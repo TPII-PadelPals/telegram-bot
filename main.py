@@ -1,6 +1,7 @@
 import telebot
 
 
+# hay que ocultar esto no deberia esta en github
 TOKEN = '7733963832:AAG4HDHRc5KqNa6XqRT5JCQ9tUwFNMiSZ9M'
 
 
@@ -36,8 +37,10 @@ def send_double(message):
     bot.reply_to(message, result)
 
 
+# detiene el bot
 @bot.message_handler(commands=['exit'])
 def receive_exit(_message):
+    bot.stop_bot()
     return
 
 
