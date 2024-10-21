@@ -1,12 +1,15 @@
 import telebot
 
+from dotenv import load_dotenv
+import os
 
-# hay que ocultar esto no deberia esta en github
-TOKEN = '7733963832:AAG4HDHRc5KqNa6XqRT5JCQ9tUwFNMiSZ9M'
+# Carga el archivo .env
+load_dotenv()
 
+token_bot = os.getenv('TOKEN_BOT_TELEGRAM')
 
-# ver si se puede mover
-bot = telebot.TeleBot(TOKEN)
+# TODO: ver si se puede mover
+bot = telebot.TeleBot(token_bot)
 
 
 @bot.message_handler(commands=['start'])
