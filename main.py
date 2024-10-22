@@ -1,4 +1,5 @@
 import telebot
+from telebot.util import extract_arguments
 
 from dotenv import load_dotenv
 import os
@@ -22,8 +23,14 @@ def send_help(message):
     bot.reply_to(message, '/start /help /ver_fmt /exit /duplicar /registrarse')
 
 
+@bot.message_handler(commands=['saludar'])
+def hello_world(message):
+    nombre_saludo = extract_arguments(message.text)
+    bot.reply_to(message, f'{nombre_saludo}')
+
+
 @bot.message_handler(commands=['registrarse'])
-def send_help(message):
+def register(message):
     bot.reply_to(message, 'asd')
 
 
