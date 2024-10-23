@@ -1,6 +1,6 @@
 import unittest
 from unittest.mock import patch, MagicMock
-from padelpals_bot import bot, send_welcome, send_double
+from padelpals_bot import send_welcome, send_double
 
 
 class TestTelegramBot(unittest.TestCase):

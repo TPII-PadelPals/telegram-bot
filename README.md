@@ -9,7 +9,7 @@ pip install -r requirements.txt
 ```
 ## Para Correr bot:
 ```
-python main.py
+python3 padelpals_bot.py
 ```
 
 ## Creacion del bot

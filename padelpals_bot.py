@@ -1,4 +1,5 @@
 import telebot
+from model.api_conection import ApiConection
 from telebot.util import extract_arguments
 
 from dotenv import load_dotenv
@@ -25,8 +26,10 @@ def send_help(message):
 
 @bot.message_handler(commands=['saludar'])
 def hello_world(message):
-    nombre_saludo = extract_arguments(message.text)
-    bot.reply_to(message, f'{nombre_saludo}')
+    hi_name = extract_arguments(message.text)
+    api_conection = ApiConection()
+    result = api_conection.get_hi_name(hi_name)
+    bot.reply_to(message, f'{result}')
 
 
 @bot.message_handler(commands=['registrarse'])
