@@ -21,7 +21,7 @@ def send_welcome(message):
 
 @bot.message_handler(commands=['help'])
 def send_help(message):
-    bot.reply_to(message, '/start /help /ver_fmt /exit /duplicar /registrarse')
+    bot.reply_to(message, '/start /help /ver_fmt /exit /duplicar /registrarse /configurar_disponibilidad')
 
 
 @bot.message_handler(commands=['saludar'])
@@ -73,6 +73,32 @@ def echo_all(message):
 def duplicar(n):
     return n * 2
 
+
+@bot.message_handler(commands=['configurar_disponibilidad'])
+def set_availability(message):
+    text = message.text
+    print(text)
+    # mensaje vacio retorna ayuda
+    if text == "/configurar_disponibilidad":
+        # todo hay que crear un archivo de idioma para dejarlo como diccionario
+        text_base = 'Indicanos los horarios que suelas tener disponibles:\n'
+        text_definition_of_hour = '- Mañana de 8hs hasta 12hs.\n- Tarde de 12hs hasta 18hs.\n- Noche de 18hs hasta 00hs.\n'
+        text_options_allowed = '1: Mañana\n2: Tarde\n3: Noche\n4: Mañana y tarde\n5: Mañana y noche\n6: Tarde y noche\n7: Todos\n'
+        text_example = 'Asignación: /configurar_disponibilidad <Numero>'
+        response_to_user = text_base + text_definition_of_hour + text_options_allowed + text_example
+        bot.reply_to(message, response_to_user)
+        return
+    number = text.split(' ')[1]
+    # mensaje con valor numerico
+    if number.isdigit():
+        number = int(number)
+        api_conection = ApiConection()
+        response_to_user = api_conection.set_availability(number)
+        bot.reply_to(message, response_to_user)
+        return
+    # mensaje sin valor numerica valido
+    response_to_user = "No es un valor valido"
+    bot.reply_to(message, response_to_user)
 
 if __name__ == '__main__':
     print("BOT INICIADO")

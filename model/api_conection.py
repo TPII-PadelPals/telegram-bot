@@ -17,3 +17,7 @@ class ApiConection:
             return f'HTTP error occurred: {http_err}'
         except Exception as err:
             return f'An error occurred: {err}'
+
+    def set_availability(self, time: int):
+        # todo finalizar
+        return "OK"
