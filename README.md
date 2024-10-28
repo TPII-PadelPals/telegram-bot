@@ -7,12 +7,14 @@
 ```
 pip install -r requirements.txt
 ```
+
 ## Para Correr bot:
+
 ```
 python3 padelpals_bot.py
 ```
 
-## Creacion del bot
+## [opcional] Si quisieramos crear un bot propio
 
 1. Crear un nuevo bot utilizando el bot "BotFather" de telegram en telegram.
    a. Iniciar solicitud de creacion del bot con el comando "/newbot".
