@@ -40,6 +40,13 @@ class TestTelegramBot(unittest.TestCase):
         set_availability(message)
         mock_reply_to.assert_called_once_with(message, 'OK')
 
+    @patch('telebot.TeleBot.reply_to')
+    def test_send_disponibilidad_horaria_whit_invalid_info(self, mock_reply_to):
+        message = MagicMock()
+        message.text = '/configurar_disponibilidad a'
+        set_availability(message)
+        mock_reply_to.assert_called_once_with(message, 'No es un valor valido')
+
 
 if __name__ == '__main__':
     unittest.main()
