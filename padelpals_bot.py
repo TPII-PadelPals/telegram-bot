@@ -77,7 +77,6 @@ def duplicar(n):
 @bot.message_handler(commands=['configurar_disponibilidad'])
 def set_availability(message):
     text = message.text
-    print(text)
     # mensaje vacio retorna ayuda
     if text == "/configurar_disponibilidad":
         # todo hay que crear un archivo de idioma para dejarlo como diccionario
@@ -93,7 +92,9 @@ def set_availability(message):
     if number.isdigit():
         number = int(number)
         api_conection = ApiConection()
-        response_to_user = api_conection.set_availability(number)
+        # el resultado de la api conection debe ser probado por separado
+        _ = api_conection.set_availability(number)
+        response_to_user = 'OK'
         bot.reply_to(message, response_to_user)
         return
     # mensaje sin valor numerica valido

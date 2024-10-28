@@ -19,5 +19,14 @@ class ApiConection:
             return f'An error occurred: {err}'
 
     def set_availability(self, time: int):
-        # todo finalizar
-        return "OK"
+        try:
+            response = requests.get(self.url + f'/message/availability/{time}')
+            # Lanza un error si la respuesta no es 200
+            response.raise_for_status()
+            data = response.json()
+            return data['message']
+        except requests.exceptions.HTTPError as http_err:
+            return f'HTTP error occurred: {http_err}'
+        except Exception as err:
+            return f'An error occurred: {err}'
+        # return "OK"
