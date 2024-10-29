@@ -2,9 +2,9 @@ import requests
 
 
 class ApiConection:
-    def __init__(self):
-        # TODO: encapsular en una variable de entorno la dirección y el puerto
-        self.url = 'http://localhost:8000'
+    def __init__(self, url):
+        # self.url = 'http://localhost:8000'
+        self.url = url
 
     def get_hi_name(self, name):
         try:

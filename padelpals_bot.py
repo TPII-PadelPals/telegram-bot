@@ -12,9 +12,9 @@ load_dotenv()
 token_bot = os.getenv('TOKEN_BOT_TELEGRAM')
 # carga diccionario de idiomas
 languaje = get_languaje(os.getenv('LANGUAGE'))
-
-
-# TODO: ver si se puede mover
+# obtiene la direccion del back end
+api_conection = ApiConection(os.getenv('URL') + ":" + os.getenv('PORT'))
+# creacion del bot
 bot = telebot.TeleBot(token_bot)
 
 
@@ -31,7 +31,7 @@ def send_help(message):
 @bot.message_handler(commands=['saludar'])
 def hello_world(message):
     hi_name = extract_arguments(message.text)
-    api_conection = ApiConection()
+    # api_conection = ApiConection()
     result = api_conection.get_hi_name(hi_name)
     bot.reply_to(message, f'{result}')
 
@@ -78,7 +78,7 @@ def set_availability(message):
     # mensaje con valor numerico
     if number.isdigit():
         number = int(number)
-        api_conection = ApiConection()
+        # api_conection = ApiConection()
         # el resultado de la api conection debe ser probado por separado
         _ = api_conection.set_availability(number)
         response_to_user = 'OK'
