@@ -6,6 +6,9 @@ from languaje import get_languaje
 from dotenv import load_dotenv
 import os
 
+KM_STEERING_SEPARATOR = ';' # separador de direccion km en especificacion de ubicacion (no puede ser espacio)
+
+# todo refactorizar para enviar esto afuera del archivo y poder mockearlo
 # Carga el archivo .env
 load_dotenv()
 # obtiene el token del bot
@@ -25,7 +28,7 @@ def send_welcome(message):
 
 @bot.message_handler(commands=['help'])
 def send_help(message):
-    bot.reply_to(message, '/start /help /ver_fmt /saludar /exit /registrarse /configurar_disponibilidad')
+    bot.reply_to(message, '/start /help /ver_fmt /saludar /exit /registrarse /configurar_disponibilidad /configurar_zona')
 
 
 @bot.message_handler(commands=['saludar'])
@@ -65,29 +68,57 @@ def echo_all(message):
 def set_availability(message):
     text = message.text
     # mensaje vacio retorna ayuda
-    if text == "/configurar_disponibilidad":
-        # text_base = 'Indicanos los horarios que suelas tener disponibles:\n'
-        # text_definition_of_hour = '- Mañana de 8hs hasta 12hs.\n- Tarde de 12hs hasta 18hs.\n- Noche de 18hs hasta 00hs.\n'
-        # text_options_allowed = '1: Mañana\n2: Tarde\n3: Noche\n4: Mañana y tarde\n5: Mañana y noche\n6: Tarde y noche\n7: Todos\n'
-        # text_example = 'Asignación: /configurar_disponibilidad <Numero>'
-        # response_to_user = text_base + text_definition_of_hour + text_options_allowed + text_example
-        # bot.reply_to(message, response_to_user)
+    if text.strip() == "/configurar_disponibilidad":
         bot.reply_to(message, languaje["MESSAGE_HELP_AVAILABILITY"])
         return
     number = text.split(' ')[1]
     # mensaje con valor numerico
     if number.isdigit():
         number = int(number)
-        # api_conection = ApiConection()
-        # el resultado de la api conection debe ser probado por separado
         _ = api_conection.set_availability(number)
         response_to_user = 'OK'
         bot.reply_to(message, response_to_user)
         return
     # mensaje sin valor numerica valido
-    # response_to_user = "No es un valor valido"
-    # bot.reply_to(message, response_to_user)
     bot.reply_to(message, languaje["MESSAGE_INVALID_VALUE"])
+
+
+@bot.message_handler(commands=['configurar_zona'])
+def set_zone(message):
+    text = message.text
+    # mensaje vacio retorna ayuda
+    if text.strip() == "/configurar_zona":
+        bot.reply_to(message, languaje["MESSAGE_HELP_ZONE"])
+        return
+    # verifico la cantidad de info dada por el usuario
+    number_of_not_info_charactes = len("/configurar_zona") + 1
+    info_field = text[number_of_not_info_charactes:]
+    info_list = info_field.split(KM_STEERING_SEPARATOR)
+    # no ocurrira nunca que haya cero valores por el if anterior
+    # solo se dio un valor y son los KM
+    if len(info_list) == 1 and info_list[0].isdigit():
+        direction = None
+        km = info_list[0]
+        text_response = languaje["MESSAGE_ZONE_UPDATED_KM"] + ": " + km + "."
+    # solo se dio un valor y es la ubicacion
+    elif len(info_list) == 1 and not info_list[0].isdigit():
+        direction = info_list[0]
+        km = None
+        text_response = languaje["MESSAGE_ZONE_UPDATED_LOCATION"] + ": " + direction + "."
+    # caso de dos o mas valores solo toma dos en orden
+    else:
+        km = info_list[1]
+        if not km.isdigit():
+            bot.reply_to(message, languaje["MESSAGE_INVALID_VALUE"])
+            return
+        direction = info_list[0]
+        text_response = languaje["MESSAGE_ZONE_UPDATED_LOCATION"] + ": " + direction + ".\n"
+        text_response += languaje["MESSAGE_ZONE_UPDATED_KM"] + ": " + km + "."
+    # todo verificar lo que devuelve el api
+    _ = api_conection.set_zone(direction, km)
+    bot.reply_to(message, text_response)
+    return
+
 
 if __name__ == '__main__':
     print("BOT INICIADO")
