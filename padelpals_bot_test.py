@@ -1,6 +1,6 @@
 import unittest
 from unittest.mock import patch, MagicMock
-from padelpals_bot import send_welcome, send_double, set_availability
+from padelpals_bot import send_welcome, set_availability
 
 
 class TestTelegramBot(unittest.TestCase):
@@ -16,15 +16,6 @@ class TestTelegramBot(unittest.TestCase):
 
         # Verifica si se llamó a reply_to con los argumentos correctos
         mock_reply_to.assert_called_once_with(message, "Bienvenido a PadelPals")
-
-    @patch('telebot.TeleBot.reply_to')
-    def test_send_double(self, mock_reply_to):
-        message = MagicMock()
-        message.text = '/duplicar J2'
-
-        send_double(message)
-
-        mock_reply_to.assert_called_once_with(message, "J2J2")
 
     @patch('telebot.TeleBot.reply_to')
     def test_send_disponibilidad_horaria_no_number(self, mock_reply_to):
