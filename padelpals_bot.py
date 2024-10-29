@@ -21,7 +21,7 @@ def send_welcome(message):
 
 @bot.message_handler(commands=['help'])
 def send_help(message):
-    bot.reply_to(message, '/start /help /ver_fmt /exit /duplicar /registrarse /configurar_disponibilidad')
+    bot.reply_to(message, '/start /help /ver_fmt /saludar /exit /registrarse /configurar_disponibilidad')
 
 
 @bot.message_handler(commands=['saludar'])
@@ -44,20 +44,7 @@ def send_format(message):
     bot.reply_to(message, str(message))
 
 
-# esto es para pruebas borrarlo
-@bot.message_handler(commands=['duplicar'])
-def send_double(message):
-    print(message)
-    text = message.text
-    result = ""
-    try:
-        result += str(duplicar(text.split()[1]))
-    except:
-        result += "No es un valor valido"
-    bot.reply_to(message, result)
-
-
-# detiene el bot
+# detiene el bot, solo para pruebas todo borrar
 @bot.message_handler(commands=['exit'])
 def receive_exit(_message):
     bot.stop_bot()
@@ -68,10 +55,6 @@ def receive_exit(_message):
 @bot.message_handler(func=lambda _message: True)
 def echo_all(message):
     bot.reply_to(message, message.text)
-
-
-def duplicar(n):
-    return n * 2
 
 
 @bot.message_handler(commands=['configurar_disponibilidad'])
