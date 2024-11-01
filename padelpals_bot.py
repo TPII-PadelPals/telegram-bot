@@ -1,7 +1,8 @@
 import telebot
 from model.api_conection import ApiConection
 from telebot.util import extract_arguments
-from languaje import get_languaje
+from language import get_language
+import logging
 
 from dotenv import load_dotenv
 import os
@@ -10,20 +11,28 @@ KM_STEERING_SEPARATOR = ';' # separador de direccion km en especificacion de ubi
 
 # todo refactorizar para enviar esto afuera del archivo y poder mockearlo
 # Carga el archivo .env
-load_dotenv()
+load_dotenv(override=True)
 # obtiene el token del bot
 token_bot = os.getenv('TOKEN_BOT_TELEGRAM')
 # carga diccionario de idiomas
-languaje = get_languaje(os.getenv('LANGUAGE'))
+print(f"lenguaje: {os.getenv('LANGUAGE')}")
+language = get_language(os.getenv('LANGUAGE'))
 # obtiene la direccion del back end
 api_conection = ApiConection(os.getenv('URL') + ":" + os.getenv('PORT'))
 # creacion del bot
 bot = telebot.TeleBot(token_bot)
 
+# Configuración de logging
+logging.basicConfig(
+    level=logging.INFO,            # Nivel de log
+    format='%(asctime)s - %(levelname)s - %(message)s'  # Formato del mensaje de log
+)
 
 @bot.message_handler(commands=['start'])
 def send_welcome(message):
-    bot.reply_to(message, languaje["MESSAGE_START"])
+    logging.info(f'Received message from {message.chat.id}: {message.text}')
+    logging.info(f'Complete Received message: {message.chat}')
+    bot.reply_to(message, language["MESSAGE_START"])
 
 
 @bot.message_handler(commands=['help'])
@@ -69,7 +78,7 @@ def set_availability(message):
     text = message.text
     # mensaje vacio retorna ayuda
     if text.strip() == "/configurar_disponibilidad":
-        bot.reply_to(message, languaje["MESSAGE_HELP_AVAILABILITY"])
+        bot.reply_to(message, language["MESSAGE_HELP_AVAILABILITY"])
         return
     number = text.split(' ')[1]
     # mensaje con valor numerico
@@ -80,7 +89,7 @@ def set_availability(message):
         bot.reply_to(message, response_to_user)
         return
     # mensaje sin valor numerica valido
-    bot.reply_to(message, languaje["MESSAGE_INVALID_VALUE"])
+    bot.reply_to(message, language["MESSAGE_INVALID_VALUE"])
 
 
 @bot.message_handler(commands=['configurar_zona'])
@@ -88,7 +97,7 @@ def set_zone(message):
     text = message.text
     # mensaje vacio retorna ayuda
     if text.strip() == "/configurar_zona":
-        bot.reply_to(message, languaje["MESSAGE_HELP_ZONE"])
+        bot.reply_to(message, language["MESSAGE_HELP_ZONE"])
         return
     # verifico la cantidad de info dada por el usuario
     number_of_not_info_charactes = len("/configurar_zona") + 1
@@ -99,28 +108,29 @@ def set_zone(message):
     if len(info_list) == 1 and info_list[0].isdigit():
         direction = None
         km = info_list[0]
-        text_response = languaje["MESSAGE_ZONE_UPDATED_KM"] + ": " + km + "."
+        text_response = language["MESSAGE_ZONE_UPDATED_KM"] + ": " + km + "."
     # solo se dio un valor y es la ubicacion
     elif len(info_list) == 1 and not info_list[0].isdigit():
         direction = info_list[0]
         km = None
-        text_response = languaje["MESSAGE_ZONE_UPDATED_LOCATION"] + ": " + direction + "."
+        text_response = language["MESSAGE_ZONE_UPDATED_LOCATION"] + ": " + direction + "."
     # caso de dos o mas valores solo toma dos en orden
     else:
         km = info_list[1]
         if not km.isdigit():
-            bot.reply_to(message, languaje["MESSAGE_INVALID_VALUE"])
+            bot.reply_to(message, language["MESSAGE_INVALID_VALUE"])
             return
         direction = info_list[0]
-        text_response = languaje["MESSAGE_ZONE_UPDATED_LOCATION"] + ": " + direction + ".\n"
-        text_response += languaje["MESSAGE_ZONE_UPDATED_KM"] + ": " + km + "."
+        text_response = language["MESSAGE_ZONE_UPDATED_LOCATION"] + ": " + direction + ".\n"
+        text_response += language["MESSAGE_ZONE_UPDATED_KM"] + ": " + km + "."
     # todo verificar lo que devuelve el api
     _ = api_conection.set_zone(direction, km)
     bot.reply_to(message, text_response)
     return
 
 
+
 if __name__ == '__main__':
-    print("BOT INICIADO")
+    logging.info("BOT Iniciado")
     bot.polling(none_stop=True)
 
