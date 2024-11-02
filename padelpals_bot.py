@@ -43,7 +43,6 @@ def send_help(message):
 @bot.message_handler(commands=['saludar'])
 def hello_world(message):
     hi_name = extract_arguments(message.text)
-    # api_conection = ApiConection()
     result = api_conection.get_hi_name(hi_name)
     bot.reply_to(message, f'{result}')
 
@@ -84,7 +83,8 @@ def set_availability(message):
     # mensaje con valor numerico
     if number.isdigit():
         number = int(number)
-        _ = api_conection.set_availability(number)
+        id_telegram = message.author_signature # revisar si este es el ID
+        _ = api_conection.set_availability(number, id_telegram)
         response_to_user = 'OK'
         bot.reply_to(message, response_to_user)
         return
@@ -123,8 +123,9 @@ def set_zone(message):
         direction = info_list[0]
         text_response = language["MESSAGE_ZONE_UPDATED_LOCATION"] + ": " + direction + ".\n"
         text_response += language["MESSAGE_ZONE_UPDATED_KM"] + ": " + km + "."
+    id_telegram = message.author_signature # revisar si este es el ID
     # todo verificar lo que devuelve el api
-    _ = api_conection.set_zone(direction, km)
+    _ = api_conection.set_zone(direction, km, id_telegram)
     bot.reply_to(message, text_response)
     return
 

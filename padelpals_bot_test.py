@@ -35,6 +35,7 @@ class TestTelegramBot(unittest.TestCase):
     def test_send_disponibilidad_horaria_whit_number(self, mock_reply_to):
         message = MagicMock()
         message.text = '/configurar_disponibilidad 4'
+        message.author_signature = 'ID'
         set_availability(message)
         mock_reply_to.assert_called_once_with(message, 'OK')
 
@@ -63,6 +64,7 @@ class TestTelegramBot(unittest.TestCase):
     def test_send_ubicacion_only_km(self, mock_reply_to):
         message = MagicMock()
         message.text = '/configurar_zona 54'
+        message.author_signature = 'ID'
         set_zone(message)
         mock_reply_to.assert_called_once_with(message, "Kilometros actualizados: 54.")
 
@@ -70,6 +72,7 @@ class TestTelegramBot(unittest.TestCase):
     def test_send_ubicacion_only_zone(self, mock_reply_to):
         message = MagicMock()
         message.text = '/configurar_zona CABA'
+        message.author_signature = 'ID'
         set_zone(message)
         mock_reply_to.assert_called_once_with(message, "Ubicacion actualizada: CABA.")
 
@@ -77,6 +80,7 @@ class TestTelegramBot(unittest.TestCase):
     def test_send_ubicacion_all(self, mock_reply_to):
         message = MagicMock()
         message.text = '/configurar_zona CABA' + KM_STEERING_SEPARATOR + '82'
+        message.author_signature = 'ID'
         set_zone(message)
         mock_reply_to.assert_called_once_with(message, "Ubicacion actualizada: CABA.\nKilometros actualizados: 82.")
 

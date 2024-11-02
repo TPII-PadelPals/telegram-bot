@@ -33,7 +33,7 @@ class TestApiConection(unittest.TestCase):
         mock_response.json.return_value = {'message': 'OK!'}
         mock_post.return_value = mock_response
 
-        result = self.api.set_availability(10)
+        result = self.api.set_availability(10, 'ID')
         self.assertEqual(result, 'OK!')
 
     @patch('requests.post')
@@ -43,7 +43,7 @@ class TestApiConection(unittest.TestCase):
         mock_response.json.return_value = {'message': 'Zona seteada'}
         mock_post.return_value = mock_response
 
-        result = self.api.set_zone("CABA", 15)
+        result = self.api.set_zone("CABA", 15, 'ID')
         self.assertEqual(result, 'Zona seteada')
 
     @patch('requests.post')
@@ -53,7 +53,7 @@ class TestApiConection(unittest.TestCase):
         mock_response.json.return_value = {'message': 'Zona seteada'}
         mock_post.return_value = mock_response
 
-        result = self.api.set_zone("CABA", None)
+        result = self.api.set_zone("CABA", None, 'ID')
         self.assertEqual(result, 'Zona seteada')
 
     @patch('requests.post')
@@ -63,7 +63,7 @@ class TestApiConection(unittest.TestCase):
         mock_response.json.return_value = {'message': 'Zona seteada'}
         mock_post.return_value = mock_response
 
-        result = self.api.set_zone(None, 15)
+        result = self.api.set_zone(None, 15, 'ID')
         self.assertEqual(result, 'Zona seteada')
 
     # @patch('requests.post')
