@@ -19,6 +19,8 @@ class ApiConection:
 
     def set_availability(self, time: int, id_telegram):
         try:
+            # response = requests.post(self.url + f'/message/availability/{time};{id_telegram}')
+            # cambio a endpoint en lugar de main
             response = requests.post(self.url + f'/message/availability/{time};{id_telegram}')
             # Lanza un error si la respuesta no es 200
             response.raise_for_status()
@@ -34,12 +36,19 @@ class ApiConection:
         if zone is None and km is None:
             raise ValueError('Zone or km must be provided')
         try:
+            # if zone is None:
+            #     response = requests.post(self.url + f'/message/zone/km/{km};{id_telegram}')
+            # elif km is None:
+            #     response = requests.post(self.url + f'/message/zone/location/{zone};{id_telegram}')
+            # else:
+            #     response = requests.post(self.url + f'/message/zone/{zone};{km};{id_telegram}')
+            # cambio a endpoint en lugar de main
             if zone is None:
-                response = requests.post(self.url + f'/message/zone/km/{km};{id_telegram}')
+                response = requests.post(self.url + f'/player/change_zone/only_km/{id_telegram}:{km}')
             elif km is None:
-                response = requests.post(self.url + f'/message/zone/location/{zone};{id_telegram}')
+                response = requests.post(self.url + f'/player/change_zone/only_location/{id_telegram}:{zone}')
             else:
-                response = requests.post(self.url + f'/message/zone/{zone};{km};{id_telegram}')
+                response = requests.post(self.url + f'/player/change_zone/{id_telegram}:{zone}:{km}')
             # Lanza un error si la respuesta no es 200
             response.raise_for_status()
             data = response.json()
