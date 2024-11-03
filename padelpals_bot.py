@@ -18,7 +18,7 @@ token_bot = os.getenv('TOKEN_BOT_TELEGRAM')
 print(f"lenguaje: {os.getenv('LANGUAGE')}")
 language = get_language(os.getenv('LANGUAGE'))
 # obtiene la direccion del back end
-api_conection = ApiConection(os.getenv('URL') + ":" + os.getenv('PORT'))
+api_conection = ApiConection("http://" + os.getenv('URL') + ":" + os.getenv('PORT'))
 # creacion del bot
 bot = telebot.TeleBot(token_bot)
 
@@ -37,6 +37,7 @@ def send_welcome(message):
 
 @bot.message_handler(commands=['help'])
 def send_help(message):
+    print(message.from_user.username)
     bot.reply_to(message, '/start /help /ver_fmt /saludar /exit /registrarse /configurar_disponibilidad /configurar_zona')
 
 
@@ -66,12 +67,6 @@ def receive_exit(_message):
     return
 
 
-# Para todos los mensajes (esto es para pruebas borrarlo)
-@bot.message_handler(func=lambda _message: True)
-def echo_all(message):
-    bot.reply_to(message, message.text)
-
-
 @bot.message_handler(commands=['configurar_disponibilidad'])
 def set_availability(message):
     text = message.text
@@ -83,8 +78,9 @@ def set_availability(message):
     # mensaje con valor numerico
     if number.isdigit():
         number = int(number)
-        id_telegram = message.author_signature # revisar si este es el ID
-        _ = api_conection.set_availability(number, id_telegram)
+        id_telegram = message.from_user.username # revisar si este es el ID
+        _a = api_conection.set_availability(number, id_telegram)
+        print(_a)
         response_to_user = 'OK'
         bot.reply_to(message, response_to_user)
         return
@@ -123,12 +119,19 @@ def set_zone(message):
         direction = info_list[0]
         text_response = language["MESSAGE_ZONE_UPDATED_LOCATION"] + ": " + direction + ".\n"
         text_response += language["MESSAGE_ZONE_UPDATED_KM"] + ": " + km + "."
-    id_telegram = message.author_signature # revisar si este es el ID
+    id_telegram = message.from_user.username # revisar si este es el ID
     # todo verificar lo que devuelve el api
-    _ = api_conection.set_zone(direction, km, id_telegram)
+    _a = api_conection.set_zone(direction, km, id_telegram)
+    print(_a)
     bot.reply_to(message, text_response)
     return
 
+
+
+# Para todos los mensajes (esto es para pruebas borrarlo)
+@bot.message_handler(func=lambda _message: True)
+def echo_all(message):
+    bot.reply_to(message, message.text)
 
 
 if __name__ == '__main__':

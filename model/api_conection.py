@@ -21,7 +21,8 @@ class ApiConection:
         try:
             # response = requests.post(self.url + f'/message/availability/{time};{id_telegram}')
             # cambio a endpoint en lugar de main
-            response = requests.post(self.url + f'/message/availability/{time};{id_telegram}')
+            # http://localhost:8000/player/change_time/gabigbell:2
+            response = requests.put(self.url + f'/player/change_time/{id_telegram}:{time}')
             # Lanza un error si la respuesta no es 200
             response.raise_for_status()
             data = response.json()
@@ -44,11 +45,11 @@ class ApiConection:
             #     response = requests.post(self.url + f'/message/zone/{zone};{km};{id_telegram}')
             # cambio a endpoint en lugar de main
             if zone is None:
-                response = requests.post(self.url + f'/player/change_zone/only_km/{id_telegram}:{km}')
+                response = requests.put(self.url + f'/player/change_zone/only_km/{id_telegram}:{km}')
             elif km is None:
-                response = requests.post(self.url + f'/player/change_zone/only_location/{id_telegram}:{zone}')
+                response = requests.put(self.url + f'/player/change_zone/only_location/{id_telegram}:{zone}')
             else:
-                response = requests.post(self.url + f'/player/change_zone/{id_telegram}:{zone}:{km}')
+                response = requests.put(self.url + f'/player/change_zone/{id_telegram}:{zone}:{km}')
             # Lanza un error si la respuesta no es 200
             response.raise_for_status()
             data = response.json()
