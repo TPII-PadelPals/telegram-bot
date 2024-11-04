@@ -129,9 +129,9 @@ def set_zone(message):
 
 
 # Para todos los mensajes (esto es para pruebas borrarlo)
-@bot.message_handler(func=lambda _message: True)
-def echo_all(message):
-    bot.reply_to(message, message.text)
+# @bot.message_handler(func=lambda _message: True)
+# def echo_all(message):
+#     bot.reply_to(message, message.text)
 
 
 if __name__ == '__main__':

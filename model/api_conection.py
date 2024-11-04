@@ -19,14 +19,14 @@ class ApiConection:
 
     def set_availability(self, time: int, id_telegram):
         try:
-            # response = requests.post(self.url + f'/message/availability/{time};{id_telegram}')
+            # response = requests.put(self.url + f'/message/availability/{time};{id_telegram}')
             # cambio a endpoint en lugar de main
-            # http://localhost:8000/player/change_time/gabigbell:2
             response = requests.put(self.url + f'/player/change_time/{id_telegram}:{time}')
             # Lanza un error si la respuesta no es 200
             response.raise_for_status()
             data = response.json()
-            return data['message']
+            # return data['message']
+            return data['time_availability']
         except requests.exceptions.HTTPError as http_err:
             return f'HTTP error occurred: {http_err}'
         except Exception as err:
@@ -38,11 +38,11 @@ class ApiConection:
             raise ValueError('Zone or km must be provided')
         try:
             # if zone is None:
-            #     response = requests.post(self.url + f'/message/zone/km/{km};{id_telegram}')
+            #     response = requests.put(self.url + f'/message/zone/km/{km};{id_telegram}')
             # elif km is None:
-            #     response = requests.post(self.url + f'/message/zone/location/{zone};{id_telegram}')
+            #     response = requests.put(self.url + f'/message/zone/location/{zone};{id_telegram}')
             # else:
-            #     response = requests.post(self.url + f'/message/zone/{zone};{km};{id_telegram}')
+            #     response = requests.put(self.url + f'/message/zone/{zone};{km};{id_telegram}')
             # cambio a endpoint en lugar de main
             if zone is None:
                 response = requests.put(self.url + f'/player/change_zone/only_km/{id_telegram}:{km}')
@@ -53,7 +53,8 @@ class ApiConection:
             # Lanza un error si la respuesta no es 200
             response.raise_for_status()
             data = response.json()
-            return data['message']
+            # return data['message']
+            return data['zone_km'], data['zone_location']
         except requests.exceptions.HTTPError as http_err:
             return f'HTTP error occurred: {http_err}'
         except Exception as err:

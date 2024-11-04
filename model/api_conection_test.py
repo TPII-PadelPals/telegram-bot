@@ -26,45 +26,45 @@ class TestApiConection(unittest.TestCase):
         result = self.api.get_hi_name("Carlos")
         self.assertIn('An error occurred', result)
 
-    @patch('requests.post')
-    def test_set_availability_success(self, mock_post):
+    @patch('requests.put')
+    def test_set_availability_success(self, mock_put):
         mock_response = Mock()
         mock_response.status_code = 200
-        mock_response.json.return_value = {'message': 'OK!'}
-        mock_post.return_value = mock_response
+        mock_response.json.return_value = {'time_availability': 10}
+        mock_put.return_value = mock_response
 
         result = self.api.set_availability(10, 'ID')
-        self.assertEqual(result, 'OK!')
+        self.assertEqual(result, 10)
 
-    @patch('requests.post')
-    def test_set_zone_success(self, mock_post):
+    @patch('requests.put')
+    def test_set_zone_success(self, mock_put):
         mock_response = Mock()
         mock_response.status_code = 200
-        mock_response.json.return_value = {'message': 'Zona seteada'}
-        mock_post.return_value = mock_response
+        mock_response.json.return_value = {'zone_km': 1, 'zone_location': 'CABA'}
+        mock_put.return_value = mock_response
 
         result = self.api.set_zone("CABA", 15, 'ID')
-        self.assertEqual(result, 'Zona seteada')
+        self.assertEqual(result, (1, 'CABA'))
 
-    @patch('requests.post')
-    def test_set_zone_only_zone_success(self, mock_post):
+    @patch('requests.put')
+    def test_set_zone_only_zone_success(self, mock_put):
         mock_response = Mock()
         mock_response.status_code = 200
-        mock_response.json.return_value = {'message': 'Zona seteada'}
-        mock_post.return_value = mock_response
+        mock_response.json.return_value = {'zone_km': 0, 'zone_location': 'CABA'}
+        mock_put.return_value = mock_response
 
         result = self.api.set_zone("CABA", None, 'ID')
-        self.assertEqual(result, 'Zona seteada')
+        self.assertEqual(result, (0, 'CABA'))
 
-    @patch('requests.post')
-    def test_set_zone_only_km_success(self, mock_post):
+    @patch('requests.put')
+    def test_set_zone_only_km_success(self, mock_put):
         mock_response = Mock()
         mock_response.status_code = 200
-        mock_response.json.return_value = {'message': 'Zona seteada'}
-        mock_post.return_value = mock_response
+        mock_response.json.return_value = {'zone_km': 15, 'zone_location': 'SA'}
+        mock_put.return_value = mock_response
 
         result = self.api.set_zone(None, 15, 'ID')
-        self.assertEqual(result, 'Zona seteada')
+        self.assertEqual(result, (15, 'SA'))
 
     # @patch('requests.post')
     # def test_set_zone_no_values_error(self):
