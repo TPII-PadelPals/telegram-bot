@@ -4,11 +4,18 @@ from model.api_conection import ApiConection
 import os
 from utils.language import get_language
 
-KM_STEERING_SEPARATOR = ';' # separador de direccion km en especificacion de ubicacion (no puede ser espacio)
+# separador de direccion km en especificacion de ubicacion (no puede ser
+# espacio)
+KM_STEERING_SEPARATOR = ';'
+
 
 def handle_configure_zone(message: Message, bot: TeleBot):
     text = message.text
-    api_conection = ApiConection("http://" + os.getenv('SERVICE_HOST') + ":" + os.getenv('SERVICE_PORT'))
+    api_conection = ApiConection(
+        "http://" +
+        os.getenv('SERVICE_HOST') +
+        ":" +
+        os.getenv('SERVICE_PORT'))
     language = get_language(os.getenv('LANGUAGE'))
 
     # mensaje vacio retorna ayuda
@@ -29,7 +36,8 @@ def handle_configure_zone(message: Message, bot: TeleBot):
     elif len(info_list) == 1 and not info_list[0].isdigit():
         direction = info_list[0]
         km = None
-        text_response = language["MESSAGE_ZONE_UPDATED_LOCATION"] + ": " + direction + "."
+        text_response = language["MESSAGE_ZONE_UPDATED_LOCATION"] + \
+            ": " + direction + "."
     # caso de dos o mas valores solo toma dos en orden
     else:
         km = info_list[1]
@@ -37,9 +45,10 @@ def handle_configure_zone(message: Message, bot: TeleBot):
             bot.reply_to(message, language["MESSAGE_INVALID_VALUE"])
             return
         direction = info_list[0]
-        text_response = language["MESSAGE_ZONE_UPDATED_LOCATION"] + ": " + direction + ".\n"
+        text_response = language["MESSAGE_ZONE_UPDATED_LOCATION"] + \
+            ": " + direction + ".\n"
         text_response += language["MESSAGE_ZONE_UPDATED_KM"] + ": " + km + "."
-    id_telegram = message.from_user.username # revisar si este es el ID
+    id_telegram = message.from_user.username  # revisar si este es el ID
     # todo verificar lo que devuelve el api
     _a = api_conection.set_zone(direction, km, id_telegram)
     print(_a)

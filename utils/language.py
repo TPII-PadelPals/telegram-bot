@@ -2,7 +2,10 @@ import json
 
 EXTENSION = "json"
 FOLDER = "language/"
-ENCODING_LENGUAJE = 'utf-8' # este encoding acepta letras con acento y la letra 'Ñ', 'ñ'. si no funciona agregar -sig
+# este encoding acepta letras con acento y la letra 'Ñ', 'ñ'. si no
+# funciona agregar -sig
+ENCODING_LENGUAJE = 'utf-8'
+
 
 def get_language(name):
     file = FOLDER + name + "." + EXTENSION

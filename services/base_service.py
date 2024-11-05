@@ -1,6 +1,7 @@
 import requests
 from model.config import Config
 
+
 class BaseService:
     def __init__(self):
         """Set the base URL for the service."""
@@ -39,7 +40,7 @@ class BaseService:
     def _handle_response(self, response):
         """Handle the response, raise an exception for bad responses."""
         try:
-            response.raise_for_status() 
-            return response.json() 
+            response.raise_for_status()
+            return response.json()
         except requests.exceptions.HTTPError as e:
-            return None 
+            return None

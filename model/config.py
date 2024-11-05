@@ -1,5 +1,6 @@
 import os
 
+
 class Config:
     """Set the configuration for the bot."""
     SERVICE_HOST = os.getenv("SERVICE_HOST", "127.0.0.1")
@@ -20,5 +21,5 @@ class Config:
         if not os.getenv("LANGUAGE"):
             missing_envs.append("LANGUAGE")
         if missing_envs:
-            raise EnvironmentError(f"Missing required environment variables: {', '.join(missing_envs)}")
-
+            raise EnvironmentError(
+                f"Missing required environment variables: {', '.join(missing_envs)}")

@@ -3,6 +3,7 @@ import logging
 from handlers import MESSAGE_HANDLERS, CALLBACK_HANDLERS
 import os
 
+
 class TelegramBot:
     def __init__(self):
         self.log = self.setup_logging()
@@ -20,10 +21,15 @@ class TelegramBot:
 
     def register_handlers(self):
         for handler in MESSAGE_HANDLERS:
-            self.bot.register_message_handler(handler["handler"], commands=[handler["command"]], pass_bot=True)
+            self.bot.register_message_handler(
+                handler["handler"], commands=[
+                    handler["command"]], pass_bot=True)
 
         for handler in CALLBACK_HANDLERS:
-            self.bot.register_callback_query_handler(handler["handler"], func=lambda call: call.data.startswith(f"{handler['command']}"), pass_bot=True)
+            self.bot.register_callback_query_handler(
+                handler["handler"],
+                func=lambda call: call.data.startswith(f"{handler['command']}"),
+                pass_bot=True)
 
     def start(self):
         self.log.info("Telegram bot Initialized")
