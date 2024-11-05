@@ -2,22 +2,23 @@
 
 ## Instalar dependencias
 
- para instalar las dependencias con: 
+para instalar las dependencias con:
 
 ```
 pip install -r requirements.txt
 ```
 
 ## Ajustar variables de entorno
+
 Como paso previo a correr el programa es necesario ajustar algunas variables de entorno en un archivo .env
 
 Con las siguientes variables:
 
 ```
-TOKEN_BOT_TELEGRAM = '<YOUR_TELEGRAM_TOKEN>'
-LANGUAGE = 'ES'
-URL = 'localhost'
-PORT = '8000'
+TELEGRAM_BOT_TOKEN=<YOUR_TELEGRAM_TOKEN>
+SERVICE_HOST=<SERVICE_HOST>
+SERVICE_PORT=<SERVICE_PORT>
+LANGUAGE=<LANGUAGE>
 ```
 
 ## Para Correr bot:
@@ -34,10 +35,9 @@ python3 padelpals_bot.py
 
    b. Crearle un nombre al bot, por ejemplo: "padelpals-<your_name>-test".
 
-   c. Asignarle un nombre de usuario al bot, por ejemplo: "padelpals_<your_name>_bot"
+   c. Asignarle un nombre de usuario al bot, por ejemplo: "padelpals\_<your_name>\_bot"
 
-
-2. Una vez creado utilizamos el token dado en nuestro programa de python, y configuramos la variable de entorno `TOKEN_BOT_TELEGRAM` con el valor generado.
+2. Una vez creado utilizamos el token dado en nuestro programa de python, y configuramos la variable de entorno `TELEGRAM_BOT_TOKEN` con el valor generado.
 
 ## Pruebas de las funciones del bot
 

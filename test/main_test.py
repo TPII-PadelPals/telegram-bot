@@ -1,6 +1,6 @@
 import unittest
 from unittest.mock import patch, MagicMock
-from padelpals_bot import send_welcome, set_availability, KM_STEERING_SEPARATOR, set_zone
+from main import send_welcome, set_availability, KM_STEERING_SEPARATOR, set_zone
 
 
 class TestTelegramBot(unittest.TestCase):

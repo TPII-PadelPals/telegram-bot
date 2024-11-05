@@ -1,6 +1,6 @@
 import unittest
 from unittest.mock import patch, Mock
-from api_conection import ApiConection  # Cambia `my_module` al nombre real del archivo donde está la clase
+from model.api_conection import ApiConection  # Cambia `my_module` al nombre real del archivo donde está la clase
 
 
 class TestApiConection(unittest.TestCase):
