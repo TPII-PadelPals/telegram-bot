@@ -3,6 +3,7 @@ from model.api_conection import ApiConection
 from telebot.util import extract_arguments
 from language import get_language
 import logging
+from handlers import MESSAGE_HANDLERS, CALLBACK_HANDLERS
 
 from dotenv import load_dotenv
 import os
@@ -136,5 +137,11 @@ def echo_all(message):
 
 if __name__ == '__main__':
     logging.info("BOT Iniciado")
-    bot.polling(none_stop=True)
 
+    for handler in MESSAGE_HANDLERS:
+        bot.register_message_handler(handler["handler"], commands=[handler["command"]], pass_bot=True)
+
+    for handler in CALLBACK_HANDLERS:
+        bot.register_callback_query_handler(handler["handler"], func=lambda call: call.data.startswith(f"{handler['command']}"), pass_bot=True)
+
+    bot.polling(none_stop=True)
