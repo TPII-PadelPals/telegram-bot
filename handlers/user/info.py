@@ -3,6 +3,7 @@ from services.user_service import UserService
 from telebot.types import Message
 import requests
 
+
 def handle_info(message: Message, bot: TeleBot):
     chat_id = message.chat.id
     try:

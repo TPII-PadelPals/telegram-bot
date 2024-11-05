@@ -1,12 +1,13 @@
 import requests
-from .config import Config
+from model.config import Config
+
 
 class BaseService:
     def __init__(self):
         """Set the base URL for the service."""
         local_server = ["localhost", "127.0.0.1"]
-        host = f"{Config.API_HOST}:{Config.API_PORT}"
-        self.base_url = f"http://{host}" if Config.API_HOST in local_server else f"https://{host}"
+        host = f"{Config.SERVICE_HOST}:{Config.SERVICE_PORT}"
+        self.base_url = f"http://{host}" if Config.SERVICE_HOST in local_server else f"https://{host}"
 
     def generate_url(self, endpoint):
         """Generate a full URL from an endpoint."""
@@ -39,7 +40,7 @@ class BaseService:
     def _handle_response(self, response):
         """Handle the response, raise an exception for bad responses."""
         try:
-            response.raise_for_status() 
-            return response.json() 
+            response.raise_for_status()
+            return response.json()
         except requests.exceptions.HTTPError as e:
-            return None 
+            return None

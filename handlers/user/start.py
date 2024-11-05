@@ -2,6 +2,7 @@ from telebot import TeleBot
 from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton, Message, CallbackQuery
 from services.user_service import UserService
 
+
 def handle_start(message: Message, bot: TeleBot):
     chat_id = message.chat.id
     service = UserService()
@@ -11,16 +12,24 @@ def handle_start(message: Message, bot: TeleBot):
     else:
         result = service.get_user_info(chat_id)
         if result:
-            bot.reply_to(message, f"Bienvenido de nuevo, {result.get('name')}!")
+            bot.reply_to(
+                message,
+                f"Bienvenido de nuevo, {result.get('name')}!")
         else:
-            bot.reply_to(message, "Ha ocurrido un error. Por favor, intenta de nuevo más tarde.")
+            bot.reply_to(
+                message,
+                "Ha ocurrido un error. Por favor, intenta de nuevo más tarde.")
+
 
 def ask_login_method(message: Message, bot: TeleBot):
     markup = InlineKeyboardMarkup(row_width=1)
     markup.add(
-        InlineKeyboardButton("Registrarse con Usuario y Contraseña", callback_data="start_user_pass"),
-        InlineKeyboardButton("Registrarse con Google", callback_data="start_google")
-    )
+        InlineKeyboardButton(
+            "Registrarse con Usuario y Contraseña",
+            callback_data="start_user_pass"),
+        InlineKeyboardButton(
+            "Registrarse con Google",
+            callback_data="start_google"))
     bot.reply_to(
         message,
         "Bienvenido a PaddlePals! Por favor seleccione un método de registro:",
@@ -43,4 +52,6 @@ def handle_callback_query(call: CallbackQuery, bot: TeleBot):
             message_id=call.message.message_id,
             reply_markup=markup)
     elif call.data == "start_user_pass":
-        bot.reply_to(call.message, "Esta opción no esta disponible actualmente. Por favor, intenta de nuevo más tarde.")
+        bot.reply_to(
+            call.message,
+            "Esta opción no esta disponible actualmente. Por favor, intenta de nuevo más tarde.")

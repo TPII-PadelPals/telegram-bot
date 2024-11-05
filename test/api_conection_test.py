@@ -1,6 +1,7 @@
 import unittest
 from unittest.mock import patch, Mock
-from api_conection import ApiConection  # Cambia `my_module` al nombre real del archivo donde está la clase
+# Cambia `my_module` al nombre real del archivo donde está la clase
+from model.api_conection import ApiConection
 
 
 class TestApiConection(unittest.TestCase):
@@ -40,7 +41,8 @@ class TestApiConection(unittest.TestCase):
     def test_set_zone_success(self, mock_put):
         mock_response = Mock()
         mock_response.status_code = 200
-        mock_response.json.return_value = {'zone_km': 1, 'zone_location': 'CABA'}
+        mock_response.json.return_value = {
+            'zone_km': 1, 'zone_location': 'CABA'}
         mock_put.return_value = mock_response
 
         result = self.api.set_zone("CABA", 15, 'ID')
@@ -50,7 +52,8 @@ class TestApiConection(unittest.TestCase):
     def test_set_zone_only_zone_success(self, mock_put):
         mock_response = Mock()
         mock_response.status_code = 200
-        mock_response.json.return_value = {'zone_km': 0, 'zone_location': 'CABA'}
+        mock_response.json.return_value = {
+            'zone_km': 0, 'zone_location': 'CABA'}
         mock_put.return_value = mock_response
 
         result = self.api.set_zone("CABA", None, 'ID')
@@ -60,7 +63,8 @@ class TestApiConection(unittest.TestCase):
     def test_set_zone_only_km_success(self, mock_put):
         mock_response = Mock()
         mock_response.status_code = 200
-        mock_response.json.return_value = {'zone_km': 15, 'zone_location': 'SA'}
+        mock_response.json.return_value = {
+            'zone_km': 15, 'zone_location': 'SA'}
         mock_put.return_value = mock_response
 
         result = self.api.set_zone(None, 15, 'ID')
@@ -79,7 +83,6 @@ class TestApiConection(unittest.TestCase):
     #     except:
     #         print("lanza otra excepcion")
     #         assert False
-
 
 
 if __name__ == "__main__":

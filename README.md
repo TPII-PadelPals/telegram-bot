@@ -1,44 +1,48 @@
-# Bot_telegram
+# Telegram Bot
 
-## Instalar dependencias
+## Project Overview
 
- para instalar las dependencias con: 
+This project is a Telegram bot designed to interact with users and provide various functionalities. It is built using Python and leverages the Telegram Bot API.
+
+## Install Dependencies
+
+To install the dependencies, run:
 
 ```
 pip install -r requirements.txt
 ```
 
-## Ajustar variables de entorno
-Como paso previo a correr el programa es necesario ajustar algunas variables de entorno en un archivo .env
+## Set Environment Variables
 
-Con las siguientes variables:
-
-```
-TOKEN_BOT_TELEGRAM = '<YOUR_TELEGRAM_TOKEN>'
-LANGUAGE = 'ES'
-URL = 'localhost'
-PORT = '8000'
-```
-
-## Para Correr bot:
+Before running the program, you need to set some environment variables in a `.env` file with the following variables:
 
 ```
-python3 padelpals_bot.py
+TELEGRAM_BOT_TOKEN=<YOUR_TELEGRAM_TOKEN>
+SERVICE_HOST=<SERVICE_HOST>
+SERVICE_PORT=<SERVICE_PORT>
+LANGUAGE=<LANGUAGE>
 ```
 
-## Para crear un bot propio para pruebas locales
+## Run the Bot
 
-1. Crear un nuevo bot utilizando el bot "BotFather" de telegram.
+To run the bot, execute:
 
-   a. Iniciar solicitud de creacion del bot con el comando "/newbot".
+```
+python main.py
+```
 
-   b. Crearle un nombre al bot, por ejemplo: "padelpals-<your_name>-test".
+## Create Your Own Bot for Local Testing
 
-   c. Asignarle un nombre de usuario al bot, por ejemplo: "padelpals_<your_name>_bot"
+1. Create a new bot using the "BotFather" bot on Telegram.
 
+   a. Start the bot creation process with the command `/newbot`.
 
-2. Una vez creado utilizamos el token dado en nuestro programa de python, y configuramos la variable de entorno `TOKEN_BOT_TELEGRAM` con el valor generado.
+   b. Give your bot a name, for example: `padelpals-<your_name>-test`.
 
-## Pruebas de las funciones del bot
+   c. Assign a username to your bot, for example: `padelpals_<your_name>_bot`.
 
-Se utiliza un mock para los mensajes que reciben los metodos de nuestro bot y se verifica los resultados obtenidos.
+2. Once created, use the provided token in your Python program and set the environment variable `TELEGRAM_BOT_TOKEN` with the generated value.
+
+## Testing Bot Functions
+
+A mock is used for the messages received by our bot's methods, and the results obtained are verified.
