@@ -1,18 +1,20 @@
-# Bot_telegram
+# Telegram Bot
 
-## Instalar dependencias
+## Project Overview
 
-para instalar las dependencias con:
+This project is a Telegram bot designed to interact with users and provide various functionalities. It is built using Python and leverages the Telegram Bot API.
+
+## Install Dependencies
+
+To install the dependencies, run:
 
 ```
 pip install -r requirements.txt
 ```
 
-## Ajustar variables de entorno
+## Set Environment Variables
 
-Como paso previo a correr el programa es necesario ajustar algunas variables de entorno en un archivo .env
-
-Con las siguientes variables:
+Before running the program, you need to set some environment variables in a `.env` file with the following variables:
 
 ```
 TELEGRAM_BOT_TOKEN=<YOUR_TELEGRAM_TOKEN>
@@ -21,24 +23,26 @@ SERVICE_PORT=<SERVICE_PORT>
 LANGUAGE=<LANGUAGE>
 ```
 
-## Para Correr bot:
+## Run the Bot
+
+To run the bot, execute:
 
 ```
-python3 padelpals_bot.py
+python main.py
 ```
 
-## Para crear un bot propio para pruebas locales
+## Create Your Own Bot for Local Testing
 
-1. Crear un nuevo bot utilizando el bot "BotFather" de telegram.
+1. Create a new bot using the "BotFather" bot on Telegram.
 
-   a. Iniciar solicitud de creacion del bot con el comando "/newbot".
+   a. Start the bot creation process with the command `/newbot`.
 
-   b. Crearle un nombre al bot, por ejemplo: "padelpals-<your_name>-test".
+   b. Give your bot a name, for example: `padelpals-<your_name>-test`.
 
-   c. Asignarle un nombre de usuario al bot, por ejemplo: "padelpals\_<your_name>\_bot"
+   c. Assign a username to your bot, for example: `padelpals_<your_name>_bot`.
 
-2. Una vez creado utilizamos el token dado en nuestro programa de python, y configuramos la variable de entorno `TELEGRAM_BOT_TOKEN` con el valor generado.
+2. Once created, use the provided token in your Python program and set the environment variable `TELEGRAM_BOT_TOKEN` with the generated value.
 
-## Pruebas de las funciones del bot
+## Testing Bot Functions
 
-Se utiliza un mock para los mensajes que reciben los metodos de nuestro bot y se verifica los resultados obtenidos.
+A mock is used for the messages received by our bot's methods, and the results obtained are verified.
