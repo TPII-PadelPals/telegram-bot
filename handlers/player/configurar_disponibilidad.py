@@ -1,17 +1,12 @@
 from telebot import TeleBot
 from telebot.types import Message
-from model.api_conection import ApiConection
-import os
-from utils.language import get_language
+
+from utils.get_from_env import get_from_env_lang, get_from_env_api
 
 
-def handle_configure_availability(message: Message, bot: TeleBot):
-    api_conection = ApiConection(
-        "http://" +
-        os.getenv('SERVICE_HOST') +
-        ":" +
-        os.getenv('SERVICE_PORT'))
-    language = get_language(os.getenv('LANGUAGE'))
+def handle_configure_availability(message: Message, bot: TeleBot, get_api=get_from_env_api, get_len=get_from_env_lang):
+    api_conection = get_api()
+    language = get_len()
     text = message.text
     # mensaje vacio retorna ayuda
     if text.strip() == "/configurar_disponibilidad":

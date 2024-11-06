@@ -1,22 +1,17 @@
 from telebot import TeleBot
 from telebot.types import Message
-from model.api_conection import ApiConection
-import os
-from utils.language import get_language
+
+from utils.get_from_env import get_from_env_api, get_from_env_lang
 
 # separador de direccion km en especificacion de ubicacion (no puede ser
 # espacio)
 KM_STEERING_SEPARATOR = ';'
 
 
-def handle_configure_zone(message: Message, bot: TeleBot):
+def handle_configure_zone(message: Message, bot: TeleBot, get_api=get_from_env_api, get_len=get_from_env_lang):
     text = message.text
-    api_conection = ApiConection(
-        "http://" +
-        os.getenv('SERVICE_HOST') +
-        ":" +
-        os.getenv('SERVICE_PORT'))
-    language = get_language(os.getenv('LANGUAGE'))
+    api_conection = get_api()
+    language = get_len()
 
     # mensaje vacio retorna ayuda
     if text.strip() == "/configurar_zona":

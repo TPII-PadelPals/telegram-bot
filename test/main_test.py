@@ -1,109 +1,120 @@
+import os
 import unittest
 from unittest.mock import patch, MagicMock
-from main import send_welcome, set_availability, KM_STEERING_SEPARATOR, set_zone
+from handlers.player.configurar_disponibilidad import handle_configure_availability
+from handlers.player.configurar_zona import handle_configure_zone, KM_STEERING_SEPARATOR
 
 
 class TestTelegramBot(unittest.TestCase):
 
-    @patch('telebot.TeleBot.reply_to')
-    def test_start_command(self, mock_reply_to):
-        # Crea un mensaje de prueba simulando el mensaje del comando /start
-        message = MagicMock()
-        message.text = '/start'
+    def setUp(self):
+        self.api_mock = MagicMock()
+        self.api_mock.set_availability = unittest.mock.create_autospec(lambda x, y: None, return_value="")
+        self.api_mock.set_zone = unittest.mock.create_autospec(lambda x, y, z: None, return_value="")
+        self.leng_mock = {"MESSAGE_HELP_AVAILABILITY": "MESSAGE_HELP_AVAILABILITY",
+                          "MESSAGE_HELP_ZONE": "MESSAGE_HELP_ZONE",
+                          "MESSAGE_ZONE_UPDATED_LOCATION": "MESSAGE_ZONE_UPDATED_LOCATION",
+                          "MESSAGE_ZONE_UPDATED_KM": "MESSAGE_ZONE_UPDATED_KM",
+                          "MESSAGE_INVALID_VALUE": "MESSAGE_INVALID_VALUE"}
+        self.bot = MagicMock()
+        self.bot.reply_to = unittest.mock.create_autospec(lambda x, y: None, return_value=None)
 
-        # Llama a la función del manejador de /start
-        send_welcome(message)
 
-        # Verifica si se llamó a reply_to con los argumentos correctos
-        mock_reply_to.assert_called_once_with(
-            message, "Bienvenido a PadelPals")
 
-    @patch('telebot.TeleBot.reply_to')
-    def test_send_disponibilidad_horaria_no_number(self, mock_reply_to):
+    def test_send_disponibilidad_horaria_no_number(self):
         message = MagicMock()
         message.text = '/configurar_disponibilidad'
-        set_availability(message)
-        mock_reply_to.assert_called_once_with(
+        handle_configure_availability(message, self.bot, lambda: self.api_mock, lambda: self.leng_mock)
+        self.api_mock.set_availability.assert_not_called()
+        self.bot.reply_to.assert_called_once_with(
             message,
-            'Indicanos los horarios que suelas tener disponibles:\n- Mañana de 8hs hasta 12hs.\n- Tarde de 12hs hasta 18hs.\n- Noche de 18hs hasta 00hs.\n1: Mañana\n2: Tarde\n3: Noche\n4: Mañana y tarde\n5: Mañana y noche\n6: Tarde y noche\n7: Todos\nAsignación: /configurar_disponibilidad <Numero>')
+            self.leng_mock["MESSAGE_HELP_AVAILABILITY"],)
 
-    @patch('telebot.TeleBot.reply_to')
-    def test_send_disponibilidad_horaria_no_number_border_case(
-            self, mock_reply_to):
+
+    def test_send_disponibilidad_horaria_no_number_border_case(self):
         message = MagicMock()
         message.text = '/configurar_disponibilidad    '
-        set_availability(message)
-        mock_reply_to.assert_called_once_with(
+        handle_configure_availability(message, self.bot, lambda: self.api_mock, lambda: self.leng_mock)
+        self.api_mock.set_availability.assert_not_called()
+        self.bot.reply_to.assert_called_once_with(
             message,
-            'Indicanos los horarios que suelas tener disponibles:\n- Mañana de 8hs hasta 12hs.\n- Tarde de 12hs hasta 18hs.\n- Noche de 18hs hasta 00hs.\n1: Mañana\n2: Tarde\n3: Noche\n4: Mañana y tarde\n5: Mañana y noche\n6: Tarde y noche\n7: Todos\nAsignación: /configurar_disponibilidad <Numero>')
+            self.leng_mock["MESSAGE_HELP_AVAILABILITY"])
 
-    @patch('telebot.TeleBot.reply_to')
-    def test_send_disponibilidad_horaria_whit_number(self, mock_reply_to):
+    def test_send_disponibilidad_horaria_whit_number(self):
         message = MagicMock()
         message.text = '/configurar_disponibilidad 4'
-        message.author_signature = 'ID'
-        set_availability(message)
-        mock_reply_to.assert_called_once_with(message, 'OK')
+        message.from_user.username = "123456"
+        handle_configure_availability(message, self.bot, lambda: self.api_mock, lambda: self.leng_mock)
+        self.api_mock.set_availability.assert_called_once()
+        self.bot.reply_to.assert_called_once_with(
+            message,
+            "OK")
 
-    @patch('telebot.TeleBot.reply_to')
-    def test_send_disponibilidad_horaria_whit_invalid_info(
-            self, mock_reply_to):
+
+    def test_send_disponibilidad_horaria_whit_invalid_info(self):
         message = MagicMock()
         message.text = '/configurar_disponibilidad a'
-        set_availability(message)
-        mock_reply_to.assert_called_once_with(message, 'No es un valor valido')
+        handle_configure_availability(message, self.bot, lambda: self.api_mock, lambda: self.leng_mock)
+        self.api_mock.set_availability.assert_not_called()
+        self.bot.reply_to.assert_called_once_with(
+            message,
+            self.leng_mock["MESSAGE_INVALID_VALUE"])
 
-    @patch('telebot.TeleBot.reply_to')
-    def test_send_ubicacion_help(self, mock_reply_to):
+
+    def test_send_ubicacion_help(self):
         message = MagicMock()
         message.text = '/configurar_zona'
-        set_zone(message)
-        mock_reply_to.assert_called_once_with(
+        handle_configure_zone(message, self.bot, lambda: self.api_mock, lambda: self.leng_mock)
+        self.api_mock.set_zone.assert_not_called()
+        self.bot.reply_to.assert_called_once_with(
             message,
-            "Necesitamos saber desde donde querés que realicemos tus matches y a que distancia (en Km), como maximo, estarias dispuesto a recorrer para jugar un partido.\n Ingresar dirección distancia.\n Ej: /configurar_zona <Dirección>;<Numero>")
+            self.leng_mock["MESSAGE_HELP_ZONE"])
 
-    @patch('telebot.TeleBot.reply_to')
-    def test_send_ubicacion_help_border_case(self, mock_reply_to):
+    def test_send_ubicacion_help_border_case(self):
         message = MagicMock()
         message.text = '/configurar_zona   '
-        set_zone(message)
-        mock_reply_to.assert_called_once_with(
+        handle_configure_zone(message, self.bot, lambda: self.api_mock, lambda: self.leng_mock)
+        self.api_mock.set_zone.assert_not_called()
+        self.bot.reply_to.assert_called_once_with(
             message,
-            "Necesitamos saber desde donde querés que realicemos tus matches y a que distancia (en Km), como maximo, estarias dispuesto a recorrer para jugar un partido.\n Ingresar dirección distancia.\n Ej: /configurar_zona <Dirección>;<Numero>")
+            self.leng_mock["MESSAGE_HELP_ZONE"])
 
-    @patch('telebot.TeleBot.reply_to')
-    def test_send_ubicacion_only_km(self, mock_reply_to):
+    def test_send_ubicacion_only_km(self):
         message = MagicMock()
         message.text = '/configurar_zona 54'
-        message.author_signature = 'ID'
-        set_zone(message)
-        mock_reply_to.assert_called_once_with(
-            message, "Kilometros actualizados: 54.")
+        message.from_user.username = "123456"
+        handle_configure_zone(message, self.bot, lambda: self.api_mock, lambda: self.leng_mock)
+        self.api_mock.set_zone.assert_called_once()
+        self.bot.reply_to.assert_called_once_with(
+            message, "MESSAGE_ZONE_UPDATED_KM: 54.")
 
-    @patch('telebot.TeleBot.reply_to')
-    def test_send_ubicacion_only_zone(self, mock_reply_to):
+
+    def test_send_ubicacion_only_zone(self):
         message = MagicMock()
         message.text = '/configurar_zona CABA'
-        message.author_signature = 'ID'
-        set_zone(message)
-        mock_reply_to.assert_called_once_with(
-            message, "Ubicacion actualizada: CABA.")
+        message.from_user.username = "123456"
+        handle_configure_zone(message, self.bot, lambda: self.api_mock, lambda: self.leng_mock)
+        self.api_mock.set_zone.assert_called_once()
+        self.bot.reply_to.assert_called_once_with(
+            message, "MESSAGE_ZONE_UPDATED_LOCATION: CABA.")
 
-    @patch('telebot.TeleBot.reply_to')
-    def test_send_ubicacion_all(self, mock_reply_to):
+
+    def test_send_ubicacion_all(self):
         message = MagicMock()
         message.text = '/configurar_zona CABA' + KM_STEERING_SEPARATOR + '82'
-        message.author_signature = 'ID'
-        set_zone(message)
-        mock_reply_to.assert_called_once_with(
-            message, "Ubicacion actualizada: CABA.\nKilometros actualizados: 82.")
+        message.from_user.username = "123456"
+        handle_configure_zone(message, self.bot, lambda: self.api_mock, lambda: self.leng_mock)
+        self.api_mock.set_zone.assert_called_once()
+        self.bot.reply_to.assert_called_once_with(
+            message, "MESSAGE_ZONE_UPDATED_LOCATION: CABA.\nMESSAGE_ZONE_UPDATED_KM: 82.")
 
-    @patch('telebot.TeleBot.reply_to')
-    def test_send_ubicacion_error_in_km(self, mock_reply_to):
+
+    def test_send_ubicacion_error_in_km(self):
         message = MagicMock()
         message.text = '/configurar_zona CABA' + KM_STEERING_SEPARATOR + 'asd'
-        set_zone(message)
-        mock_reply_to.assert_called_once_with(message, "No es un valor valido")
+        handle_configure_zone(message, self.bot, lambda: self.api_mock, lambda: self.leng_mock)
+        self.api_mock.set_zone.assert_not_called()
+        self.bot.reply_to.assert_called_once_with(message, self.leng_mock["MESSAGE_INVALID_VALUE"])
 
 
 if __name__ == '__main__':
