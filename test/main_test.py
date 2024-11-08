@@ -10,12 +10,14 @@ class TestTelegramBot(unittest.TestCase):
     def setUp(self):
         self.api_mock = MagicMock()
         self.api_mock.set_availability = unittest.mock.create_autospec(lambda x, y: None, return_value="")
+        self.api_mock.set_available_day = unittest.mock.create_autospec(lambda x, y: None, return_value="")
         self.api_mock.set_zone = unittest.mock.create_autospec(lambda x, y, z: None, return_value="")
         self.leng_mock = {"MESSAGE_HELP_AVAILABILITY": "MESSAGE_HELP_AVAILABILITY",
                           "MESSAGE_HELP_ZONE": "MESSAGE_HELP_ZONE",
                           "MESSAGE_ZONE_UPDATED_LOCATION": "MESSAGE_ZONE_UPDATED_LOCATION",
                           "MESSAGE_ZONE_UPDATED_KM": "MESSAGE_ZONE_UPDATED_KM",
-                          "MESSAGE_INVALID_VALUE": "MESSAGE_INVALID_VALUE"}
+                          "MESSAGE_INVALID_VALUE": "MESSAGE_INVALID_VALUE",
+                          "DAYS_NAMES": {"lunes": 0}}
         self.bot = MagicMock()
         self.bot.reply_to = unittest.mock.create_autospec(lambda x, y: None, return_value=None)
 
@@ -115,6 +117,17 @@ class TestTelegramBot(unittest.TestCase):
         handle_configure_zone(message, self.bot, lambda: self.api_mock, lambda: self.leng_mock)
         self.api_mock.set_zone.assert_not_called()
         self.bot.reply_to.assert_called_once_with(message, self.leng_mock["MESSAGE_INVALID_VALUE"])
+
+    def test_send_disponibilidad_diaria(self):
+        message = MagicMock()
+        message.text = '/configurar_disponibilidad lUnEs'
+        message.from_user.username = "123456"
+        handle_configure_availability(message, self.bot, lambda: self.api_mock, lambda: self.leng_mock)
+        self.api_mock.set_availability.assert_not_called()
+        self.api_mock.set_available_day.assert_called_once()
+        self.bot.reply_to.assert_called_once_with(
+            message,
+            "OK")
 
 
 if __name__ == '__main__':

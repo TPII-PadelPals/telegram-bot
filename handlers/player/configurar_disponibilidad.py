@@ -3,6 +3,7 @@ from telebot.types import Message
 
 from utils.get_from_env import get_from_env_lang, get_from_env_api
 
+# DAYS = {0: "Lunes", 1: "Martes", 2: "Miercoles", 3: "Jueves", 4: "Viernes", 5: "Sabado", 6: "Domingo"}
 
 def handle_configure_availability(message: Message, bot: TeleBot, get_api=get_from_env_api, get_len=get_from_env_lang):
     api_conection = get_api()
@@ -18,6 +19,14 @@ def handle_configure_availability(message: Message, bot: TeleBot, get_api=get_fr
         number = int(number)
         id_telegram = message.from_user.username  # revisar si este es el ID
         _a = api_conection.set_availability(number, id_telegram)
+        print(_a)
+        response_to_user = 'OK'
+        bot.reply_to(message, response_to_user)
+        return
+    if number.lower() in language["DAYS_NAMES"].keys():
+        id_telegram = message.from_user.username  # revisar si este es el ID
+        value_day = language["DAYS_NAMES"][number.lower()]
+        _a = api_conection.set_available_day(value_day, id_telegram)
         print(_a)
         response_to_user = 'OK'
         bot.reply_to(message, response_to_user)

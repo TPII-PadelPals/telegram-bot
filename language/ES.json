@@ -1,8 +1,9 @@
 {
   "MESSAGE_START": "Bienvenido a PadelPals",
-  "MESSAGE_HELP_AVAILABILITY": "Indicanos los horarios que suelas tener disponibles:\n- Mañana de 8hs hasta 12hs.\n- Tarde de 12hs hasta 18hs.\n- Noche de 18hs hasta 00hs.\n1: Mañana\n2: Tarde\n3: Noche\n4: Mañana y tarde\n5: Mañana y noche\n6: Tarde y noche\n7: Todos\nAsignación: /configurar_disponibilidad <Numero>",
+  "MESSAGE_HELP_AVAILABILITY": "Indicanos los horarios que suelas tener disponibles:\n- Mañana de 8hs hasta 12hs.\n- Tarde de 12hs hasta 18hs.\n- Noche de 18hs hasta 00hs.\n1: Mañana\n2: Tarde\n3: Noche\n4: Mañana y tarde\n5: Mañana y noche\n6: Tarde y noche\n7: Todos\nAsignación: /configurar_disponibilidad <Numero>\n Tambien indicanos tus dias disponibles ingresando:\n /configurar_disponibilidad <Dia>",
   "MESSAGE_INVALID_VALUE": "No es un valor valido",
   "MESSAGE_HELP_ZONE": "Necesitamos saber desde donde querés que realicemos tus matches y a que distancia (en Km), como maximo, estarias dispuesto a recorrer para jugar un partido.\n Ingresar dirección distancia.\n Ej: /configurar_zona <Dirección>;<Numero>",
   "MESSAGE_ZONE_UPDATED_LOCATION": "Ubicacion actualizada",
-  "MESSAGE_ZONE_UPDATED_KM": "Kilometros actualizados"
+  "MESSAGE_ZONE_UPDATED_KM": "Kilometros actualizados",
+  "DAYS_NAMES": {"lunes": 0, "lu":  0, "martes": 1, "ma":  1, "miercoles": 2, "mi": 3, "jueves": 3, "ju": 3, "viernes": 4, "vi": 4, "sabado": 5, "sa":  5, "domingo": 6, "do": 6}
 }

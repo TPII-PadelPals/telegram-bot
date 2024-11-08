@@ -33,6 +33,20 @@ class ApiConection:
         except Exception as err:
             return f'An error occurred: {err}'
 
+    def set_available_day(self, day, id_telegram):
+        try:
+            # /player/change_days/{item_id}:{day}
+            response = requests.put(
+                self.url + f'/player/change_days/{id_telegram}:{day}')
+            # Lanza un error si la respuesta no es 201
+            response.raise_for_status()
+            data = response.json()
+            return data
+        except requests.exceptions.HTTPError as http_err:
+            return f'HTTP error occurred: {http_err}'
+        except Exception as err:
+            return f'An error occurred: {err}'
+
     def set_zone(self, zone: str, km: int, id_telegram):
         # se supone que esto no ocurra nunca por las llamadas del bot
         if zone is None and km is None:

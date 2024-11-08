@@ -84,6 +84,16 @@ class TestApiConection(unittest.TestCase):
     #         print("lanza otra excepcion")
     #         assert False
 
+    @patch('requests.put')
+    def test_set_available_day_success(self, mock_put):
+        mock_response = Mock()
+        mock_response.status_code = 200
+        mock_response.json.return_value = 4
+        mock_put.return_value = mock_response
+
+        result = self.api.set_available_day(4, 'ID')
+        self.assertEqual(result, 4)
+
 
 if __name__ == "__main__":
     unittest.main()
