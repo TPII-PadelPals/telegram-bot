@@ -94,6 +94,42 @@ class TestApiConection(unittest.TestCase):
         result = self.api.set_available_day(4, 'ID')
         self.assertEqual(result, 4)
 
+    @patch('requests.get')
+    def test_get_matches_success_empty(self, mock_put):
+        mock_response = Mock()
+        mock_response.status_code = 200
+        mock_response.json.return_value = []
+        mock_put.return_value = mock_response
+
+        result = self.api.get_matches('ID')
+        self.assertEqual(result, [])
+
+    @patch('requests.get')
+    def test_get_matches_success_no_empty(self, mock_put):
+        result_base = [
+            {
+                "player_id_1": "test_40",
+                "player_id_2": "test_48",
+                "paddle_court_id": 1,
+                "time_availability": 4,
+                "begin_date_time": "2024-11-11T19:59:49.808321"
+            },
+            {
+                "player_id_1": "test_40",
+                "player_id_2": "test_48",
+                "paddle_court_id": 4,
+                "time_availability": 4,
+                "begin_date_time": "2024-11-11T19:59:49.808409"
+            }
+        ]
+        mock_response = Mock()
+        mock_response.status_code = 200
+        mock_response.json.return_value = result_base
+        mock_put.return_value = mock_response
+
+        result = self.api.get_matches('ID')
+        self.assertEqual(result, result)
+
 
 if __name__ == "__main__":
     unittest.main()

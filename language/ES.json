@@ -5,5 +5,8 @@
   "MESSAGE_HELP_ZONE": "Necesitamos saber desde donde querés que realicemos tus matches y a que distancia (en Km), como maximo, estarias dispuesto a recorrer para jugar un partido.\n Ingresar dirección distancia.\n Ej: /configurar_zona <Dirección>;<Numero>",
   "MESSAGE_ZONE_UPDATED_LOCATION": "Ubicacion actualizada",
   "MESSAGE_ZONE_UPDATED_KM": "Kilometros actualizados",
-  "DAYS_NAMES": {"lunes": 0, "lu":  0, "martes": 1, "ma":  1, "miercoles": 2, "mi": 3, "jueves": 3, "ju": 3, "viernes": 4, "vi": 4, "sabado": 5, "sa":  5, "domingo": 6, "do": 6}
+  "DAYS_NAMES": {"lunes": 0, "lu":  0, "martes": 1, "ma":  1, "miercoles": 2, "mi": 3, "jueves": 3, "ju": 3, "viernes": 4, "vi": 4, "sabado": 5, "sa":  5, "domingo": 6, "do": 6},
+  "MESSAGE_SEE_MATCHES": "Estos son todos los posibles emparejamientos:\n Jugador | Cancha | Horario\n",
+  "SEE_MATCHES_SEPARATOR": " | ",
+  "MESSAGE_SEE_MATCHES_EMPTY": "No hay emparejamientos posibles actualmente."
 }

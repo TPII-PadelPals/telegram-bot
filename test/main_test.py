@@ -3,6 +3,7 @@ import unittest
 from unittest.mock import patch, MagicMock
 from handlers.player.configurar_disponibilidad import handle_configure_availability
 from handlers.player.configurar_zona import handle_configure_zone, KM_STEERING_SEPARATOR
+from handlers.player.ver_emparejamientos import handle_see_matches
 
 
 class TestTelegramBot(unittest.TestCase):
@@ -12,12 +13,16 @@ class TestTelegramBot(unittest.TestCase):
         self.api_mock.set_availability = unittest.mock.create_autospec(lambda x, y: None, return_value="")
         self.api_mock.set_available_day = unittest.mock.create_autospec(lambda x, y: None, return_value="")
         self.api_mock.set_zone = unittest.mock.create_autospec(lambda x, y, z: None, return_value="")
+        self.api_mock.get_matches = unittest.mock.create_autospec(lambda x: None, return_value=[])
         self.leng_mock = {"MESSAGE_HELP_AVAILABILITY": "MESSAGE_HELP_AVAILABILITY",
                           "MESSAGE_HELP_ZONE": "MESSAGE_HELP_ZONE",
                           "MESSAGE_ZONE_UPDATED_LOCATION": "MESSAGE_ZONE_UPDATED_LOCATION",
                           "MESSAGE_ZONE_UPDATED_KM": "MESSAGE_ZONE_UPDATED_KM",
                           "MESSAGE_INVALID_VALUE": "MESSAGE_INVALID_VALUE",
-                          "DAYS_NAMES": {"lunes": 0}}
+                          "DAYS_NAMES": {"lunes": 0},
+                          "MESSAGE_SEE_MATCHES": "MESSAGE_SEE_MATCHES",
+                          "SEE_MATCHES_SEPARATOR": "|",
+                          "MESSAGE_SEE_MATCHES_EMPTY": "MESSAGE_SEE_MATCHES_EMPTY"}
         self.bot = MagicMock()
         self.bot.reply_to = unittest.mock.create_autospec(lambda x, y: None, return_value=None)
 
@@ -128,6 +133,37 @@ class TestTelegramBot(unittest.TestCase):
         self.bot.reply_to.assert_called_once_with(
             message,
             "OK")
+
+    def test_send_matches_empty(self):
+        message = MagicMock()
+        message.text = '/ver_emparejamientos'
+        message.from_user.username = "123456"
+        handle_see_matches(message, self.bot, lambda: self.api_mock, lambda: self.leng_mock)
+        self.api_mock.set_availability.assert_not_called()
+        self.api_mock.set_available_day.assert_not_called()
+        self.bot.reply_to.assert_called_once_with(
+            message,
+            "MESSAGE_SEE_MATCHES_EMPTY")
+
+    def test_send_matches_not_empty(self):
+        self.api_mock.get_matches = unittest.mock.create_autospec(lambda x: None, return_value=[
+            {
+                "player_id_1": "test_40",
+                "player_id_2": "test_48",
+                "paddle_court_id": 1,
+                "time_availability": 4,
+                "begin_date_time": "2024-11-11T19:59:49.808321"
+            }
+        ])
+        message = MagicMock()
+        message.text = '/ver_emparejamientos'
+        message.from_user.username = "test_40"
+        handle_see_matches(message, self.bot, lambda: self.api_mock, lambda: self.leng_mock)
+        self.api_mock.set_availability.assert_not_called()
+        self.api_mock.set_available_day.assert_not_called()
+        self.bot.reply_to.assert_called_once_with(
+            message,
+            "MESSAGE_SEE_MATCHEStest_48|1|4\n")
 
 
 if __name__ == '__main__':
