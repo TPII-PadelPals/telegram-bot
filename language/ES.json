@@ -6,7 +6,11 @@
   "MESSAGE_ZONE_UPDATED_LOCATION": "Ubicacion actualizada",
   "MESSAGE_ZONE_UPDATED_KM": "Kilometros actualizados",
   "DAYS_NAMES": {"lunes": 0, "lu":  0, "martes": 1, "ma":  1, "miercoles": 2, "mi": 3, "jueves": 3, "ju": 3, "viernes": 4, "vi": 4, "sabado": 5, "sa":  5, "domingo": 6, "do": 6},
-  "MESSAGE_SEE_MATCHES": "Estos son todos los posibles emparejamientos:\n Jugador | Cancha | Horario\n",
+  "TIME_NAMES": {"1": "Mañana", "2": "Tarde", "3": "Noche", "4": "Mañana y tarde", "5": "Mañana y noche", "6": "Tarde y noche", "7": "Todos"},
+  "MESSAGE_SEE_MATCHES": "Estos son todos los posibles emparejamientos:\n",
+  "PLAYER": "Jugador",
+  "COURT": "Cancha",
+  "TIME": "Horario",
   "SEE_MATCHES_SEPARATOR": " | ",
   "MESSAGE_SEE_MATCHES_EMPTY": "No hay emparejamientos posibles actualmente."
 }
