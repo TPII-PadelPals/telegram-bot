@@ -27,7 +27,7 @@ def handle_see_matches(message: Message, bot: TeleBot, get_api=get_from_env_api,
         if other_player == id_telegram:
             other_player = match["player_id_2"]
         players.append(str(other_player))
-        courts.append(str(match['paddle_court_id']))
+        courts.append(str(match['paddle_court_name']))
         times.append(str(language['TIME_NAMES']
                      [str(match['time_availability'])]))
 
