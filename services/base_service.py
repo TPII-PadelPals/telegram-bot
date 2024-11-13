@@ -1,6 +1,9 @@
 import requests
 from model.config import Config
+import logging
 
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 class BaseService:
     def __init__(self):
@@ -16,18 +19,21 @@ class BaseService:
     def get(self, endpoint, params=None, headers=None):
         """Send a GET request."""
         url = f"{self.base_url}{endpoint}"
+        logger.info(f"GET request to {url}, params: {params}")
         response = requests.get(url, params=params, headers=headers)
         return self._handle_response(response)
 
     def post(self, endpoint, data=None, json=None, headers=None):
         """Send a POST request."""
         url = f"{self.base_url}{endpoint}"
+        logger.info(f"POST request to {url}, json: {json}")
         response = requests.post(url, data=data, json=json, headers=headers)
         return self._handle_response(response)
 
     def put(self, endpoint, data=None, json=None, headers=None):
         """Send a PUT request."""
         url = f"{self.base_url}{endpoint}"
+        logger.info(f"PUT request to {url}, json: {json}")
         response = requests.put(url, data=data, json=json, headers=headers)
         return self._handle_response(response)
 
