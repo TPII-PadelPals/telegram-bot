@@ -22,7 +22,11 @@ class TestTelegramBot(unittest.TestCase):
                           "DAYS_NAMES": {"lunes": 0},
                           "MESSAGE_SEE_MATCHES": "MESSAGE_SEE_MATCHES",
                           "SEE_MATCHES_SEPARATOR": "|",
-                          "MESSAGE_SEE_MATCHES_EMPTY": "MESSAGE_SEE_MATCHES_EMPTY"}
+                          "MESSAGE_SEE_MATCHES_EMPTY": "MESSAGE_SEE_MATCHES_EMPTY",
+                          "PLAYER": "PLAYER",
+                          "COURT": "COURT",
+                          "TIME": "TIME",
+                          "TIME_NAMES": {"2": "TIME_NAMES"}}
         self.bot = MagicMock()
         self.bot.reply_to = unittest.mock.create_autospec(lambda x, y: None, return_value=None)
 
@@ -146,12 +150,13 @@ class TestTelegramBot(unittest.TestCase):
             "MESSAGE_SEE_MATCHES_EMPTY")
 
     def test_send_matches_not_empty(self):
+        # TODO corregir el test
         self.api_mock.get_matches = unittest.mock.create_autospec(lambda x: None, return_value=[
             {
                 "player_id_1": "test_40",
                 "player_id_2": "test_48",
-                "paddle_court_id": 1,
-                "time_availability": 4,
+                "paddle_court_name": "1",
+                "time_availability": "2",
                 "begin_date_time": "2024-11-11T19:59:49.808321"
             }
         ])
