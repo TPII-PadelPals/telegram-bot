@@ -106,3 +106,17 @@ class ApiConection:
             return f'HTTP error occurred: {http_err}'
         except Exception as err:
             return f'An error occurred: {err}'
+
+    def put_strokes(self, id_telegram, body):
+        try:
+            #/provisional_match/create/{day}/{time}
+            response = requests.put(
+                self.url + f'/player/{id_telegram}/strokes',
+                body
+            )
+            data = response.json()
+            return data
+        except requests.exceptions.HTTPError as http_err:
+            return f'HTTP error occurred: {http_err}'
+        except Exception as err:
+            return f'An error occurred: {err}'

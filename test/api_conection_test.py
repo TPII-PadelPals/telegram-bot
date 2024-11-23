@@ -130,6 +130,16 @@ class TestApiConection(unittest.TestCase):
         result = self.api.get_matches('ID')
         self.assertEqual(result, result)
 
+    @patch('requests.put')
+    def test_put_strokes(self, mock_put):
+        mock_response = Mock()
+        mock_response.status_code = 200
+        mock_response.json.return_value = "OK"
+        mock_put.return_value = mock_response
+
+        result = self.api.put_strokes(4, {"a": "2"})
+        self.assertEqual(result, "OK")
+
 
 if __name__ == "__main__":
     unittest.main()
