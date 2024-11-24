@@ -12,22 +12,22 @@ POSITION_OF_STROKES = 1
 MAX_VALUE_FOR_STROKE = 16
 DEFINITION_OF_HABILITY = ["Beginner", "Intermediate", "Advanced"]
 DEFINITION_OF_STROKE = {
-    "serve": None,
-    "forehand_ground": None,
-    "background_ground": None,
-    "forehand_back_wall": None,
-    "backhand_back_wall": None,
-    "forehand_side_wall": None,
-    "backhand_side_wall": None,
-    "forehand_double_walls": None,
-    "backhand_double_walls": None,
-    "forehand_counter_wall": None,
-    "backhand_counter_wall": None,
-    "forehand_volley": None,
-    "backhand_volley": None,
-    "lob": None,
-    "smash": None,
-    "bandeja": None
+    "serve": "",
+    "forehand_ground": "",
+    "background_ground": "",
+    "forehand_back_wall": "",
+    "backhand_back_wall": "",
+    "forehand_side_wall": "",
+    "backhand_side_wall": "",
+    "forehand_double_walls": "",
+    "backhand_double_walls": "",
+    "forehand_counter_wall": "",
+    "backhand_counter_wall": "",
+    "forehand_volley": "",
+    "backhand_volley": "",
+    "lob": "",
+    "smash": "",
+    "bandeja": ""
 }
 NUMBER_FOR_STROKE = {
     1: "serve",
