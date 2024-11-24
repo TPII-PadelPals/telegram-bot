@@ -10,7 +10,7 @@ SEPARATOR_OF_STROKES = ','
 POSITION_OF_HABILITY = 2
 POSITION_OF_STROKES = 1
 MAX_VALUE_FOR_STROKE = 16
-DEFINITION_OF_HABILITY = ["Beginner", "Intermediate", "Advanced"]
+DEFINITION_OF_HABILITY = ["beginner", "intermediate", "advanced"]
 DEFINITION_OF_STROKE = {
     "serve": "",
     "forehand_ground": "",
@@ -89,8 +89,9 @@ def handle_configure_strokes(message: Message, bot: TeleBot, get_api=get_from_en
     response_to_user += "\n"
     number_for_stroke_to_response = language["NUMBER_FOR_STROKE"]
     strokes_body = DEFINITION_OF_STROKE
+    position_of_definition_hability = language["SENDER_POSITION_STROKE_HABILITY"]
     for number_of_stroke in strokes_list:
-        strokes_body[NUMBER_FOR_STROKE[number_of_stroke]] = hability
+        strokes_body[NUMBER_FOR_STROKE[number_of_stroke]] = DEFINITION_OF_HABILITY[position_of_definition_hability[hability]]
         # agrego el golpe a la respuesta del usuario
         response_to_user += number_for_stroke_to_response[str(number_of_stroke)]
         response_to_user += "\n"

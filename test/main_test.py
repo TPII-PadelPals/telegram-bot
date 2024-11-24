@@ -34,7 +34,12 @@ class TestTelegramBot(unittest.TestCase):
                           "MESSAGE_INCORRECT_HABILITY": "MESSAGE_INCORRECT_HABILITY",
                           "MESSAGE_STROKES_UPDATED": "MESSAGE_STROKES_UPDATED",
                           "NUMBER_FOR_STROKE": {"2": "2","5": "5","1": "1","3": "3","4": "4","6": "6","7": "7","8": "8","9": "8","10": "8","11": "8","12": "8","13": "8","14": "8","15": "8","16": "8"},
-                          "TIME_NAMES": {"2": "TIME_NAMES"}}
+                          "TIME_NAMES": {"2": "TIME_NAMES"},
+                          "SENDER_POSITION_STROKE_HABILITY": {
+                              "principiante": 0,
+                              "intermedio": 1,
+                              "avanzado": 2
+                          },}
         self.bot = MagicMock()
         self.bot.reply_to = unittest.mock.create_autospec(lambda x, y: None, return_value=None)
 

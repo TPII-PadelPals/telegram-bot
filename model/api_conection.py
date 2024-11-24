@@ -112,7 +112,7 @@ class ApiConection:
             #/provisional_match/create/{day}/{time}
             response = requests.put(
                 self.url + f'/player/{id_telegram}/strokes',
-                body
+                json=body
             )
             data = response.json()
             return data
