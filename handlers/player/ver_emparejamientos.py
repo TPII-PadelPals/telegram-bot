@@ -1,7 +1,8 @@
 from telebot import TeleBot
 from telebot.types import Message
-
 from utils.get_from_env import get_from_env_lang, get_from_env_api
+import datetime
+
 
 COL_WIDTH = 20
 
@@ -21,6 +22,7 @@ def handle_see_matches(message: Message, bot: TeleBot, get_api=get_from_env_api,
 
     players = [language['PLAYER']]
     courts = [language['COURT']]
+    dates = [language['DATE']]
     times = [language['TIME']]
     for match in matches:
         other_player = match["player_id_1"]
@@ -28,19 +30,25 @@ def handle_see_matches(message: Message, bot: TeleBot, get_api=get_from_env_api,
             other_player = match["player_id_2"]
         players.append(str(other_player))
         courts.append(str(match['paddle_court_name']))
-        times.append(str(language['TIME_NAMES']
-                     [str(match['time_availability'])]))
+        dates.append(datetime.datetime
+                     .strptime(match['begin_date_time'], "%Y-%m-%d")
+                     .strftime(language['DATE_FMT']))
+        times.append(datetime.datetime
+                     .strptime(str(match['time_availability']), "%H")
+                     .strftime(language['TIME_FMT']))
 
     players_col_width = max([len(player) for player in players])
     courts_col_width = max([len(court) for court in courts])
+    dates_col_width = max([len(date) for date in dates])
     times_col_width = max([len(time) for time in times])
 
     text_response = "```\n"
     text_response += language["MESSAGE_SEE_MATCHES"]
-    for player, court, time in zip(players, courts, times):
+    for player, court, date, time in zip(players, courts, dates, times):
         text_response += language['SEE_MATCHES_SEPARATOR'].join([
             f"{player.ljust(players_col_width)}",
             f"{court.ljust(courts_col_width)}",
+            f"{date.ljust(dates_col_width)}",
             f"{time.ljust(times_col_width)}",
         ]) + "\n"
     text_response += "```"
