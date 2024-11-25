@@ -27,10 +27,9 @@ def handle_see_matches(message: Message, bot: TeleBot, get_api=get_from_env_api,
         other_player = match["player_id_1"]
         if other_player == id_telegram:
             other_player = match["player_id_2"]
-        court = str(match['paddle_court_name'])
-        date = datetime.datetime.strptime(match['begin_date_time'], "%Y-%m-%d")
-        time = datetime.datetime.strptime(
-            str(match['time_availability']), "%H")
+        court = str(match['court_name'])
+        date = datetime.datetime.strptime(match['date'], "%Y-%m-%d")
+        time = datetime.datetime.strptime(str(match['time']), "%H")
         df_matches.loc[len(df_matches)] = [other_player, court, date, time]
 
     # Ordenar por fecha y horas
@@ -58,7 +57,4 @@ def handle_see_matches(message: Message, bot: TeleBot, get_api=get_from_env_api,
     for _, row in df_matches.iterrows():
         text_response += language['SEE_MATCHES_SEPARATOR'].join(row) + "\n"
     text_response += "```"
-    try:
-        bot.reply_to(message, text_response, parse_mode="MarkdownV2")
-    except:
-        bot.reply_to(message, text_response)
+    bot.reply_to(message, text_response, parse_mode="MarkdownV2")
