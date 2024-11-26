@@ -120,3 +120,42 @@ class ApiConection:
             return f'HTTP error occurred: {http_err}'
         except Exception as err:
             return f'An error occurred: {err}'
+
+    def get_reserves(self, id_telegram):
+        try:
+            response = requests.get(
+                self.url + f'/reserves/get/{id_telegram}')
+            data = response.json()
+            return data
+        except requests.exceptions.HTTPError as http_err:
+            return f'HTTP error occurred: {http_err}'
+        except Exception as err:
+            return f'An error occurred: {err}'
+
+    def respond_to_matchmaking(self, id_telegram, information_of_match, accept: bool):
+        try:
+            # caso aceptar
+            if accept:
+                url = f'{self.url}{f'/player/match/{id_telegram}/accept'}'
+                # response = requests.put(
+                #     self.url + f'/player/match/{id_telegram}/accept',
+                #     json=information_of_match
+                # )
+            # caso rechazar
+            else:
+                url = f'{self.url}{f'/player/match/{id_telegram}/reject'}'
+                # response = requests.put(
+                #     self.url + f'/player/match/{id_telegram}/reject',
+                #     json=information_of_match
+                # )
+                # data = response.json()
+            response = requests.put(
+                url,
+                json=information_of_match
+            )
+            data = response.json()
+            return data
+        except requests.exceptions.HTTPError as http_err:
+            return f'HTTP error occurred: {http_err}'
+        except Exception as err:
+            return f'An error occurred: {err}'
