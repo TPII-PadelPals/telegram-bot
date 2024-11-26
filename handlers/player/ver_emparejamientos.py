@@ -57,4 +57,7 @@ def handle_see_matches(message: Message, bot: TeleBot, get_api=get_from_env_api,
     for _, row in df_matches.iterrows():
         text_response += language['SEE_MATCHES_SEPARATOR'].join(row) + "\n"
     text_response += "```"
-    bot.reply_to(message, text_response, parse_mode="MarkdownV2")
+    try:
+        bot.reply_to(message, text_response, parse_mode="MarkdownV2")
+    except:
+        bot.reply_to(message, text_response)
