@@ -27,6 +27,8 @@
   "MESSAGE_INCORRECT_HABILITY": "Los valores de habilidad son: 'principiante', 'intermedio' o 'avanzado'.",
   "MESSAGE_STROKES_UPDATED": "Golpes actualizados, al nivel: ",
   "ALL": "todos",
+  "ACCEPT": "oponente acepto",
+  "I_ACCEPT": "aceptado",
   "NUMBER_FOR_STROKE": {"1": "serve", "2": "forehand_ground", "3": "background_ground", "4": "forehand_back_wall", "5": "backhand_back_wall", "6": "forehand_side_wall", "7": "backhand_side_wall", "8": "forehand_double_walls", "9": "backhand_double_walls", "10": "forehand_counter_wall", "11": "backhand_counter_wall", "12": "forehand_volley", "13": "backhand_volley", "14": "lob", "15": "smash", "16": "bandeja"},
   "MESSAGE_SEE_RESERVES_EMPTY": "No hay reservas actualmente.",
   "MESSAGE_SEE_RESERVES": "Estos son todas las reservas realizadas:\n",

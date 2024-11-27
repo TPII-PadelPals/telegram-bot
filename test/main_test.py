@@ -58,6 +58,8 @@ class TestTelegramBot(unittest.TestCase):
                           "DATE": "DATE",
                           "MESSAGE_SEE_RESERVES": "MESSAGE_SEE_RESERVES",
                           "MESSAGE_RESPOND_TO_MATCHMAKING_HELP": "MESSAGE_RESPOND_TO_MATCHMAKING_HELP",
+                          "I_ACCEPT": "I_ACCEPT",
+                          "ACCEPT": "ACCEPT",
                           "MESSAGE_RESPOND_TO_MATCHMAKING": "MESSAGE_RESPOND_TO_MATCHMAKING"
                         }
         self.bot = MagicMock()
@@ -312,6 +314,8 @@ class TestTelegramBot(unittest.TestCase):
                 "player_id_2": "test_48",
                 "paddle_court_name": "1",
                 "time_availability": "2",
+                "player_id_1_response_accept": "true",
+                "player_id_2_response_accept": "false",
                 "begin_date_time": "2024-11-11"
             }
         ])

@@ -82,7 +82,7 @@ class ApiConection:
         try:
             matches = []
             response = requests.get(
-                self.url + f"/provisional_match?{id_telegram}")
+                self.url + f"/provisional_match/{id_telegram}")
             matches += response.json()
             return matches
         except requests.exceptions.HTTPError as http_err:

@@ -148,14 +148,18 @@ class TestApiConection(unittest.TestCase):
                 "player_id_2": "test_48",
                 "paddle_court_id": 1,
                 "time_availability": 4,
-                "begin_date_time": "2024-11-11"
+                "begin_date_time": "2024-11-11",
+                "player_id_1_response_accept": False,
+                "player_id_2_response_accept": True
             },
             {
                 "player_id_1": "test_40",
                 "player_id_2": "test_48",
                 "paddle_court_id": 4,
                 "time_availability": 4,
-                "begin_date_time": "2024-11-12"
+                "begin_date_time": "2024-11-12",
+                "player_id_1_response_accept": False,
+                "player_id_2_response_accept": True
             }
         ]
         mock_response = Mock()
