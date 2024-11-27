@@ -128,7 +128,7 @@ class TestApiConection(unittest.TestCase):
         mock_put.return_value = mock_response
 
         result = self.api.get_matches('ID')
-        self.assertEqual(result, result)
+        self.assertEqual(result, result_base)
 
     @patch('requests.put')
     def test_put_strokes(self, mock_put):
@@ -138,6 +138,68 @@ class TestApiConection(unittest.TestCase):
         mock_put.return_value = mock_response
 
         result = self.api.put_strokes(4, {"a": "2"})
+        self.assertEqual(result, "OK")
+
+    @patch('requests.get')
+    def test_get_reserves(self, mock_put):
+        result_base = [
+            {
+                "player_id_1": "test_40",
+                "player_id_2": "test_48",
+                "paddle_court_id": 1,
+                "time_availability": 4,
+                "begin_date_time": "2024-11-11"
+            },
+            {
+                "player_id_1": "test_40",
+                "player_id_2": "test_48",
+                "paddle_court_id": 4,
+                "time_availability": 4,
+                "begin_date_time": "2024-11-12"
+            }
+        ]
+        mock_response = Mock()
+        mock_response.status_code = 200
+        mock_response.json.return_value = result_base
+        mock_put.return_value = mock_response
+
+        result = self.api.get_reserves(4)
+        self.assertEqual(result, result_base)
+
+    @patch('requests.put')
+    def test_respond_to_matchmaking_accept(self, mock_put):
+        mock_response = Mock()
+        mock_response.status_code = 200
+        mock_response.json.return_value = "OK"
+        mock_put.return_value = mock_response
+
+        info = {
+            "player_id_1": "test_40",
+            "player_id_2": "test_48",
+            "paddle_court_id": 1,
+            "time_availability": 4,
+            #"begin_date_time": "2024-11-11"
+        }
+
+        result = self.api.respond_to_matchmaking(4, info, True)
+        self.assertEqual(result, "OK")
+
+    @patch('requests.put')
+    def test_respond_to_matchmaking_reject(self, mock_put):
+        mock_response = Mock()
+        mock_response.status_code = 200
+        mock_response.json.return_value = "OK"
+        mock_put.return_value = mock_response
+
+        info = {
+            "player_id_1": "test_40",
+            "player_id_2": "test_48",
+            "paddle_court_id": 1,
+            "time_availability": 4,
+            #"begin_date_time": "2024-11-11"
+        }
+
+        result = self.api.respond_to_matchmaking(4, info, False)
         self.assertEqual(result, "OK")
 
 

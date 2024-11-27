@@ -1,10 +1,13 @@
 import os
 import unittest
 from unittest.mock import patch, MagicMock
+
+from handlers.player import handle_respond_to_matchmaking_accept, handle_respond_to_matchmaking_reject
 from handlers.player.configurar_disponibilidad import handle_configure_availability
 from handlers.player.configurar_zona import handle_configure_zone, KM_STEERING_SEPARATOR
 from handlers.player.ver_emparejamientos import handle_see_matches
 from handlers.player.configurar_golpes import handle_configure_strokes
+from handlers.player.ver_reservas import handle_see_reserves
 
 
 class TestTelegramBot(unittest.TestCase):
@@ -21,6 +24,8 @@ class TestTelegramBot(unittest.TestCase):
             lambda x: None, return_value=[])
         self.api_mock.put_strokes = unittest.mock.create_autospec(
             lambda x, y: None, return_value="")
+        self.api_mock.get_reserves = unittest.mock.create_autospec(lambda x: None, return_value=[])
+        self.api_mock.respond_to_matchmaking = unittest.mock.create_autospec(lambda id_telegram, info, accept: None, return_value="")
         self.leng_mock = {"MESSAGE_HELP_AVAILABILITY": "MESSAGE_HELP_AVAILABILITY",
                           "MESSAGE_HELP_ZONE": "MESSAGE_HELP_ZONE",
                           "MESSAGE_ZONE_UPDATED_LOCATION": "MESSAGE_ZONE_UPDATED_LOCATION",
@@ -48,7 +53,13 @@ class TestTelegramBot(unittest.TestCase):
                               "principiante": 0,
                               "intermedio": 1,
                               "avanzado": 2
-                          }, }
+                          },
+                          "MESSAGE_SEE_RESERVES_EMPTY": "MESSAGE_SEE_RESERVES_EMPTY",
+                          "DATE": "DATE",
+                          "MESSAGE_SEE_RESERVES": "MESSAGE_SEE_RESERVES",
+                          "MESSAGE_RESPOND_TO_MATCHMAKING_HELP": "MESSAGE_RESPOND_TO_MATCHMAKING_HELP",
+                          "MESSAGE_RESPOND_TO_MATCHMAKING": "MESSAGE_RESPOND_TO_MATCHMAKING"
+                        }
         self.bot = MagicMock()
         self.bot.reply_to = unittest.mock.create_autospec(
             lambda x, y: None, return_value=None)
@@ -284,6 +295,115 @@ class TestTelegramBot(unittest.TestCase):
         # self.bot.reply_to.assert_called_once()
         self.bot.reply_to.assert_called_once()
 
+    def test_see_reserves_empty(self):
+        message = MagicMock()
+        message.text = '/ver_reservas'
+        message.from_user.username = "123456"
+        handle_see_reserves(message, self.bot, lambda: self.api_mock, lambda: self.leng_mock)
+        self.api_mock.get_reserves.assert_called_once()
+        self.bot.reply_to.assert_called_once_with(
+            message,
+            "MESSAGE_SEE_RESERVES_EMPTY")
+
+    def test_see_reserves_not_empty(self):
+        self.api_mock.get_reserves = unittest.mock.create_autospec(lambda x: None, return_value=[
+            {
+                "player_id_1": "test_40",
+                "player_id_2": "test_48",
+                "paddle_court_name": "1",
+                "time_availability": "2",
+                "begin_date_time": "2024-11-11"
+            }
+        ])
+        message = MagicMock()
+        message.text = '/ver_reservas'
+        message.from_user.username = "test_40"
+        handle_see_reserves(message, self.bot, lambda: self.api_mock, lambda: self.leng_mock)
+        self.api_mock.get_reserves.assert_called_once()
+        # self.bot.reply_to.assert_called_once_with(
+        #     message,
+        #     "```\nMESSAGE_SEE_MATCHESPLAYER |COURT|TIME\ntest_48|1    |TIME_NAMES\n```")
+        self.bot.reply_to.assert_called_once()
+
+    def test_respond_to_matchmaking_accept_few_values_2(self):
+        message = MagicMock()
+        message.text = '/ver_emparejamientos asd asd '
+        message.from_user.username = "123456"
+        handle_respond_to_matchmaking_accept(message, self.bot, lambda: self.api_mock, lambda: self.leng_mock)
+        self.bot.reply_to.assert_called_once_with(
+            message,
+            "MESSAGE_RESPOND_TO_MATCHMAKING_HELP"
+        )
+
+    def test_respond_to_matchmaking_reject_few_values_0(self):
+        message = MagicMock()
+        message.text = '/ver_emparejamientos'
+        message.from_user.username = "123456"
+        handle_respond_to_matchmaking_reject(message, self.bot, lambda: self.api_mock, lambda: self.leng_mock)
+        self.bot.reply_to.assert_called_once_with(
+            message,
+            "MESSAGE_RESPOND_TO_MATCHMAKING_HELP"
+        )
+
+    def test_respond_to_matchmaking_accept_many_values_4(self):
+        message = MagicMock()
+        message.text = '/ver_emparejamientos oponente cancha hora extra'
+        message.from_user.username = "123456"
+        handle_respond_to_matchmaking_accept(message, self.bot, lambda: self.api_mock, lambda: self.leng_mock)
+        self.bot.reply_to.assert_called_once_with(
+            message,
+            "MESSAGE_RESPOND_TO_MATCHMAKING_HELP"
+        )
+
+    def test_respond_to_matchmaking_reject_many_values_5(self):
+        message = MagicMock()
+        message.text = '/ver_emparejamientos oponente cancha hora extra hola'
+        message.from_user.username = "123456"
+        handle_respond_to_matchmaking_accept(message, self.bot, lambda: self.api_mock, lambda: self.leng_mock)
+        self.bot.reply_to.assert_called_once_with(
+            message,
+            "MESSAGE_RESPOND_TO_MATCHMAKING_HELP"
+        )
+
+    def test_respond_to_matchmaking_accept(self):
+        message = MagicMock()
+        message.text = '/ver_emparejamientos oponente cancha hora'
+        message.from_user.username = "aaa_jugador"
+        handle_respond_to_matchmaking_accept(message, self.bot, lambda: self.api_mock, lambda: self.leng_mock)
+        self.api_mock.respond_to_matchmaking.assert_called_once_with(
+            "aaa_jugador",
+            {
+                "player_id_1": "aaa_jugador",
+                "player_id_2": "oponente",
+                "paddle_court_name": "cancha",
+                "time_availability": "hora",
+            },
+            True
+        )
+        self.bot.reply_to.assert_called_once_with(
+            message,
+            "MESSAGE_RESPOND_TO_MATCHMAKING"
+        )
+
+    def test_respond_to_matchmaking_reject(self):
+        message = MagicMock()
+        message.text = '/ver_emparejamientos oponente cancha hora'
+        message.from_user.username = "zzz_jugador"
+        handle_respond_to_matchmaking_reject(message, self.bot, lambda: self.api_mock, lambda: self.leng_mock)
+        self.api_mock.respond_to_matchmaking.assert_called_once_with(
+            "zzz_jugador",
+            {
+                "player_id_1": "oponente",
+                "player_id_2": "zzz_jugador",
+                "paddle_court_name": "cancha",
+                "time_availability": "hora",
+            },
+            False
+        )
+        self.bot.reply_to.assert_called_once_with(
+            message,
+            "MESSAGE_RESPOND_TO_MATCHMAKING"
+        )
 
 if __name__ == '__main__':
     unittest.main()
