@@ -14,12 +14,17 @@ class TestTelegramBot(unittest.TestCase):
 
     def setUp(self):
         self.api_mock = MagicMock()
-        self.api_mock.set_availability = unittest.mock.create_autospec(lambda x, y: None, return_value="")
-        self.api_mock.set_available_day = unittest.mock.create_autospec(lambda x, y: None, return_value="")
-        self.api_mock.set_zone = unittest.mock.create_autospec(lambda x, y, z: None, return_value="")
-        self.api_mock.get_matches = unittest.mock.create_autospec(lambda x: None, return_value=[])
+        self.api_mock.set_availability = unittest.mock.create_autospec(
+            lambda x, y: None, return_value="")
+        self.api_mock.set_available_day = unittest.mock.create_autospec(
+            lambda x, y: None, return_value="")
+        self.api_mock.set_zone = unittest.mock.create_autospec(
+            lambda x, y, z: None, return_value="")
+        self.api_mock.get_matches = unittest.mock.create_autospec(
+            lambda x: None, return_value=[])
+        self.api_mock.put_strokes = unittest.mock.create_autospec(
+            lambda x, y: None, return_value="")
         self.api_mock.get_reserves = unittest.mock.create_autospec(lambda x: None, return_value=[])
-        self.api_mock.put_strokes = unittest.mock.create_autospec(lambda x, y: None, return_value="")
         self.api_mock.respond_to_matchmaking = unittest.mock.create_autospec(lambda id_telegram, info, accept: None, return_value="")
         self.leng_mock = {"MESSAGE_HELP_AVAILABILITY": "MESSAGE_HELP_AVAILABILITY",
                           "MESSAGE_HELP_ZONE": "MESSAGE_HELP_ZONE",
@@ -33,12 +38,16 @@ class TestTelegramBot(unittest.TestCase):
                           "PLAYER": "PLAYER",
                           "COURT": "COURT",
                           "TIME": "TIME",
+                          "DATE": "Fecha",
+                          "DATE_FMT": "%d/%m/%Y",
+                          "TIME": "Horario",
+                          "TIME_FMT": "%H:%M",
                           "ALL": "ALL",
                           "STROKE_HABILITY": ["principiante", "intermedio", "avanzado"],
                           "MESSAGE_HELP_STROKE": "MESSAGE_HELP_STROKE",
                           "MESSAGE_INCORRECT_HABILITY": "MESSAGE_INCORRECT_HABILITY",
                           "MESSAGE_STROKES_UPDATED": "MESSAGE_STROKES_UPDATED",
-                          "NUMBER_FOR_STROKE": {"2": "2","5": "5","1": "1","3": "3","4": "4","6": "6","7": "7","8": "8","9": "8","10": "8","11": "8","12": "8","13": "8","14": "8","15": "8","16": "8"},
+                          "NUMBER_FOR_STROKE": {"2": "2", "5": "5", "1": "1", "3": "3", "4": "4", "6": "6", "7": "7", "8": "8", "9": "8", "10": "8", "11": "8", "12": "8", "13": "8", "14": "8", "15": "8", "16": "8"},
                           "TIME_NAMES": {"2": "TIME_NAMES"},
                           "SENDER_POSITION_STROKE_HABILITY": {
                               "principiante": 0,
@@ -52,24 +61,24 @@ class TestTelegramBot(unittest.TestCase):
                           "MESSAGE_RESPOND_TO_MATCHMAKING": "MESSAGE_RESPOND_TO_MATCHMAKING"
                         }
         self.bot = MagicMock()
-        self.bot.reply_to = unittest.mock.create_autospec(lambda x, y: None, return_value=None)
-
-
+        self.bot.reply_to = unittest.mock.create_autospec(
+            lambda x, y: None, return_value=None)
 
     def test_send_disponibilidad_horaria_no_number(self):
         message = MagicMock()
         message.text = '/configurar_disponibilidad'
-        handle_configure_availability(message, self.bot, lambda: self.api_mock, lambda: self.leng_mock)
+        handle_configure_availability(
+            message, self.bot, lambda: self.api_mock, lambda: self.leng_mock)
         self.api_mock.set_availability.assert_not_called()
         self.bot.reply_to.assert_called_once_with(
             message,
             self.leng_mock["MESSAGE_HELP_AVAILABILITY"],)
 
-
     def test_send_disponibilidad_horaria_no_number_border_case(self):
         message = MagicMock()
         message.text = '/configurar_disponibilidad    '
-        handle_configure_availability(message, self.bot, lambda: self.api_mock, lambda: self.leng_mock)
+        handle_configure_availability(
+            message, self.bot, lambda: self.api_mock, lambda: self.leng_mock)
         self.api_mock.set_availability.assert_not_called()
         self.bot.reply_to.assert_called_once_with(
             message,
@@ -79,27 +88,28 @@ class TestTelegramBot(unittest.TestCase):
         message = MagicMock()
         message.text = '/configurar_disponibilidad 4'
         message.from_user.username = "123456"
-        handle_configure_availability(message, self.bot, lambda: self.api_mock, lambda: self.leng_mock)
+        handle_configure_availability(
+            message, self.bot, lambda: self.api_mock, lambda: self.leng_mock)
         self.api_mock.set_availability.assert_called_once()
         self.bot.reply_to.assert_called_once_with(
             message,
             "OK")
 
-
     def test_send_disponibilidad_horaria_whit_invalid_info(self):
         message = MagicMock()
         message.text = '/configurar_disponibilidad a'
-        handle_configure_availability(message, self.bot, lambda: self.api_mock, lambda: self.leng_mock)
+        handle_configure_availability(
+            message, self.bot, lambda: self.api_mock, lambda: self.leng_mock)
         self.api_mock.set_availability.assert_not_called()
         self.bot.reply_to.assert_called_once_with(
             message,
             self.leng_mock["MESSAGE_INVALID_VALUE"])
 
-
     def test_send_ubicacion_help(self):
         message = MagicMock()
         message.text = '/configurar_zona'
-        handle_configure_zone(message, self.bot, lambda: self.api_mock, lambda: self.leng_mock)
+        handle_configure_zone(
+            message, self.bot, lambda: self.api_mock, lambda: self.leng_mock)
         self.api_mock.set_zone.assert_not_called()
         self.bot.reply_to.assert_called_once_with(
             message,
@@ -108,7 +118,8 @@ class TestTelegramBot(unittest.TestCase):
     def test_send_ubicacion_help_border_case(self):
         message = MagicMock()
         message.text = '/configurar_zona   '
-        handle_configure_zone(message, self.bot, lambda: self.api_mock, lambda: self.leng_mock)
+        handle_configure_zone(
+            message, self.bot, lambda: self.api_mock, lambda: self.leng_mock)
         self.api_mock.set_zone.assert_not_called()
         self.bot.reply_to.assert_called_once_with(
             message,
@@ -118,44 +129,47 @@ class TestTelegramBot(unittest.TestCase):
         message = MagicMock()
         message.text = '/configurar_zona 54'
         message.from_user.username = "123456"
-        handle_configure_zone(message, self.bot, lambda: self.api_mock, lambda: self.leng_mock)
+        handle_configure_zone(
+            message, self.bot, lambda: self.api_mock, lambda: self.leng_mock)
         self.api_mock.set_zone.assert_called_once()
         self.bot.reply_to.assert_called_once_with(
             message, "MESSAGE_ZONE_UPDATED_KM: 54.")
-
 
     def test_send_ubicacion_only_zone(self):
         message = MagicMock()
         message.text = '/configurar_zona CABA'
         message.from_user.username = "123456"
-        handle_configure_zone(message, self.bot, lambda: self.api_mock, lambda: self.leng_mock)
+        handle_configure_zone(
+            message, self.bot, lambda: self.api_mock, lambda: self.leng_mock)
         self.api_mock.set_zone.assert_called_once()
         self.bot.reply_to.assert_called_once_with(
             message, "MESSAGE_ZONE_UPDATED_LOCATION: CABA.")
-
 
     def test_send_ubicacion_all(self):
         message = MagicMock()
         message.text = '/configurar_zona CABA' + KM_STEERING_SEPARATOR + '82'
         message.from_user.username = "123456"
-        handle_configure_zone(message, self.bot, lambda: self.api_mock, lambda: self.leng_mock)
+        handle_configure_zone(
+            message, self.bot, lambda: self.api_mock, lambda: self.leng_mock)
         self.api_mock.set_zone.assert_called_once()
         self.bot.reply_to.assert_called_once_with(
             message, "MESSAGE_ZONE_UPDATED_LOCATION: CABA.\nMESSAGE_ZONE_UPDATED_KM: 82.")
 
-
     def test_send_ubicacion_error_in_km(self):
         message = MagicMock()
         message.text = '/configurar_zona CABA' + KM_STEERING_SEPARATOR + 'asd'
-        handle_configure_zone(message, self.bot, lambda: self.api_mock, lambda: self.leng_mock)
+        handle_configure_zone(
+            message, self.bot, lambda: self.api_mock, lambda: self.leng_mock)
         self.api_mock.set_zone.assert_not_called()
-        self.bot.reply_to.assert_called_once_with(message, self.leng_mock["MESSAGE_INVALID_VALUE"])
+        self.bot.reply_to.assert_called_once_with(
+            message, self.leng_mock["MESSAGE_INVALID_VALUE"])
 
     def test_send_disponibilidad_diaria(self):
         message = MagicMock()
         message.text = '/configurar_disponibilidad lUnEs'
         message.from_user.username = "123456"
-        handle_configure_availability(message, self.bot, lambda: self.api_mock, lambda: self.leng_mock)
+        handle_configure_availability(
+            message, self.bot, lambda: self.api_mock, lambda: self.leng_mock)
         self.api_mock.set_availability.assert_not_called()
         self.api_mock.set_available_day.assert_called_once()
         self.bot.reply_to.assert_called_once_with(
@@ -166,7 +180,8 @@ class TestTelegramBot(unittest.TestCase):
         message = MagicMock()
         message.text = '/ver_emparejamientos'
         message.from_user.username = "123456"
-        handle_see_matches(message, self.bot, lambda: self.api_mock, lambda: self.leng_mock)
+        handle_see_matches(message, self.bot,
+                           lambda: self.api_mock, lambda: self.leng_mock)
         self.api_mock.set_availability.assert_not_called()
         self.api_mock.set_available_day.assert_not_called()
         self.bot.reply_to.assert_called_once_with(
@@ -178,15 +193,16 @@ class TestTelegramBot(unittest.TestCase):
             {
                 "player_id_1": "test_40",
                 "player_id_2": "test_48",
-                "paddle_court_name": "1",
-                "time_availability": "2",
-                "begin_date_time": "2024-11-11T19:59:49.808321"
+                "court_name": "1",
+                "time": "2",
+                "date": "2024-11-11"
             }
         ])
         message = MagicMock()
         message.text = '/ver_emparejamientos'
         message.from_user.username = "test_40"
-        handle_see_matches(message, self.bot, lambda: self.api_mock, lambda: self.leng_mock)
+        handle_see_matches(message, self.bot,
+                           lambda: self.api_mock, lambda: self.leng_mock)
         self.api_mock.set_availability.assert_not_called()
         self.api_mock.set_available_day.assert_not_called()
         # self.bot.reply_to.assert_called_once_with(
@@ -198,7 +214,8 @@ class TestTelegramBot(unittest.TestCase):
         message = MagicMock()
         message.text = '/ver_emparejamientos'
         message.from_user.username = "123456"
-        handle_configure_strokes(message, self.bot, lambda: self.api_mock, lambda: self.leng_mock)
+        handle_configure_strokes(
+            message, self.bot, lambda: self.api_mock, lambda: self.leng_mock)
         self.api_mock.put_strokes.assert_not_called()
         # self.bot.reply_to.assert_called_once()
         self.bot.reply_to.assert_called_once_with(
@@ -210,7 +227,8 @@ class TestTelegramBot(unittest.TestCase):
         message = MagicMock()
         message.text = '/ver_emparejamientos asd'
         message.from_user.username = "123456"
-        handle_configure_strokes(message, self.bot, lambda: self.api_mock, lambda: self.leng_mock)
+        handle_configure_strokes(
+            message, self.bot, lambda: self.api_mock, lambda: self.leng_mock)
         self.api_mock.put_strokes.assert_not_called()
         # self.bot.reply_to.assert_called_once()
         self.bot.reply_to.assert_called_once_with(
@@ -222,7 +240,8 @@ class TestTelegramBot(unittest.TestCase):
         message = MagicMock()
         message.text = '/ver_emparejamientos asd asd wwww'
         message.from_user.username = "123456"
-        handle_configure_strokes(message, self.bot, lambda: self.api_mock, lambda: self.leng_mock)
+        handle_configure_strokes(
+            message, self.bot, lambda: self.api_mock, lambda: self.leng_mock)
         self.api_mock.put_strokes.assert_not_called()
         # self.bot.reply_to.assert_called_once()
         self.bot.reply_to.assert_called_once_with(
@@ -234,7 +253,8 @@ class TestTelegramBot(unittest.TestCase):
         message = MagicMock()
         message.text = '/ver_emparejamientos all asd'
         message.from_user.username = "123456"
-        handle_configure_strokes(message, self.bot, lambda: self.api_mock, lambda: self.leng_mock)
+        handle_configure_strokes(
+            message, self.bot, lambda: self.api_mock, lambda: self.leng_mock)
         self.api_mock.put_strokes.assert_not_called()
         # self.bot.reply_to.assert_called_once()
         self.bot.reply_to.assert_called_once_with(
@@ -246,7 +266,8 @@ class TestTelegramBot(unittest.TestCase):
         message = MagicMock()
         message.text = '/ver_emparejamientos s principiante'
         message.from_user.username = "123456"
-        handle_configure_strokes(message, self.bot, lambda: self.api_mock, lambda: self.leng_mock)
+        handle_configure_strokes(
+            message, self.bot, lambda: self.api_mock, lambda: self.leng_mock)
         self.api_mock.put_strokes.assert_not_called()
         # self.bot.reply_to.assert_called_once()
         self.bot.reply_to.assert_called_once_with(
@@ -258,7 +279,8 @@ class TestTelegramBot(unittest.TestCase):
         message = MagicMock()
         message.text = '/ver_emparejamientos 2,5 principiante'
         message.from_user.username = "123456"
-        handle_configure_strokes(message, self.bot, lambda: self.api_mock, lambda: self.leng_mock)
+        handle_configure_strokes(
+            message, self.bot, lambda: self.api_mock, lambda: self.leng_mock)
         self.api_mock.put_strokes.assert_called_once()
         # self.bot.reply_to.assert_called_once()
         self.bot.reply_to.assert_called_once()
@@ -267,7 +289,8 @@ class TestTelegramBot(unittest.TestCase):
         message = MagicMock()
         message.text = '/ver_emparejamientos all principiante'
         message.from_user.username = "123456"
-        handle_configure_strokes(message, self.bot, lambda: self.api_mock, lambda: self.leng_mock)
+        handle_configure_strokes(
+            message, self.bot, lambda: self.api_mock, lambda: self.leng_mock)
         self.api_mock.put_strokes.assert_called_once()
         # self.bot.reply_to.assert_called_once()
         self.bot.reply_to.assert_called_once()
