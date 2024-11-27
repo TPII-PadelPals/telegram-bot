@@ -81,10 +81,9 @@ class ApiConection:
     def get_matches(self, id_telegram):
         try:
             matches = []
-            for key_player_id in ["player_id_1", "player_id_2"]:
-                response = requests.get(
-                    self.url + f"/provisional_match?{key_player_id}={id_telegram}")
-                matches += response.json()
+            response = requests.get(
+                self.url + f"/provisional_match?{id_telegram}")
+            matches += response.json()
             return matches
         except requests.exceptions.HTTPError as http_err:
             return f'HTTP error occurred: {http_err}'
