@@ -37,6 +37,7 @@ class TestTelegramBot(unittest.TestCase):
                           "MESSAGE_SEE_MATCHES_EMPTY": "MESSAGE_SEE_MATCHES_EMPTY",
                           "PLAYER": "PLAYER",
                           "COURT": "COURT",
+                          "COURT_ID": "COURT_ID",
                           "TIME": "TIME",
                           "DATE": "Fecha",
                           "DATE_FMT": "%d/%m/%Y",
@@ -196,6 +197,7 @@ class TestTelegramBot(unittest.TestCase):
                 "player_id_1": "test_40",
                 "player_id_2": "test_48",
                 "court_name": "1",
+                "court_id": "1",
                 "time": "2",
                 "date": "2024-11-11"
             }

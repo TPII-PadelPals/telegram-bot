@@ -10,6 +10,7 @@
   "MESSAGE_SEE_MATCHES": "Estos son todos los posibles emparejamientos:\n",
   "PLAYER": "Jugador",
   "COURT": "Cancha",
+  "COURT_ID": "ID Cancha",
   "DATE": "Fecha",
   "DATE_FMT": "%d/%m/%Y",
   "TIME": "Horario",
