@@ -1,35 +1,80 @@
 from telebot import TeleBot
-from telebot.types import Message
+from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton, Message, ReplyKeyboardMarkup, KeyboardButton, CallbackQuery
 
 from utils.get_from_env import get_from_env_lang, get_from_env_api
 
-# DAYS = {0: "Lunes", 1: "Martes", 2: "Miercoles", 3: "Jueves", 4: "Viernes", 5: "Sabado", 6: "Domingo"}
+import logging
+import time 
+
+logging.basicConfig(level=logging.INFO)
+loger = logging.getLogger(__name__)
+
+DEFAULT_PLAYER = 'francoMartinDiMaria'
+
+def get_callback_data(text, buttons):
+    for button in buttons:
+        if button["text"] == text:
+            return button["callback_data"]
+    return None
 
 def handle_configure_availability(message: Message, bot: TeleBot, get_api=get_from_env_api, get_len=get_from_env_lang):
-    api_conection = get_api()
     language = get_len()
-    text = message.text
-    # mensaje vacio retorna ayuda
-    if text.strip() == "/configurar_disponibilidad":
-        bot.reply_to(message, language["MESSAGE_HELP_AVAILABILITY"])
-        return
-    number = text.split(' ')[1]
-    # mensaje con valor numerico
-    if number.isdigit():
-        number = int(number)
-        id_telegram = message.from_user.username  # revisar si este es el ID
-        _a = api_conection.set_availability(number, id_telegram)
-        print(_a)
-        response_to_user = 'OK'
-        bot.reply_to(message, response_to_user)
-        return
-    if number.lower() in language["DAYS_NAMES"].keys():
-        id_telegram = message.from_user.username  # revisar si este es el ID
-        value_day = language["DAYS_NAMES"][number.lower()]
-        _a = api_conection.set_available_day(value_day, id_telegram)
-        print(_a)
-        response_to_user = 'OK'
-        bot.reply_to(message, response_to_user)
-        return
-    # mensaje sin valor numerica valido
-    bot.reply_to(message, language["MESSAGE_INVALID_VALUE"])
+    
+    markup = ReplyKeyboardMarkup(row_width=2)
+    for button in language["AVAILABILITY_TIME_BUTTONS"]:
+        markup.add(KeyboardButton(button["text"]))
+
+    msg = bot.reply_to(message, language["AVAILABILITY_MESSAGE"], reply_markup=markup, parse_mode="Markdown")
+    bot.register_next_step_handler(msg, process_time_step, bot)
+    loger.info("Se ha configurado la disponibilidad")
+
+
+def process_time_step(message: Message, bot: TeleBot):
+    api_conection = get_from_env_api()
+    language = get_from_env_lang()
+
+    id_telegram = message.from_user.username if message.from_user.username is not None else DEFAULT_PLAYER
+    text = message.text.strip()
+
+    number = get_callback_data(text, language["AVAILABILITY_TIME_BUTTONS"])
+    loger.info(f"Se ha configurado la disponibilidad para el horario {number}")
+
+    if number is None:
+        bot.reply_to(message, 'No se pudo configurar la disponibilidad')
+
+    api_conection.set_availability(number, id_telegram)
+    bot.reply_to(message, 'Se ha configurado el horario correctamente')
+
+    markup = ReplyKeyboardMarkup(row_width=2)
+    for button in language["AVAILABILITY_DAY_BUTTONS"]:
+        markup.add(KeyboardButton(button["text"]))
+
+    msg = bot.send_message(message.chat.id, language["AVAILABLE_DAYS_MESSAGE"], reply_markup=markup)
+
+    bot.register_next_step_handler(msg, process_day_step, bot)
+    loger.info("Se ha configurado el horario correctamente")
+
+
+def process_day_step(message: Message, bot: TeleBot):
+    api_conection = get_from_env_api()
+    language = get_from_env_lang()
+
+    id_telegram = message.from_user.username if message.from_user.username is not None else DEFAULT_PLAYER
+    text = message.text.strip()
+
+    number = get_callback_data(text, language["AVAILABILITY_DAY_BUTTONS"])
+    loger.info(f"Se ha configurado la disponibilidad para el dia {number}")
+
+    if number is None:
+        bot.reply_to(message, 'No se pudo configurar la disponibilidad')
+
+    api_conection.set_available_day(number, id_telegram)
+    bot.reply_to(message, 'Se ha configurado el dia correctamente')
+
+
+    bot.send_message(
+        message.chat.id,
+        "Ya tenes todo listo! Deseas ver los matches que tenes emparejados para vos? Utiliza el comando /ver_emparejamientos",
+       )
+
+    loger.info("Se ha configurado el dia correctamente")

@@ -1,7 +1,7 @@
 from telebot import TeleBot
 from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton, Message, CallbackQuery
 from services.user_service import UserService
-
+import time
 
 def handle_start(message: Message, bot: TeleBot):
     chat_id = message.chat.id
@@ -51,6 +51,10 @@ def handle_callback_query(call: CallbackQuery, bot: TeleBot):
             chat_id=chat_id,
             message_id=call.message.message_id,
             reply_markup=markup)
+        time.sleep(8)
+        bot.send_message(
+            chat_id,
+            "Te has registrado correctamente.\nPara encontrar matches, por favor, configura tu ubicación y disponibilidad.")
     elif call.data == "start_user_pass":
         bot.reply_to(
             call.message,

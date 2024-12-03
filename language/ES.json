@@ -5,12 +5,101 @@
   "MESSAGE_HELP_ZONE": "Necesitamos saber desde donde querés que realicemos tus matches y a que distancia (en Km), como maximo, estarias dispuesto a recorrer para jugar un partido.\n Ingresar dirección distancia.\n Ej: /configurar_zona <Dirección>;<Numero>",
   "MESSAGE_ZONE_UPDATED_LOCATION": "Ubicacion actualizada",
   "MESSAGE_ZONE_UPDATED_KM": "Kilometros actualizados",
-  "DAYS_NAMES": {"lunes": 0, "lu":  0, "martes": 1, "ma":  1, "miercoles": 2, "mi": 3, "jueves": 3, "ju": 3, "viernes": 4, "vi": 4, "sabado": 5, "sa":  5, "domingo": 6, "do": 6},
-  "TIME_NAMES": {"1": "Mañana", "2": "Tarde", "3": "Noche", "4": "Mañana y tarde", "5": "Mañana y noche", "6": "Tarde y noche", "7": "Todos"},
+  "DAYS_NAMES": {
+    "lunes": 0,
+    "lu": 0,
+    "martes": 1,
+    "ma": 1,
+    "miercoles": 2,
+    "mi": 3,
+    "jueves": 3,
+    "ju": 3,
+    "viernes": 4,
+    "vi": 4,
+    "sabado": 5,
+    "sa": 5,
+    "domingo": 6,
+    "do": 6
+  },
+  "TIME_NAMES": {
+    "1": "Mañana",
+    "2": "Tarde",
+    "3": "Noche",
+    "4": "Mañana y tarde",
+    "5": "Mañana y noche",
+    "6": "Tarde y noche",
+    "7": "Todos"
+  },
   "MESSAGE_SEE_MATCHES": "Estos son todos los posibles emparejamientos:\n",
   "PLAYER": "Jugador",
   "COURT": "Cancha",
   "TIME": "Horario",
   "SEE_MATCHES_SEPARATOR": " | ",
-  "MESSAGE_SEE_MATCHES_EMPTY": "No hay emparejamientos posibles actualmente."
+  "MESSAGE_SEE_MATCHES_EMPTY": "No hay emparejamientos posibles actualmente.",
+
+  "MESSAGE_SELECT_TIME": "Indicanos los horarios que suelas tener disponibles:\n* Mañana [8hs-12hs].\n- Tarde [12hs-18hs].\n- Noche [18hs-00hs].",
+  "MESSAGE_SELECT_DAY": "Selecciona el día disponible:",
+
+  "AVAILABILITY_MESSAGE": "Indícanos los horarios que suelas tener disponibles:\n  - *Mañana [8hs-12hs]*\n  - *Tarde [12hs-18hs]*\n  - *Noche [18hs-00hs]*\n",
+  "AVAILABILITY_TIME_BUTTONS": [
+    {
+      "text": "Mañana",
+      "callback_data": "1"
+    },
+    {
+      "text": "Tarde",
+      "callback_data": "2"
+    },
+    {
+      "text": "Noche",
+      "callback_data": "3"
+    },
+    {
+      "text": "Mañana y tarde",
+      "callback_data": "4"
+    },
+    {
+      "text": "Mañana y noche",
+      "callback_data": "5"
+    },
+    {
+      "text": "Tarde y noche",
+      "callback_data": "6"
+    },
+    {
+      "text": "Todos",
+      "callback_data": "7"
+    }
+  ],
+  "AVAILABLE_DAYS_MESSAGE": "Selecciona el día disponible:",
+  "AVAILABILITY_DAY_BUTTONS": [
+    {
+      "text": "Lunes",
+      "callback_data": "0"
+    },
+    {
+      "text": "Martes",
+      "callback_data": "1"
+    },
+    {
+      "text": "Miércoles",
+      "callback_data": "2"
+    },
+    {
+      "text": "Jueves",
+      "callback_data": "3"
+    },
+    {
+      "text": "Viernes",
+      "callback_data": "4"
+    },
+    {
+      "text": "Sábado",
+      "callback_data": "5"
+    },
+    {
+      "text": "Domingo",
+      "callback_data": "6"
+    }
+  ]
 }
