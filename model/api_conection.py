@@ -119,14 +119,14 @@ class ApiConection:
         try:
             # caso aceptar
             if accept:
-                url = f'{self.url}{f'/player/match/{id_telegram}/accept'}'
+                url = f'{self.url}/player/match/{id_telegram}/accept'
                 # response = requests.put(
                 #     self.url + f'/player/match/{id_telegram}/accept',
                 #     json=information_of_match
                 # )
             # caso rechazar
             else:
-                url = f'{self.url}{f'/player/match/{id_telegram}/reject'}'
+                url = f'{self.url}/player/match/{id_telegram}/reject'
                 # response = requests.put(
                 #     self.url + f'/player/match/{id_telegram}/reject',
                 #     json=information_of_match
