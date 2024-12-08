@@ -105,7 +105,6 @@ class TestTelegramBot(unittest.TestCase):
         bot.send_message.assert_called_once_with(12345, "Please select a day", reply_markup=bot.send_message.call_args[1]['reply_markup'])
         bot.register_next_step_handler.assert_called_once()
 
-
     def test_send_ubicacion_help(self):
         message = MagicMock()
         message.text = '/configurar_zona'
