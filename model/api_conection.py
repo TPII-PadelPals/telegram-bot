@@ -80,27 +80,63 @@ class ApiConection:
 
     def get_matches(self, id_telegram):
         try:
-            #/provisional_match/create/{day}/{time}
+            matches = []
             response = requests.get(
-                self.url + f'/provisional_match/get/{id_telegram}')
+                self.url + f"/provisional_match?player_id_1={id_telegram}")
+            matches += response.json()
+            return matches
+        except requests.exceptions.HTTPError as http_err:
+            return f'HTTP error occurred: {http_err}'
+        except Exception as err:
+            return f'An error occurred: {err}'
+
+    def put_strokes(self, id_telegram, body):
+        try:
+            # /provisional_match/create/{day}/{time}
+            response = requests.put(
+                self.url + f'/player/{id_telegram}/strokes',
+                json=body
+            )
             data = response.json()
-            # ejemplo de retorno
-            # [
-            #     {
-            #         "player_id_1": "test_40",
-            #         "player_id_2": "test_48",
-            #         "paddle_court_id": 1,
-            #         "time_availability": 4,
-            #         "begin_date_time": "2024-11-11T19:59:49.808321"
-            #     },
-            #     {
-            #         "player_id_1": "test_40",
-            #         "player_id_2": "test_48",
-            #         "paddle_court_id": 4,
-            #         "time_availability": 4,
-            #         "begin_date_time": "2024-11-11T19:59:49.808409"
-            #     }
-            # ]
+            return data
+        except requests.exceptions.HTTPError as http_err:
+            return f'HTTP error occurred: {http_err}'
+        except Exception as err:
+            return f'An error occurred: {err}'
+
+    def get_reserves(self, id_telegram):
+        try:
+            response = requests.get(
+                self.url + f'/reserves/get/{id_telegram}')
+            data = response.json()
+            return data
+        except requests.exceptions.HTTPError as http_err:
+            return f'HTTP error occurred: {http_err}'
+        except Exception as err:
+            return f'An error occurred: {err}'
+
+    def respond_to_matchmaking(self, id_telegram, information_of_match, accept: bool):
+        try:
+            # caso aceptar
+            if accept:
+                url = f'{self.url}/player/match/{id_telegram}/accept'
+                # response = requests.put(
+                #     self.url + f'/player/match/{id_telegram}/accept',
+                #     json=information_of_match
+                # )
+            # caso rechazar
+            else:
+                url = f'{self.url}/player/match/{id_telegram}/reject'
+                # response = requests.put(
+                #     self.url + f'/player/match/{id_telegram}/reject',
+                #     json=information_of_match
+                # )
+                # data = response.json()
+            response = requests.put(
+                url,
+                json=information_of_match
+            )
+            data = response.json()
             return data
         except requests.exceptions.HTTPError as http_err:
             return f'HTTP error occurred: {http_err}'

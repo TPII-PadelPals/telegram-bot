@@ -4,7 +4,6 @@ from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton, Message, R
 from utils.get_from_env import get_from_env_lang, get_from_env_api
 
 import logging
-import time 
 
 logging.basicConfig(level=logging.INFO)
 loger = logging.getLogger(__name__)
@@ -17,8 +16,8 @@ def get_callback_data(text, buttons):
             return button["callback_data"]
     return None
 
-def handle_configure_availability(message: Message, bot: TeleBot, get_api=get_from_env_api, get_len=get_from_env_lang):
-    language = get_len()
+def handle_configure_availability(message: Message, bot: TeleBot):
+    language = get_from_env_lang()
     
     markup = ReplyKeyboardMarkup(row_width=2)
     for button in language["AVAILABILITY_TIME_BUTTONS"]:
