@@ -2,7 +2,7 @@ from telebot import TeleBot, types
 from telebot.types import Message
 from services.player_service import PlayerService
 
-DEFAULT_PLAYER = 'rocko_10'
+DEFAULT_PLAYER = 'francoMartinDiMaria'
 
 player_service = PlayerService()
 

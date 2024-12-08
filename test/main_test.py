@@ -1,9 +1,11 @@
 import os
 import unittest
 from unittest.mock import patch, MagicMock
+from unittest.mock import Mock, patch
+from telebot.types import Message
 
 from handlers.player import handle_respond_to_matchmaking_accept, handle_respond_to_matchmaking_reject
-from handlers.player.configurar_disponibilidad import handle_configure_availability
+from handlers.player.configurar_disponibilidad import process_time_step
 from handlers.player.configurar_zona import handle_configure_zone, KM_STEERING_SEPARATOR
 from handlers.player.ver_emparejamientos import handle_see_matches
 from handlers.player.configurar_golpes import handle_configure_strokes
@@ -67,46 +69,41 @@ class TestTelegramBot(unittest.TestCase):
         self.bot.reply_to = unittest.mock.create_autospec(
             lambda x, y: None, return_value=None)
 
-    def test_send_disponibilidad_horaria_no_number(self):
-        message = MagicMock()
-        message.text = '/configurar_disponibilidad'
-        handle_configure_availability(
-            message, self.bot, lambda: self.api_mock, lambda: self.leng_mock)
-        self.api_mock.set_availability.assert_not_called()
-        self.bot.reply_to.assert_called_once_with(
-            message,
-            self.leng_mock["MESSAGE_HELP_AVAILABILITY"],)
+    @patch('handlers.player.configurar_disponibilidad.get_from_env_api')
+    @patch('handlers.player.configurar_disponibilidad.get_from_env_lang')
+    def test_availability_process_time_step(self, mock_get_from_env_lang, mock_get_from_env_api):
 
-    def test_send_disponibilidad_horaria_no_number_border_case(self):
-        message = MagicMock()
-        message.text = '/configurar_disponibilidad    '
-        handle_configure_availability(
-            message, self.bot, lambda: self.api_mock, lambda: self.leng_mock)
-        self.api_mock.set_availability.assert_not_called()
-        self.bot.reply_to.assert_called_once_with(
-            message,
-            self.leng_mock["MESSAGE_HELP_AVAILABILITY"])
+        mock_get_from_env_lang.return_value = {
+            "AVAILABILITY_TIME_BUTTONS": [
+                {"text": "Morning", "callback_data": "1"},
+                {"text": "Afternoon", "callback_data": "2"},
+                {"text": "Evening", "callback_data": "3"}
+            ],
+            "AVAILABILITY_DAY_BUTTONS": [
+                {"text": "Monday", "callback_data": "1"},
+                {"text": "Tuesday", "callback_data": "2"}
+            ],
+            "AVAILABILITY_MESSAGE": "Please select a time",
+            "AVAILABLE_DAYS_MESSAGE": "Please select a day"
+        }
 
-    def test_send_disponibilidad_horaria_whit_number(self):
-        message = MagicMock()
-        message.text = '/configurar_disponibilidad 4'
-        message.from_user.username = "123456"
-        handle_configure_availability(
-            message, self.bot, lambda: self.api_mock, lambda: self.leng_mock)
-        self.api_mock.set_availability.assert_called_once()
-        self.bot.reply_to.assert_called_once_with(
-            message,
-            "OK")
+        mock_api = Mock()
+        mock_get_from_env_api.return_value = mock_api
 
-    def test_send_disponibilidad_horaria_whit_invalid_info(self):
-        message = MagicMock()
-        message.text = '/configurar_disponibilidad a'
-        handle_configure_availability(
-            message, self.bot, lambda: self.api_mock, lambda: self.leng_mock)
-        self.api_mock.set_availability.assert_not_called()
-        self.bot.reply_to.assert_called_once_with(
-            message,
-            self.leng_mock["MESSAGE_INVALID_VALUE"])
+        message = Mock(spec=Message)
+        type(message).from_user = Mock(username="test_user")
+        message.chat = Mock()
+        message.text = "Morning"
+        message.chat.id = 12345
+
+        bot = Mock()
+
+        process_time_step(message, bot)
+
+        mock_api.set_availability.assert_called_once_with("1", "test_user")
+        bot.reply_to.assert_called_once_with(message, 'Se ha configurado el horario correctamente')
+        bot.send_message.assert_called_once_with(12345, "Please select a day", reply_markup=bot.send_message.call_args[1]['reply_markup'])
+        bot.register_next_step_handler.assert_called_once()
 
     def test_send_ubicacion_help(self):
         message = MagicMock()
@@ -166,18 +163,6 @@ class TestTelegramBot(unittest.TestCase):
         self.api_mock.set_zone.assert_not_called()
         self.bot.reply_to.assert_called_once_with(
             message, self.leng_mock["MESSAGE_INVALID_VALUE"])
-
-    def test_send_disponibilidad_diaria(self):
-        message = MagicMock()
-        message.text = '/configurar_disponibilidad lUnEs'
-        message.from_user.username = "123456"
-        handle_configure_availability(
-            message, self.bot, lambda: self.api_mock, lambda: self.leng_mock)
-        self.api_mock.set_availability.assert_not_called()
-        self.api_mock.set_available_day.assert_called_once()
-        self.bot.reply_to.assert_called_once_with(
-            message,
-            "OK")
 
     def test_send_matches_empty(self):
         message = MagicMock()

@@ -4,13 +4,16 @@ from utils.get_from_env import get_from_env_lang, get_from_env_api
 import datetime
 import pandas as pd
 
+DEFAULT_PLAYER = 'francoMartinDiMaria'
+
 
 def handle_see_matches(message: Message, bot: TeleBot, get_api=get_from_env_api, get_len=get_from_env_lang):
     api_conection = get_api()
     language = get_len()
     # text = message.text
     # obtengo los matches
-    id_telegram = message.from_user.username
+    id_telegram = message.from_user.username if message.from_user.username is not None else DEFAULT_PLAYER
+
     matches = api_conection.get_matches(id_telegram)
     # caso sin emparejamiento
     if len(matches) == 0:
