@@ -1,6 +1,6 @@
 from .configurar_disponibilidad import handle_configure_availability
 from .configurar_zona import handle_configure_zone
-from .ver_emparejamientos import handle_see_matches
+from .ver_emparejamientos import matchups_callback, handle_matchups, filter_fn
 from .configurar_ubicacion import handle_configure_location
 from .configurar_golpes import handle_configure_strokes
 from .ver_reservas import handle_see_reserves
@@ -11,7 +11,7 @@ PLAYER_MESSAGE_HANDLERS = [{"command": "configurar_disponibilidad",
                            {"command": "configurar_zona",
                             "handler": handle_configure_zone},
                            {"command": "ver_emparejamientos",
-                            "handler": handle_see_matches},
+                            "handler": handle_matchups},
                            {"command": "configurar_ubicacion",
                             "handler": handle_configure_location},
                            {"command": "ver_reservas",
@@ -23,4 +23,8 @@ PLAYER_MESSAGE_HANDLERS = [{"command": "configurar_disponibilidad",
                            {"command": "configurar_golpes",
                             "handler": handle_configure_strokes}]
 
-PLAYER_CALLBACK_HANDLERS = []
+PLAYER_CALLBACK_HANDLERS = [{
+    "command": "ver_emparejamientos",
+    "handler": matchups_callback,
+    "filter_fn": filter_fn,
+}, ]

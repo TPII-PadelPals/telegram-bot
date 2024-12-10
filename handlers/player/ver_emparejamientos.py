@@ -1,66 +1,110 @@
+from services.match_service import MatchService
 from telebot import TeleBot
-from telebot.types import Message
-from utils.get_from_env import get_from_env_lang, get_from_env_api
-import datetime
-import pandas as pd
+from telebot.types import Message, InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery
+from utils.get_from_env import get_from_env_lang
+from datetime import datetime as dt
+from telebot.types import Message, CallbackQuery
+from telebot import types, TeleBot
+
 
 DEFAULT_PLAYER = 'francoMartinDiMaria'
+VIEW_PADDLE_MATCHUPS_COMMAND = "ver_emparejamientos"
 
+language = get_from_env_lang()
 
-def handle_see_matches(message: Message, bot: TeleBot, get_api=get_from_env_api, get_len=get_from_env_lang):
-    api_conection = get_api()
-    language = get_len()
-    # text = message.text
-    # obtengo los matches
-    id_telegram = message.from_user.username if message.from_user.username is not None else DEFAULT_PLAYER
+def filter_fn(call: CallbackQuery):
+    return call.data.startswith(VIEW_PADDLE_MATCHUPS_COMMAND)
 
-    matches = api_conection.get_matches(id_telegram)
-    # caso sin emparejamiento
-    if len(matches) == 0:
+def generate_callback_string(data: str):
+    return f"{VIEW_PADDLE_MATCHUPS_COMMAND}:{data}"
+
+def parse_provisional_match(player_nickname, matchup: dict):
+    other_player = matchup["player_id_1"] if matchup["player_id_1"] != player_nickname else matchup["player_id_2"]
+    court_name = matchup['court_name']
+    court_id = matchup['court_id']
+    date = dt.strptime(matchup['date'], "%Y-%m-%d").strftime(language['DATE_FMT'])
+    time = dt.strptime(str(matchup['time']), "%H").strftime(language['TIME_FMT'])
+    return other_player, court_id, court_name, date, time
+
+def matchups_keyboard(player_nickname, matchups: list):
+    inline_markup = InlineKeyboardMarkup()
+    for matchup in matchups:
+        inline_markup.row(matchups_keyboard_line(player_nickname, matchup))
+    return inline_markup
+
+def matchups_keyboard_line(player_nickname, matchup: dict):
+    other_player, _, court_name, date, time = parse_provisional_match(player_nickname, matchup)
+
+    button_text = f"{other_player} - {court_name} - {time} {date}"
+    return InlineKeyboardButton(
+        text=button_text,
+        callback_data=generate_callback_string(matchup["id"])
+    )
+
+def matchups_back_keyboard():
+    return InlineKeyboardMarkup(
+        keyboard=[
+            [
+                InlineKeyboardButton(
+                    text='⬅',
+                    callback_data=generate_callback_string('back')
+                )
+            ]
+        ]
+    )
+
+def handle_matchups(message: Message, bot: TeleBot):
+
+    id_telegram = message.from_user.username if message.from_user.username else DEFAULT_PLAYER
+
+    match_service = MatchService()
+    matches = match_service.get_provisional_matches({'player_id_1': id_telegram})
+
+    if not matches:
         text_response = language["MESSAGE_SEE_MATCHES_EMPTY"]
         bot.reply_to(message, text_response)
         return
 
-    text_headers = [language['PLAYER'], language['COURT'],
-                    language['DATE'], language['TIME']]
-    df_matches = pd.DataFrame(columns=text_headers)
+    bot.send_message(message.chat.id, language["MESSAGE_SEE_MATCHES"], reply_markup=matchups_keyboard(id_telegram, matches))
 
-    # Cargar matches
-    for match in matches:
-        other_player = match["player_id_1"]
-        if other_player == id_telegram:
-            other_player = match["player_id_2"]
-        court = str(match['court_name'])
-        date = datetime.datetime.strptime(match['date'], "%Y-%m-%d")
-        time = datetime.datetime.strptime(str(match['time']), "%H")
-        df_matches.loc[len(df_matches)] = [other_player, court, date, time]
 
-    # Ordenar por fecha y horas
-    df_matches = df_matches.sort_values(
-        by=[language['DATE'], language['TIME']], ignore_index=True)
+def matchups_callback(call: types.CallbackQuery, bot: TeleBot):
+    if call.data == generate_callback_string('back'):
+        matchups_back_callback(call, bot)
+    else:
+        matchups_main_callback(call, bot)
 
-    # Formatear fecha y hora
-    df_matches[language['DATE']] = df_matches[language['DATE']].apply(
-        lambda date: date.strftime(language['DATE_FMT']))
-    df_matches[language['TIME']] = df_matches[language['TIME']].apply(
-        lambda time: time.strftime(language['TIME_FMT']))
 
-    # Ajustar ancho de las columnas
-    df_matches.loc[-1] = text_headers
-    df_matches.index += 1
-    df_matches = df_matches.sort_index()
-    for header in text_headers:
-        col_width = df_matches[header].str.len().max()
-        df_matches[header] = df_matches[header].apply(
-            lambda v: v.ljust(col_width))
+def matchups_main_callback(call: types.CallbackQuery, bot: TeleBot):
+    callback_data: dict = call.data
+    id_telegram = call.message.chat.username if call.message.chat.username else DEFAULT_PLAYER
+    matchup_id = int(callback_data.split(':')[-1])
+    match_service = MatchService()
+    get_provisional_matches = match_service.get_provisional_matches({'id': matchup_id})
+    provisional_match = get_provisional_matches[0]
 
-    # Generar respuesta
-    text_response = "```\n"
-    text_response += language["MESSAGE_SEE_MATCHES"]
-    for _, row in df_matches.iterrows():
-        text_response += language['SEE_MATCHES_SEPARATOR'].join(row) + "\n"
-    text_response += "```"
-    try:
-        bot.reply_to(message, text_response, parse_mode="MarkdownV2")
-    except:
-        bot.reply_to(message, text_response)
+    other_player, court_id, court_name, date, time = parse_provisional_match(id_telegram, provisional_match)
+
+    text = f"Contrincante: {other_player}\n" \
+           f"Establecimiento: {court_name}\n" \
+           f"Cancha: {court_id}\n" \
+           f"Horario: {time}\n" \
+           f"Dia: {date}\n"
+
+    bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id,
+                          text=text, reply_markup=matchups_back_keyboard())
+    
+
+def matchups_back_callback(call: types.CallbackQuery, bot: TeleBot):
+    id_telegram = call.message.chat.username if call.message.chat.username else DEFAULT_PLAYER
+
+    match_service = MatchService()
+    matches = match_service.get_provisional_matches({'player_id_1': id_telegram})
+
+    if not matches:
+        text_response = language["MESSAGE_SEE_MATCHES_EMPTY"]
+        bot.reply_to(call.message, text_response)
+        return
+    
+    bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id,text=language["MESSAGE_SEE_MATCHES"], reply_markup=matchups_keyboard(id_telegram, matches))
+                        
