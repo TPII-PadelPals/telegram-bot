@@ -22,13 +22,13 @@ class TelegramBot:
     def register_handlers(self):
         for handler in MESSAGE_HANDLERS:
             self.bot.register_message_handler(
-                handler["handler"], commands=[
+                callback=handler["handler"], commands=[
                     handler["command"]], pass_bot=True)
 
         for handler in CALLBACK_HANDLERS:
             self.bot.register_callback_query_handler(
-                handler["handler"],
-                func=lambda call: call.data.startswith(f"{handler['command']}"),
+                callback=handler['handler'],
+                func=handler['filter_fn'],
                 pass_bot=True)
 
     def start(self):

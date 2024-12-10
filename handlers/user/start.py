@@ -3,6 +3,10 @@ from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton, Message, C
 from services.user_service import UserService
 import time
 
+def filter_fn(call: CallbackQuery):
+    return call.data.startswith("start")
+
+
 def handle_start(message: Message, bot: TeleBot):
     chat_id = message.chat.id
     service = UserService()
