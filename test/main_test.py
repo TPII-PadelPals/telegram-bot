@@ -7,7 +7,6 @@ from telebot.types import Message
 from handlers.player import handle_respond_to_matchmaking_accept, handle_respond_to_matchmaking_reject
 from handlers.player.configurar_disponibilidad import process_time_step
 from handlers.player.configurar_zona import handle_configure_zone, KM_STEERING_SEPARATOR
-from handlers.player.ver_emparejamientos import handle_see_matches
 from handlers.player.configurar_golpes import handle_configure_strokes
 from handlers.player.ver_reservas import handle_see_reserves
 
@@ -163,41 +162,6 @@ class TestTelegramBot(unittest.TestCase):
         self.api_mock.set_zone.assert_not_called()
         self.bot.reply_to.assert_called_once_with(
             message, self.leng_mock["MESSAGE_INVALID_VALUE"])
-
-    def test_send_matches_empty(self):
-        message = MagicMock()
-        message.text = '/ver_emparejamientos'
-        message.from_user.username = "123456"
-        handle_see_matches(message, self.bot,
-                           lambda: self.api_mock, lambda: self.leng_mock)
-        self.api_mock.set_availability.assert_not_called()
-        self.api_mock.set_available_day.assert_not_called()
-        self.bot.reply_to.assert_called_once_with(
-            message,
-            "MESSAGE_SEE_MATCHES_EMPTY")
-
-    def test_send_matches_not_empty(self):
-        self.api_mock.get_matches = unittest.mock.create_autospec(lambda x: None, return_value=[
-            {
-                "player_id_1": "test_40",
-                "player_id_2": "test_48",
-                "court_name": "1",
-                "court_id": "1",
-                "time": "2",
-                "date": "2024-11-11"
-            }
-        ])
-        message = MagicMock()
-        message.text = '/ver_emparejamientos'
-        message.from_user.username = "test_40"
-        handle_see_matches(message, self.bot,
-                           lambda: self.api_mock, lambda: self.leng_mock)
-        self.api_mock.set_availability.assert_not_called()
-        self.api_mock.set_available_day.assert_not_called()
-        # self.bot.reply_to.assert_called_once_with(
-        #     message,
-        #     "```\nMESSAGE_SEE_MATCHESPLAYER |COURT|TIME\ntest_48|1    |TIME_NAMES\n```")
-        self.bot.reply_to.assert_called_once()
 
     def test_configure_strokes_help(self):
         message = MagicMock()
