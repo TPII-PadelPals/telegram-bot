@@ -88,8 +88,8 @@ def matchups_main_callback(call: types.CallbackQuery, bot: TeleBot):
     text = f"Contrincante: {other_player}\n" \
            f"Establecimiento: {court_name}\n" \
            f"Cancha: {court_id}\n" \
-           f"Horario: {time}\n" \
-           f"Dia: {date}\n"
+           f"Dia: {date}\n" \
+           f"Horario: {time}\n"
 
     bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id,
                           text=text, reply_markup=matchups_back_keyboard())
