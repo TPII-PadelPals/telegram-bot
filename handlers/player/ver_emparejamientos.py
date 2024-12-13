@@ -80,8 +80,14 @@ def matchups_main_callback(call: types.CallbackQuery, bot: TeleBot):
     id_telegram = call.message.chat.username if call.message.chat.username else DEFAULT_PLAYER
     matchup_id = int(callback_data.split(':')[-1])
     match_service = MatchService()
-    get_provisional_matches = match_service.get_provisional_matches({'id': matchup_id})
-    provisional_match = get_provisional_matches[0]
+    provisional_matches = match_service.get_provisional_matches({'id': matchup_id})
+
+    if not provisional_matches:
+        text_response = language["MESSAGE_SEE_MATCHES_EMPTY"]
+        bot.reply_to(provisional_matches, text_response)
+        return
+
+    provisional_match = provisional_matches[0]
 
     other_player, court_id, court_name, date, time = parse_provisional_match(id_telegram, provisional_match)
 
