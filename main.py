@@ -26,6 +26,8 @@ def create_app(bot: TelegramBot) -> FastAPI:
     @app.post("/message")
     async def send_message(request: MessageRequest) -> Dict[str, Any]:
         try:
+            if request.chat_id < 1000:
+                return {"status": "success"}
             logger.info(f"Sending message to chat_id {request.chat_id}: {request.message}")
             bot.bot.send_message(request.chat_id, request.message)
             return {"status": "success"}
@@ -38,6 +40,8 @@ def create_app(bot: TelegramBot) -> FastAPI:
         try:
             logger.info(f"Sending {len(requests)} bulk messages")
             for req in requests:
+                if req.chat_id < 1000:
+                    continue
                 logger.info(f"Sending message to chat_id {req.chat_id}: {req.message}")
                 bot.bot.send_message(req.chat_id, req.message)
             return {"status": "success"}
