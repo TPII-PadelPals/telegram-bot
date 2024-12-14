@@ -5,9 +5,12 @@ from model.config import Config
 from dotenv import load_dotenv
 import threading
 import uvicorn
-from typing import Any
-import signal
-import sys
+from typing import Any, Dict, List
+import logging
+
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger(__name__)
+
 
 # Define the request model for message input
 class MessageRequest(BaseModel):
@@ -21,20 +24,25 @@ def create_app(bot: TelegramBot) -> FastAPI:
     app = FastAPI()
 
     @app.post("/message")
-    async def send_message(request: MessageRequest) -> dict[str, Any]:
+    async def send_message(request: MessageRequest) -> Dict[str, Any]:
         try:
+            logger.info(f"Sending message to chat_id {request.chat_id}: {request.message}")
             bot.bot.send_message(request.chat_id, request.message)
             return {"status": "success"}
         except Exception as e:
+            logger.error(f"Error sending single message: {e}")
             raise HTTPException(status_code=500, detail=f"Failed to send message: {e}")
 
     @app.post("/message/bulk")
-    async def send_messages(request: list[MessageRequest]) -> dict[str, Any]:
+    async def send_messages(requests: List[MessageRequest]) -> Dict[str, Any]:
         try:
-            for req in request:
+            logger.info(f"Sending {len(requests)} bulk messages")
+            for req in requests:
+                logger.info(f"Sending message to chat_id {req.chat_id}: {req.message}")
                 bot.bot.send_message(req.chat_id, req.message)
             return {"status": "success"}
         except Exception as e:
+            logger.error(f"Error sending bulk messages: {e}")
             raise HTTPException(status_code=500, detail=f"Failed to send messages: {e}")
 
     return app
