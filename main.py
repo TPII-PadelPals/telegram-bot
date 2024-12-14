@@ -23,7 +23,7 @@ shutdown_event = threading.Event()
 def create_app(bot: TelegramBot) -> FastAPI:
     app = FastAPI()
 
-    @app.post("/message")
+    @app.post("/messages")
     async def send_message(request: MessageRequest) -> Dict[str, Any]:
         try:
             if request.chat_id < 1000:
@@ -35,7 +35,7 @@ def create_app(bot: TelegramBot) -> FastAPI:
             logger.error(f"Error sending single message: {e}")
             raise HTTPException(status_code=500, detail=f"Failed to send message: {e}")
 
-    @app.post("/message/bulk")
+    @app.post("/messages/bulk")
     async def send_messages(requests: List[MessageRequest]) -> Dict[str, Any]:
         try:
             logger.info(f"Sending {len(requests)} bulk messages")
