@@ -13,11 +13,11 @@ class Settings(BaseSettings):
     TELEGRAM_BOT_LANGUAGE: str
 
     TELEGRAM_BOT_SERVICE_HOST: str
-    TELEGRAM_BOT_SERVICE_PORT: str
+    TELEGRAM_BOT_SERVICE_PORT: int
 
     # Gateway settings
     GATEWAY_HOST: str
-    GATEWAY_PORT: str
+    GATEWAY_PORT: int
 
 
 settings = Settings()
