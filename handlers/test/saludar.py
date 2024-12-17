@@ -2,7 +2,7 @@ from telebot import TeleBot
 from telebot.types import Message
 from model.api_conection import ApiConection
 from telebot.util import extract_arguments
-from model.config import settings
+from core.config import settings
 
 def handle_greet(message: Message, bot: TeleBot):
     api_conection = ApiConection(

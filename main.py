@@ -5,7 +5,7 @@ import threading
 import uvicorn
 from typing import Any, Dict, List
 import logging
-from model.config import settings
+from core.config import settings
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)

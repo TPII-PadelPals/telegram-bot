@@ -1,5 +1,5 @@
 import requests
-from model.config import settings
+from core.config import settings
 import logging
 
 logging.basicConfig(level=logging.INFO)

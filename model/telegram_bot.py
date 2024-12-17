@@ -1,7 +1,7 @@
 import telebot
 import logging
 from handlers import MESSAGE_HANDLERS, CALLBACK_HANDLERS
-from model.config import settings
+from core.config import settings
 
 class TelegramBot:
     def __init__(self):
