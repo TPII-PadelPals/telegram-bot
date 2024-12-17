@@ -1,7 +1,6 @@
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from model.telegram_bot import TelegramBot
-from model.config import Config
 from dotenv import load_dotenv
 import threading
 import uvicorn
@@ -69,9 +68,6 @@ def run_server(app: FastAPI) -> None:
 def main() -> None:
     # Load environment variables
     load_dotenv(override=True)
-
-    # Validate required configuration
-    Config.validate_envs()
 
     # Initialize the Telegram bot
     bot = TelegramBot()
