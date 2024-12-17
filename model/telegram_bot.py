@@ -33,5 +33,5 @@ class TelegramBot:
 
     def start(self):
         self.log.info("Telegram bot Initialized")
-        self.log.info(f"Using Language: {os.getenv('LANGUAGE')}")
+        self.log.info(f"Using Language: {os.getenv('TELEGRAM_BOT_LANGUAGE')}")
         self.bot.polling(none_stop=True)

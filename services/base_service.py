@@ -9,8 +9,8 @@ class BaseService:
     def __init__(self):
         """Set the base URL for the service."""
         local_server = ["localhost", "127.0.0.1"]
-        host = f"{Config.SERVICE_HOST}:{Config.SERVICE_PORT}"
-        self.base_url = f"http://{host}" if Config.SERVICE_HOST in local_server else f"https://{host}"
+        host = f"{Config.GATEWAY_HOST}:{Config.GATEWAY_PORT}"
+        self.base_url = f"http://{host}" if Config.GATEWAY_HOST in local_server else f"https://{host}"
 
     def generate_url(self, endpoint):
         """Generate a full URL from an endpoint."""
