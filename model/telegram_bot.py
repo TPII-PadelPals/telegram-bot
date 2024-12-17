@@ -1,13 +1,12 @@
 import telebot
 import logging
 from handlers import MESSAGE_HANDLERS, CALLBACK_HANDLERS
-import os
-
+from model.config import settings
 
 class TelegramBot:
     def __init__(self):
         self.log = self.setup_logging()
-        self.token_bot = os.getenv('TELEGRAM_BOT_TOKEN')
+        self.token_bot = settings.TELEGRAM_BOT_TOKEN
         self.bot = telebot.TeleBot(self.token_bot)
         self.register_handlers()
 
@@ -33,5 +32,5 @@ class TelegramBot:
 
     def start(self):
         self.log.info("Telegram bot Initialized")
-        self.log.info(f"Using Language: {os.getenv('TELEGRAM_BOT_LANGUAGE')}")
+        self.log.info(f"Using Language: {settings.TELEGRAM_BOT_LANGUAGE}")
         self.bot.polling(none_stop=True)

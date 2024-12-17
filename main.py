@@ -1,4 +1,3 @@
-import os
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from model.telegram_bot import TelegramBot
@@ -8,6 +7,7 @@ import threading
 import uvicorn
 from typing import Any, Dict, List
 import logging
+from model.config import settings
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
@@ -61,7 +61,7 @@ def start_bot(bot: TelegramBot) -> None:
 
 def run_server(app: FastAPI) -> None:
     try:
-        uvicorn.run(app, host=os.getenv('TELEGRAM_BOT_SERVICE_HOST'), port=os.getenv('TELEGRAM_BOT_SERVICE_PORT'))
+        uvicorn.run(app, host=settings.TELEGRAM_BOT_SERVICE_HOST, port=settings.TELEGRAM_BOT_SERVICE_PORT)
     except Exception as e:
         print(f"Server error: {e}")
         shutdown_event.set()
