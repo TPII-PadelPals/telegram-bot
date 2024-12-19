@@ -9,6 +9,7 @@ class UserService(BaseService):
         local_server = ["localhost", "127.0.0.1"]
         host = f"{Config.USERS_SERVICE_HOST}:{Config.USERS_SERVICE_PORT}"
         self.base_url = f"http://{host}" if Config.USERS_SERVICE_HOST in local_server else f"https://{host}"
+        self.x_api_key_header = {"x-api-key": Config.USERS_SERVICE_API_KEY}
 
     def register_user(self, chat_id):
         """Register a user with the given chat ID."""

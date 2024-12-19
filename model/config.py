@@ -7,15 +7,17 @@ class Config:
     SERVICE_PORT = os.getenv("SERVICE_PORT", "8000")
     USERS_SERVICE_HOST = os.getenv("USERS_SERVICE_HOST", "127.0.0.1")
     USERS_SERVICE_PORT = os.getenv("USERS_SERVICE_PORT", "8000")
+    USERS_SERVICE_API_KEY = os.getenv("USERS_SERVICE_API_KEY", "")
     TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
     LANGUAGE = os.getenv("LANGUAGE", "ES")
 
     ENV_VARS = [
-        "SERVICE_HOST"
-        "SERVICE_PORT"
-        "USERS_SERVICE_HOST"
-        "USERS_SERVICE_PORT"
-        "TELEGRAM_BOT_TOKEN"
+        "SERVICE_HOST",
+        "SERVICE_PORT",
+        "USERS_SERVICE_HOST",
+        "USERS_SERVICE_PORT",
+        "USERS_SERVICE_API_KEY",
+        "TELEGRAM_BOT_TOKEN",
         "LANGUAGE"
     ]
 
