@@ -3,6 +3,7 @@ from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton, Message, C
 from services.user_service import UserService
 import time
 
+
 def filter_fn(call: CallbackQuery):
     return call.data.startswith("start")
 
@@ -10,11 +11,13 @@ def filter_fn(call: CallbackQuery):
 def handle_start(message: Message, bot: TeleBot):
     chat_id = message.chat.id
     service = UserService()
-    result = service.register_user(chat_id)
+    # result = service.register_user(chat_id)
+    result = True
     if result:
         ask_login_method(message, bot)
     else:
-        result = service.get_user_info(chat_id)
+        # result = service.get_user_info(chat_id)
+        result = None
         if result:
             bot.reply_to(
                 message,
@@ -50,6 +53,7 @@ def handle_callback_query(call: CallbackQuery, bot: TeleBot):
             InlineKeyboardButton(
                 "Registrarse con Google",
                 url=auth_url))
+        # service.register_user_with_google(chat_id)
         bot.edit_message_text(
             "¡Bienvenido! Por favor, regístrate con Google para continuar.",
             chat_id=chat_id,
