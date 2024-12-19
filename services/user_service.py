@@ -1,7 +1,14 @@
 from .base_service import BaseService
+from model.config import Config
 
 
 class UserService(BaseService):
+
+    def __init__(self):
+        """Set the base URL for the service."""
+        local_server = ["localhost", "127.0.0.1"]
+        host = f"{Config.USERS_SERVICE_HOST}:{Config.USERS_SERVICE_PORT}"
+        self.base_url = f"http://{host}" if Config.USERS_SERVICE_HOST in local_server else f"https://{host}"
 
     def register_user(self, chat_id):
         """Register a user with the given chat ID."""
