@@ -23,5 +23,5 @@ class SurveyGenerator:
         position_question = self.questions.index(question)
         self.answers[position_question].append(answer)
 
-    def generate_format_of_survey(self) -> str:
-        return ""
+    def send_survey(self):
+        return
