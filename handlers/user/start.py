@@ -53,12 +53,12 @@ def handle_callback_query(call: CallbackQuery, bot: TeleBot):
             InlineKeyboardButton(
                 "Registrarse con Google",
                 url=auth_url))
-        # service.register_user_with_google(chat_id)
-        bot.edit_message_text(
-            "¡Bienvenido! Por favor, regístrate con Google para continuar.",
-            chat_id=chat_id,
-            message_id=call.message.message_id,
-            reply_markup=markup)
+        service.register_user_with_google(chat_id)
+        # bot.edit_message_text(
+        #     "¡Bienvenido! Por favor, regístrate con Google para continuar.",
+        #     chat_id=chat_id,
+        #     message_id=call.message.message_id,
+        #     reply_markup=markup)
         time.sleep(8)
         bot.send_message(
             chat_id,
