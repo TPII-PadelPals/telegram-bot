@@ -150,5 +150,6 @@
     "/rechazar_emparejamiento": "Rechazo de un emparejamiento, este emparejamiento ya no aparecera."
   },
   "MESSAGE_RESPOND_TO_MATCHMAKING_HELP": "Para aceptar/rechazar un emparejamiento se deben dar los siguientes datos:\n- oponente: Ej: Pablo.\n- Cancha: Ej: 4\nHora del encuentro: Ej: 15\n\nLa estructura es: /<aceptar_emparejamiento/rechazar_emparejamiento> <Oponente> <Cancha> <Horario>.\nEjemplos:\n/aceptar_emparejamiento Pablo 51 9\n/rechazar_emparejamiento Carlos 32 18",
-  "MESSAGE_RESPOND_TO_MATCHMAKING": "Estado de emparejamiento: "
+  "MESSAGE_RESPOND_TO_MATCHMAKING": "Estado de emparejamiento: ",
+  "MESSAGE_SURVEY_PLAYER_ALLOWED": "Ahora puede realizar una encuesta para puntuar a los jugadores con quien participo, para hacerlo \\encuesta_jugador <Nombre dl jugador>.\n Los siguientes jugadores ahora pueden ser punteados: "
 }

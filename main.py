@@ -1,6 +1,5 @@
 import os
 from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel
 from model.telegram_bot import TelegramBot
 from model.config import Config
 from dotenv import load_dotenv
@@ -9,14 +8,13 @@ import uvicorn
 from typing import Any, Dict, List
 import logging
 
+from utils.get_from_env import get_from_env_lang
+from utils.message_processing import MessageProcessing
+from utils.message_request import MessageRequest
+
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
-
-# Define the request model for message input
-class MessageRequest(BaseModel):
-    chat_id: int
-    message: str
 
 # Shared event to signal shutdown
 shutdown_event = threading.Event()
@@ -30,7 +28,9 @@ def create_app(bot: TelegramBot) -> FastAPI:
             if request.chat_id < 1000:
                 return {"status": "success"}
             logger.info(f"Sending message to chat_id {request.chat_id}: {request.message}")
-            bot.bot.send_message(request.chat_id, request.message)
+            process_request = MessageProcessing().message_processing(get_from_env_lang(), request)
+            bot.bot.send_message(process_request["chat_id"], process_request["message"])
+            # bot.bot.send_message(request.chat_id, request.message)
             return {"status": "success"}
         except Exception as e:
             logger.error(f"Error sending single message: {e}")
@@ -44,7 +44,9 @@ def create_app(bot: TelegramBot) -> FastAPI:
                 if req.chat_id < 1000:
                     continue
                 logger.info(f"Sending message to chat_id {req.chat_id}: {req.message}")
-                bot.bot.send_message(req.chat_id, req.message)
+                process_request = MessageProcessing().message_processing(get_from_env_lang(), req)
+                bot.bot.send_message(process_request["chat_id"], process_request["message"])
+                # bot.bot.send_message(req.chat_id, req.message)
             return {"status": "success"}
         except Exception as e:
             logger.error(f"Error sending bulk messages: {e}")
