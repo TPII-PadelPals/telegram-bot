@@ -1,11 +1,20 @@
 import unittest
+from unittest.mock import MagicMock
 
 from utils.survey_generator import SurveyGenerator
 
 
 class TestSurveyGenerator(unittest.TestCase):
-    # def setUp(self):
-    #     self.empty_survey = SurveyGenerator([], [])
+    def setUp(self):
+        self.empty_survey = SurveyGenerator([], [])
+        self.bot = MagicMock()
+        self.bot.send_poll = unittest.mock.create_autospec(
+            lambda
+                chat_id,
+                question,
+                options,
+                allows_multiple_answers,
+                is_anonymous: None, return_value=None)
 
     def test_new_survey_whit_data(self):
         try:
@@ -48,6 +57,35 @@ class TestSurveyGenerator(unittest.TestCase):
             assert True
         except Exception:
             raise AssertionError
+
+    def test_send_empty_survey(self):
+        try:
+            self.empty_survey.send_survey("", "123456")
+        except Exception:
+            raise AssertionError
+
+    def test_send_one_survey(self):
+        self.empty_survey.add_question("HOLA", ["MUNDO", "PLANTA"])
+        self.empty_survey.send_survey(self.bot, "123456")
+        self.bot.send_poll.assert_called_once_with(
+            "123456",
+            "HOLA",
+            ["MUNDO", "PLANTA"],
+            False,
+            False
+        )
+
+    def test_send_one_survey_and_add_answer(self):
+        self.empty_survey.add_question("HOLA", ["MUNDO", "PLANTA"])
+        self.empty_survey.add_answers("HOLA", "GENTE")
+        self.empty_survey.send_survey(self.bot, "123456", True)
+        self.bot.send_poll.assert_called_once_with(
+            "123456",
+            "HOLA",
+            ["MUNDO", "PLANTA", "GENTE"],
+            True,
+            False
+        )
 
 if __name__ == '__main__':
     unittest.main()

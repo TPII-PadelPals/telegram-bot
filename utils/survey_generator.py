@@ -23,5 +23,14 @@ class SurveyGenerator:
         position_question = self.questions.index(question)
         self.answers[position_question].append(answer)
 
-    def send_survey(self):
-        return
+    def send_survey(self, bot, id_to_send, allows_multiple_answers=False):
+        if len(self.questions) == 0:
+            return
+        for question, answers in zip(self.questions, self.answers):
+            bot.send_poll(
+                chat_id=id_to_send,
+                question=question,
+                options=answers,
+                allows_multiple_answers=allows_multiple_answers,
+                is_anonymous=False  # Encuesta no anónima
+            )
