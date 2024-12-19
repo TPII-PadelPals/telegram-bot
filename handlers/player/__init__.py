@@ -1,5 +1,6 @@
 from .configurar_disponibilidad import handle_configure_availability
 from .configurar_zona import handle_configure_zone
+from .encuesta_de_jugador import handle_survey_to_player
 from .ver_emparejamientos import matchups_callback, handle_matchups, filter_fn
 from .configurar_ubicacion import handle_configure_location
 from .configurar_golpes import handle_configure_strokes
@@ -21,7 +22,9 @@ PLAYER_MESSAGE_HANDLERS = [{"command": "configurar_disponibilidad",
                            {"command": "rechazar_emparejamiento",
                             "handler": handle_respond_to_matchmaking_reject},
                            {"command": "configurar_golpes",
-                            "handler": handle_configure_strokes}]
+                            "handler": handle_configure_strokes},
+                           {"command": "encuesta_jugador",
+                            "handler": handle_survey_to_player}]
 
 PLAYER_CALLBACK_HANDLERS = [{
     "command": "ver_emparejamientos",

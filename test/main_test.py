@@ -4,7 +4,8 @@ from unittest.mock import patch, MagicMock
 from unittest.mock import Mock, patch
 from telebot.types import Message
 
-from handlers.player import handle_respond_to_matchmaking_accept, handle_respond_to_matchmaking_reject
+from handlers.player import handle_respond_to_matchmaking_accept, handle_respond_to_matchmaking_reject, \
+    handle_survey_to_player
 from handlers.player.configurar_disponibilidad import process_time_step
 from handlers.player.configurar_zona import handle_configure_zone, KM_STEERING_SEPARATOR
 from handlers.player.configurar_golpes import handle_configure_strokes
@@ -25,6 +26,8 @@ class TestTelegramBot(unittest.TestCase):
             lambda x: None, return_value=[])
         self.api_mock.put_strokes = unittest.mock.create_autospec(
             lambda x, y: None, return_value="")
+        self.api_mock.put_survey_to_player = unittest.mock.create_autospec(
+            lambda id_telegram, other_player, rating: None, return_value={"result": True, "message": "3"})
         self.api_mock.get_reserves = unittest.mock.create_autospec(lambda x: None, return_value=[])
         self.api_mock.respond_to_matchmaking = unittest.mock.create_autospec(lambda id_telegram, info, accept: None, return_value="")
         self.leng_mock = {"MESSAGE_HELP_AVAILABILITY": "MESSAGE_HELP_AVAILABILITY",
@@ -62,7 +65,11 @@ class TestTelegramBot(unittest.TestCase):
                           "MESSAGE_RESPOND_TO_MATCHMAKING_HELP": "MESSAGE_RESPOND_TO_MATCHMAKING_HELP",
                           "I_ACCEPT": "I_ACCEPT",
                           "ACCEPT": "ACCEPT",
-                          "MESSAGE_RESPOND_TO_MATCHMAKING": "MESSAGE_RESPOND_TO_MATCHMAKING"
+                          "MESSAGE_RESPOND_TO_MATCHMAKING": "MESSAGE_RESPOND_TO_MATCHMAKING",
+                          "QUESTION_SURVEY_PLAYER": "QUESTION_SURVEY_PLAYER",
+                          "MESSAGE_HELP_SURVEY_PLAYER": "MESSAGE_HELP_SURVEY_PLAYER",
+                          "RATING_ERROR": "RATING_ERROR",
+                          "ANSWER_SURVEY_PLAYER": "ANSWER_SURVEY_PLAYER"
                         }
         self.bot = MagicMock()
         self.bot.reply_to = unittest.mock.create_autospec(
@@ -359,6 +366,69 @@ class TestTelegramBot(unittest.TestCase):
             message,
             "MESSAGE_RESPOND_TO_MATCHMAKING"
         )
+
+    def test_handle_survey_to_player_empty(self):
+        message = MagicMock()
+        message.text = '/encuesta_jugador'
+        handle_survey_to_player(message, self.bot, lambda: self.api_mock, lambda: self.leng_mock)
+        self.bot.reply_to.assert_called_once_with(
+            message,
+            "MESSAGE_HELP_SURVEY_PLAYER"
+        )
+
+    def test_handle_survey_to_player_many_info(self):
+        message = MagicMock()
+        message.text = '/encuesta_jugador asd asd asd'
+        handle_survey_to_player(message, self.bot, lambda: self.api_mock, lambda: self.leng_mock)
+        self.bot.reply_to.assert_called_once_with(
+            message,
+            "MESSAGE_HELP_SURVEY_PLAYER"
+        )
+
+    def test_handle_survey_to_player_other_player_and_rating_minnor(self):
+        message = MagicMock()
+        message.text = '/encuesta_jugador otro_jugador 0'
+        handle_survey_to_player(message, self.bot, lambda: self.api_mock, lambda: self.leng_mock)
+        self.bot.reply_to.assert_called_once_with(
+            message,
+            "RATING_ERROR"
+        )
+
+    def test_handle_survey_to_player_other_player_and_rating_mayor(self):
+        message = MagicMock()
+        message.text = '/encuesta_jugador otro_jugador 6'
+        handle_survey_to_player(message, self.bot, lambda: self.api_mock, lambda: self.leng_mock)
+        self.bot.reply_to.assert_called_once_with(
+            message,
+            "RATING_ERROR"
+        )
+
+    def test_handle_survey_to_player_other_player_and_rating_invalid(self):
+        message = MagicMock()
+        message.text = '/encuesta_jugador otro_jugador asd'
+        # message.from_user.username = "zzz_jugador"
+        handle_survey_to_player(message, self.bot, lambda: self.api_mock, lambda: self.leng_mock)
+        self.bot.reply_to.assert_called_once_with(
+            message,
+            "MESSAGE_INVALID_VALUE"
+        )
+
+    def test_handle_survey_to_player_other_player_and_rating_valid(self):
+        message = MagicMock()
+        message.text = '/encuesta_jugador otro_jugador 3'
+        message.from_user.username = "zzz_jugador"
+        handle_survey_to_player(message, self.bot, lambda: self.api_mock, lambda: self.leng_mock)
+        self.bot.reply_to.assert_called_once_with(
+            message,
+            "ANSWER_SURVEY_PLAYER3"
+        )
+        # la respuesta de la API esta hardcodeada a 3
+        self.api_mock.put_survey_to_player.assert_called_once_with(
+            "zzz_jugador",
+            "otro_jugador",
+            3
+        )
+
 
 if __name__ == '__main__':
     unittest.main()
