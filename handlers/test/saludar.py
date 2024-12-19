@@ -1,10 +1,10 @@
-from telebot import TeleBot
+from model.telegram_bot import TelegramBot
 from telebot.types import Message
 from model.api_conection import ApiConection
 from telebot.util import extract_arguments
 from core.config import settings
 
-def handle_greet(message: Message, bot: TeleBot):
+def handle_greet(message: Message, bot: TelegramBot):
     api_conection = ApiConection(f"http://{settings.GATEWAY_HOST}:{settings.GATEWAY_PORT}")
     hi_name = extract_arguments(message.text)
     result = api_conection.get_hi_name(hi_name)

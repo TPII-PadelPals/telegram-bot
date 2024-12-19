@@ -1,5 +1,5 @@
-from telebot import TeleBot
-from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton, Message, ReplyKeyboardMarkup, KeyboardButton, CallbackQuery
+from model.telegram_bot import TelegramBot
+from telebot.types import Message, ReplyKeyboardMarkup, KeyboardButton
 
 from utils.get_from_env import get_from_env_lang, get_from_env_api
 
@@ -16,7 +16,7 @@ def get_callback_data(text, buttons):
             return button["callback_data"]
     return None
 
-def handle_configure_availability(message: Message, bot: TeleBot):
+def handle_configure_availability(message: Message, bot: TelegramBot):
     language = get_from_env_lang()
     
     markup = ReplyKeyboardMarkup(row_width=2)
@@ -28,7 +28,7 @@ def handle_configure_availability(message: Message, bot: TeleBot):
     loger.info("Se ha configurado la disponibilidad")
 
 
-def process_time_step(message: Message, bot: TeleBot):
+def process_time_step(message: Message, bot: TelegramBot):
     api_conection = get_from_env_api()
     language = get_from_env_lang()
 
@@ -54,7 +54,7 @@ def process_time_step(message: Message, bot: TeleBot):
     loger.info("Se ha configurado el horario correctamente")
 
 
-def process_day_step(message: Message, bot: TeleBot):
+def process_day_step(message: Message, bot: TelegramBot):
     api_conection = get_from_env_api()
     language = get_from_env_lang()
 

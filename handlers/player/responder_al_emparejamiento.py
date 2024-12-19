@@ -1,4 +1,4 @@
-from telebot import TeleBot
+from model.telegram_bot import TelegramBot
 from telebot.types import Message
 
 from utils.get_from_env import get_from_env_api, get_from_env_lang
@@ -14,13 +14,13 @@ POSITION_OF_OPONENT = 1
 POSITION_OF_COURT = 2
 POSITION_OF_TIME = 3
 
-def handle_respond_to_matchmaking_accept(message: Message, bot: TeleBot, get_api=get_from_env_api, get_len=get_from_env_lang):
+def handle_respond_to_matchmaking_accept(message: Message, bot: TelegramBot, get_api=get_from_env_api, get_len=get_from_env_lang):
     return _respond_to_matchmaking(message, bot, True, get_api, get_len)
 
-def handle_respond_to_matchmaking_reject(message: Message, bot: TeleBot, get_api=get_from_env_api, get_len=get_from_env_lang):
+def handle_respond_to_matchmaking_reject(message: Message, bot: TelegramBot, get_api=get_from_env_api, get_len=get_from_env_lang):
     return _respond_to_matchmaking(message, bot, False, get_api, get_len)
 
-def _respond_to_matchmaking(message: Message, bot: TeleBot, accept: bool, get_api=get_from_env_api, get_len=get_from_env_lang):
+def _respond_to_matchmaking(message: Message, bot: TelegramBot, accept: bool, get_api=get_from_env_api, get_len=get_from_env_lang):
     text = message.text
     api_conection = get_api()
     language = get_len()

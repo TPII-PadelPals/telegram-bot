@@ -1,10 +1,9 @@
+from model.telegram_bot import TelegramBot
 from services.match_service import MatchService
-from telebot import TeleBot
 from telebot.types import Message, InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery
 from utils.get_from_env import get_from_env_lang
 from datetime import datetime as dt
 from telebot.types import Message, CallbackQuery
-from telebot import types, TeleBot
 
 
 DEFAULT_PLAYER = 'francoMartinDiMaria'
@@ -53,7 +52,7 @@ def matchups_back_keyboard():
         ]
     )
 
-def handle_matchups(message: Message, bot: TeleBot):
+def handle_matchups(message: Message, bot: TelegramBot):
 
     id_telegram = message.from_user.username if message.from_user.username else DEFAULT_PLAYER
 
@@ -68,14 +67,14 @@ def handle_matchups(message: Message, bot: TeleBot):
     bot.send_message(message.chat.id, language["MESSAGE_SEE_MATCHES"], reply_markup=matchups_keyboard(id_telegram, matches))
 
 
-def matchups_callback(call: types.CallbackQuery, bot: TeleBot):
+def matchups_callback(call: CallbackQuery, bot: TelegramBot):
     if call.data == generate_callback_string('back'):
         matchups_back_callback(call, bot)
     else:
         matchups_main_callback(call, bot)
 
 
-def matchups_main_callback(call: types.CallbackQuery, bot: TeleBot):
+def matchups_main_callback(call: CallbackQuery, bot: TelegramBot):
     callback_data: dict = call.data
     id_telegram = call.message.chat.username if call.message.chat.username else DEFAULT_PLAYER
     matchup_id = int(callback_data.split(':')[-1])
@@ -101,7 +100,7 @@ def matchups_main_callback(call: types.CallbackQuery, bot: TeleBot):
                           text=text, reply_markup=matchups_back_keyboard())
     
 
-def matchups_back_callback(call: types.CallbackQuery, bot: TeleBot):
+def matchups_back_callback(call: CallbackQuery, bot: TelegramBot):
     id_telegram = call.message.chat.username if call.message.chat.username else DEFAULT_PLAYER
 
     match_service = MatchService()

@@ -1,4 +1,4 @@
-from telebot import TeleBot
+from model.telegram_bot import TelegramBot
 from telebot.types import Message
 
 from utils.get_from_env import get_from_env_lang, get_from_env_api
@@ -50,7 +50,7 @@ NUMBER_FOR_STROKE = {
 
 # TODO traducir NUMBER_FOR_STROKE y MESSAGE_HELP_STROKE del json
 
-def handle_configure_strokes(message: Message, bot: TeleBot, get_api=get_from_env_api, get_len=get_from_env_lang):
+def handle_configure_strokes(message: Message, bot: TelegramBot, get_api=get_from_env_api, get_len=get_from_env_lang):
     text = message.text
     api_conection = get_api()
     language = get_len()

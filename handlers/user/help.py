@@ -1,4 +1,4 @@
-from telebot import TeleBot
+from model.telegram_bot import TelegramBot
 from telebot.types import Message
 
 from utils.get_from_env import get_from_env_lang
@@ -7,7 +7,7 @@ from utils.get_from_env import get_from_env_lang
 COMMANDS = ["/start", "/help", "/registrarse", "/configurar_disponibilidad", "/configurar_zona", "/ver_emparejamientos", "/configurar_golpes", "/ver_reservas", "/aceptar_emparejamiento", "/rechazar_emparejamiento"]
 SEPARATOR_OF_DATA = ": "
 
-def handle_help(message: Message, bot: TeleBot, get_len=get_from_env_lang):
+def handle_help(message: Message, bot: TelegramBot, get_len=get_from_env_lang):
     language = get_len()
     data_language = language["MESSAGE_HELP_GENERAL"]
     message_to_help = ""
