@@ -8,7 +8,6 @@ from typing import Any, Dict, List
 import logging
 from core.config import settings
 
-from utils.get_from_env import get_from_env_lang
 from utils.message_processing import MessageProcessing
 from utils.message_request import MessageRequest
 
@@ -29,7 +28,7 @@ def create_app(bot_manager: TelegramBotManager) -> FastAPI:
             if request.chat_id < 1000:
                 return {"status": "success"}
             logger.info(f"Sending message to chat_id {request.chat_id}: {request.message}")
-            process_request = MessageProcessing().message_processing(get_from_env_lang(), request)
+            process_request = MessageProcessing().message_processing(bot.language_manager, request)
             bot.bot.send_message(process_request["chat_id"], process_request["message"])
             # bot.bot.send_message(request.chat_id, request.message)
             return {"status": "success"}
@@ -45,7 +44,7 @@ def create_app(bot_manager: TelegramBotManager) -> FastAPI:
                 if req.chat_id < 1000:
                     continue
                 logger.info(f"Sending message to chat_id {req.chat_id}: {req.message}")
-                process_request = MessageProcessing().message_processing(get_from_env_lang(), req)
+                process_request = MessageProcessing().message_processing(bot.language_manager, req)
                 bot.bot.send_message(process_request["chat_id"], process_request["message"])
                 # bot.bot.send_message(req.chat_id, req.message)
             return {"status": "success"}

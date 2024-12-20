@@ -321,56 +321,62 @@ class TestTelegramBot(unittest.TestCase):
         )
 
     def test_handle_survey_to_player_empty(self):
+        self.bot.language_manager.get.return_value = "MESSAGE_HELP_SURVEY_PLAYER"
         message = MagicMock()
         message.text = '/encuesta_jugador'
-        handle_survey_to_player(message, self.bot, lambda: self.api_mock, lambda: self.leng_mock)
+        handle_survey_to_player(message, self.bot, lambda: self.api_mock)
         self.bot.reply_to.assert_called_once_with(
             message,
             "MESSAGE_HELP_SURVEY_PLAYER"
         )
 
     def test_handle_survey_to_player_many_info(self):
+        self.bot.language_manager.get.return_value = "MESSAGE_HELP_SURVEY_PLAYER"
         message = MagicMock()
         message.text = '/encuesta_jugador asd asd asd'
-        handle_survey_to_player(message, self.bot, lambda: self.api_mock, lambda: self.leng_mock)
+        handle_survey_to_player(message, self.bot, lambda: self.api_mock)
         self.bot.reply_to.assert_called_once_with(
             message,
             "MESSAGE_HELP_SURVEY_PLAYER"
         )
 
     def test_handle_survey_to_player_other_player_and_rating_minnor(self):
+        self.bot.language_manager.get.return_value = "RATING_ERROR"
         message = MagicMock()
         message.text = '/encuesta_jugador otro_jugador 0'
-        handle_survey_to_player(message, self.bot, lambda: self.api_mock, lambda: self.leng_mock)
+        handle_survey_to_player(message, self.bot, lambda: self.api_mock)
         self.bot.reply_to.assert_called_once_with(
             message,
             "RATING_ERROR"
         )
 
     def test_handle_survey_to_player_other_player_and_rating_mayor(self):
+        self.bot.language_manager.get.return_value = "RATING_ERROR"
         message = MagicMock()
         message.text = '/encuesta_jugador otro_jugador 6'
-        handle_survey_to_player(message, self.bot, lambda: self.api_mock, lambda: self.leng_mock)
+        handle_survey_to_player(message, self.bot, lambda: self.api_mock)
         self.bot.reply_to.assert_called_once_with(
             message,
             "RATING_ERROR"
         )
 
     def test_handle_survey_to_player_other_player_and_rating_invalid(self):
+        self.bot.language_manager.get.return_value = "MESSAGE_INVALID_VALUE"
         message = MagicMock()
         message.text = '/encuesta_jugador otro_jugador asd'
         # message.from_user.username = "zzz_jugador"
-        handle_survey_to_player(message, self.bot, lambda: self.api_mock, lambda: self.leng_mock)
+        handle_survey_to_player(message, self.bot, lambda: self.api_mock)
         self.bot.reply_to.assert_called_once_with(
             message,
             "MESSAGE_INVALID_VALUE"
         )
 
     def test_handle_survey_to_player_other_player_and_rating_valid(self):
+        self.bot.language_manager.get.return_value = "ANSWER_SURVEY_PLAYER"
         message = MagicMock()
         message.text = '/encuesta_jugador otro_jugador 3'
         message.from_user.username = "zzz_jugador"
-        handle_survey_to_player(message, self.bot, lambda: self.api_mock, lambda: self.leng_mock)
+        handle_survey_to_player(message, self.bot, lambda: self.api_mock)
         self.bot.reply_to.assert_called_once_with(
             message,
             "ANSWER_SURVEY_PLAYER3"
