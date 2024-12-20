@@ -56,27 +56,21 @@ def handle_configure_strokes(message: Message, bot: TelegramBot, get_api=get_fro
     language_manager = bot.language_manager
 
     info_list = text.split()
-    print(info_list)
     # mensaje vacio retorna ayuda
     if text.strip() == "/configurar_golpes" or len(info_list) != EXPECTED_INFORMATION:
-        print("ENTRA 1")
         bot.reply_to(message, language_manager.get("MESSAGE_HELP_STROKE"))
         return
     hability = info_list[POSITION_OF_HABILITY].lower()
     # caso de error en habilidad
     if not hability in language_manager.get("STROKE_HABILITY"):
-        print("ENTRA 2")
         bot.reply_to(message, language_manager.get("MESSAGE_INCORRECT_HABILITY"))
         return
     # obtengo el listado de golpes a configurar
     if info_list[POSITION_OF_STROKES].lower() == language_manager.get("ALL").lower():
-        print("ENTRA 3")
         strokes_list = list(range(1, MAX_VALUE_FOR_STROKE + 1))
     else:
-        print("ENTRA 4")
         strokes_list_str = info_list[POSITION_OF_STROKES].split(SEPARATOR_OF_STROKES)
         try:
-            print("ENTRA 5")
             strokes_list = []
             for number_of_stroke_str in strokes_list_str:
                 number_of_stroke = int(number_of_stroke_str)
@@ -86,10 +80,8 @@ def handle_configure_strokes(message: Message, bot: TelegramBot, get_api=get_fro
             # strokes_list = [int(number_of_stroke) for number_of_stroke in strokes_list_str]
         # caso donde un valor no sea numerico
         except ValueError:
-            print("ENTRA 6")
             bot.reply_to(message, language_manager.get("MESSAGE_INVALID_VALUE"))
             return
-    print("ENTRA 7")
     # creo el mensaje para la api y el de respuesta para el usuario
     id_telegram = message.from_user.username
     response_to_user = language_manager.get("MESSAGE_STROKES_UPDATED")
