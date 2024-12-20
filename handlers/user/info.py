@@ -1,5 +1,5 @@
 from telebot import TeleBot
-from services.user_service import UserService
+from services.user_service_backend import UserServiceBackend
 from telebot.types import Message
 import requests
 
@@ -7,7 +7,7 @@ import requests
 def handle_info(message: Message, bot: TeleBot):
     chat_id = message.chat.id
     try:
-        service = UserService()
+        service = UserServiceBackend()
         user_info = service.get_user_info(chat_id)
         if user_info:
             response = f"Nombre: {user_info['name']}\nEmail: {user_info['email']}"

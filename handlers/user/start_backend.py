@@ -1,31 +1,29 @@
 from telebot import TeleBot
 from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton, Message, CallbackQuery
-from services.user_service import UserService
+from services.user_service_backend import UserServiceBackend
 import time
 
 
 def filter_fn(call: CallbackQuery):
-    return call.data.startswith("start")
+    return call.data.startswith("start_backend")
 
 
 def handle_start(message: Message, bot: TeleBot):
     chat_id = message.chat.id
-    service = UserService()
-    result = service.get_user_info(chat_id)
+    service = UserServiceBackend()
+    result = service.register_user(chat_id)
     if result:
-        users_count = result["count"]
-        if users_count == 0:
-            ask_login_method(message, bot)
-            return
-        users = result["data"]
-        user = users[0]
-        bot.reply_to(
-            message,
-            f"Bienvenido de nuevo, {user['name']}!")
-        return
-    bot.reply_to(
-        message,
-        "Ha ocurrido un error. Por favor, intenta de nuevo más tarde.")
+        ask_login_method(message, bot)
+    else:
+        result = service.get_user_info(chat_id)
+        if result:
+            bot.reply_to(
+                message,
+                f"Bienvenido de nuevo, {result.get('name')}!")
+        else:
+            bot.reply_to(
+                message,
+                "Ha ocurrido un error. Por favor, intenta de nuevo más tarde.")
 
 
 def ask_login_method(message: Message, bot: TeleBot):
@@ -45,7 +43,7 @@ def ask_login_method(message: Message, bot: TeleBot):
 
 def handle_callback_query(call: CallbackQuery, bot: TeleBot):
     chat_id = call.message.chat.id
-    service = UserService()
+    service = UserServiceBackend()  # UserService()
     if call.data == "start_google":
         auth_url = service.generate_google_auth_url(chat_id)
         markup = InlineKeyboardMarkup()
