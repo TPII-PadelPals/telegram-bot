@@ -1,17 +1,15 @@
-import telebot
+from model.language_manager import LanguageManager
+from telebot import TeleBot
 import logging
-from handlers import MESSAGE_HANDLERS, CALLBACK_HANDLERS
-import os
+from core.config import settings
 
-
-class TelegramBot:
+class TelegramBot(TeleBot):
     def __init__(self):
-        self.log = self.setup_logging()
-        self.token_bot = os.getenv('TELEGRAM_BOT_TOKEN')
-        self.bot = telebot.TeleBot(self.token_bot)
-        self.register_handlers()
+        super().__init__(settings.TELEGRAM_BOT_TOKEN)
+        self.log = self._setup_logging()
+        self.language_manager = LanguageManager(settings.TELEGRAM_BOT_LANGUAGE)
 
-    def setup_logging(self):
+    def _setup_logging(self):
         logging.basicConfig(
             level=logging.INFO,
             format="[%(asctime)s][%(threadName)s] %(levelname)s: %(message)s"
@@ -19,19 +17,7 @@ class TelegramBot:
         log = logging.getLogger(__name__)
         return log
 
-    def register_handlers(self):
-        for handler in MESSAGE_HANDLERS:
-            self.bot.register_message_handler(
-                callback=handler["handler"], commands=[
-                    handler["command"]], pass_bot=True)
-
-        for handler in CALLBACK_HANDLERS:
-            self.bot.register_callback_query_handler(
-                callback=handler['handler'],
-                func=handler['filter_fn'],
-                pass_bot=True)
-
     def start(self):
         self.log.info("Telegram bot Initialized")
-        self.log.info(f"Using Language: {os.getenv('TELEGRAM_BOT_LANGUAGE')}")
-        self.bot.polling(none_stop=True)
+        self.log.info(f"Using Language: {settings.TELEGRAM_BOT_LANGUAGE}")
+        self.polling(none_stop=True)

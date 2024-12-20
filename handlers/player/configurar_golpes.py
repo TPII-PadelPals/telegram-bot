@@ -1,7 +1,7 @@
-from telebot import TeleBot
+from model.telegram_bot import TelegramBot
 from telebot.types import Message
 
-from utils.get_from_env import get_from_env_lang, get_from_env_api
+from utils.get_from_env import get_from_env_api
 
 
 # ["configurar_golpes", lista de golpes, habilidad]
@@ -50,23 +50,23 @@ NUMBER_FOR_STROKE = {
 
 # TODO traducir NUMBER_FOR_STROKE y MESSAGE_HELP_STROKE del json
 
-def handle_configure_strokes(message: Message, bot: TeleBot, get_api=get_from_env_api, get_len=get_from_env_lang):
+def handle_configure_strokes(message: Message, bot: TelegramBot, get_api=get_from_env_api):
     text = message.text
     api_conection = get_api()
-    language = get_len()
+    language_manager = bot.language_manager
 
     info_list = text.split()
     # mensaje vacio retorna ayuda
     if text.strip() == "/configurar_golpes" or len(info_list) != EXPECTED_INFORMATION:
-        bot.reply_to(message, language["MESSAGE_HELP_STROKE"])
+        bot.reply_to(message, language_manager.get("MESSAGE_HELP_STROKE"))
         return
     hability = info_list[POSITION_OF_HABILITY].lower()
     # caso de error en habilidad
-    if not hability in language["STROKE_HABILITY"]:
-        bot.reply_to(message, language["MESSAGE_INCORRECT_HABILITY"])
+    if not hability in language_manager.get("STROKE_HABILITY"):
+        bot.reply_to(message, language_manager.get("MESSAGE_INCORRECT_HABILITY"))
         return
     # obtengo el listado de golpes a configurar
-    if info_list[POSITION_OF_STROKES].lower() == language["ALL"].lower():
+    if info_list[POSITION_OF_STROKES].lower() == language_manager.get("ALL").lower():
         strokes_list = list(range(1, MAX_VALUE_FOR_STROKE + 1))
     else:
         strokes_list_str = info_list[POSITION_OF_STROKES].split(SEPARATOR_OF_STROKES)
@@ -80,16 +80,16 @@ def handle_configure_strokes(message: Message, bot: TeleBot, get_api=get_from_en
             # strokes_list = [int(number_of_stroke) for number_of_stroke in strokes_list_str]
         # caso donde un valor no sea numerico
         except ValueError:
-            bot.reply_to(message, language["MESSAGE_INVALID_VALUE"])
+            bot.reply_to(message, language_manager.get("MESSAGE_INVALID_VALUE"))
             return
     # creo el mensaje para la api y el de respuesta para el usuario
     id_telegram = message.from_user.username
-    response_to_user = language["MESSAGE_STROKES_UPDATED"]
+    response_to_user = language_manager.get("MESSAGE_STROKES_UPDATED")
     response_to_user += hability
     response_to_user += "\n"
-    number_for_stroke_to_response = language["NUMBER_FOR_STROKE"]
+    number_for_stroke_to_response = language_manager.get("NUMBER_FOR_STROKE")
     strokes_body = DEFINITION_OF_STROKE
-    position_of_definition_hability = language["SENDER_POSITION_STROKE_HABILITY"]
+    position_of_definition_hability = language_manager.get("SENDER_POSITION_STROKE_HABILITY")
     for number_of_stroke in strokes_list:
         strokes_body[NUMBER_FOR_STROKE[number_of_stroke]] = DEFINITION_OF_HABILITY[position_of_definition_hability[hability]]
         # agrego el golpe a la respuesta del usuario

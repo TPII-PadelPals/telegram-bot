@@ -1,12 +1,12 @@
-import os
 from fastapi import FastAPI, HTTPException
+from model.telegram_bot_manager import TelegramBotManager
+from pydantic import BaseModel
 from model.telegram_bot import TelegramBot
-from model.config import Config
-from dotenv import load_dotenv
 import threading
 import uvicorn
 from typing import Any, Dict, List
 import logging
+from core.config import settings
 
 from utils.get_from_env import get_from_env_lang
 from utils.message_processing import MessageProcessing
@@ -19,8 +19,9 @@ logger = logging.getLogger(__name__)
 # Shared event to signal shutdown
 shutdown_event = threading.Event()
 
-def create_app(bot: TelegramBot) -> FastAPI:
+def create_app(bot_manager: TelegramBotManager) -> FastAPI:
     app = FastAPI()
+    bot = bot_manager.bot
 
     @app.post("/messages")
     async def send_message(request: MessageRequest) -> Dict[str, Any]:
@@ -54,36 +55,31 @@ def create_app(bot: TelegramBot) -> FastAPI:
 
     return app
 
-def start_bot(bot: TelegramBot) -> None:
+def start_bot(bot_manager: TelegramBotManager) -> None:
     try:
-        bot.start()
+        bot_manager.start()
     except Exception as e:
         print(f"Bot error: {e}")
         shutdown_event.set()
 
 def run_server(app: FastAPI) -> None:
     try:
-        uvicorn.run(app, host=os.getenv('TELEGRAM_BOT_SERVICE_HOST'), port=os.getenv('TELEGRAM_BOT_SERVICE_PORT'))
+        uvicorn.run(app, host=settings.TELEGRAM_BOT_SERVICE_HOST, port=settings.TELEGRAM_BOT_SERVICE_PORT)
     except Exception as e:
         print(f"Server error: {e}")
         shutdown_event.set()
 
 def main() -> None:
-    # Load environment variables
-    load_dotenv(override=True)
-
-    # Validate required configuration
-    Config.validate_envs()
 
     # Initialize the Telegram bot
-    bot = TelegramBot()
+    bot_manager = TelegramBotManager()
 
     # Start the bot in a separate thread
-    bot_thread = threading.Thread(target=start_bot, args=(bot,), daemon=True)
+    bot_thread = threading.Thread(target=start_bot, args=(bot_manager,), daemon=True)
     bot_thread.start()
 
     # Create the FastAPI application
-    app = create_app(bot)
+    app = create_app(bot_manager)
 
     # Start the server in a separate thread
     server_thread = threading.Thread(target=run_server, args=(app,), daemon=True)
