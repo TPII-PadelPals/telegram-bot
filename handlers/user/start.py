@@ -1,4 +1,4 @@
-from telebot import TeleBot
+from model.telegram_bot import TelegramBot
 from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton, Message, CallbackQuery
 from services.user_service import UserService
 import time
@@ -7,7 +7,7 @@ def filter_fn(call: CallbackQuery):
     return call.data.startswith("start")
 
 
-def handle_start(message: Message, bot: TeleBot):
+def handle_start(message: Message, bot: TelegramBot):
     chat_id = message.chat.id
     service = UserService()
     result = service.register_user(chat_id)
@@ -25,7 +25,7 @@ def handle_start(message: Message, bot: TeleBot):
                 "Ha ocurrido un error. Por favor, intenta de nuevo más tarde.")
 
 
-def ask_login_method(message: Message, bot: TeleBot):
+def ask_login_method(message: Message, bot: TelegramBot):
     markup = InlineKeyboardMarkup(row_width=1)
     markup.add(
         InlineKeyboardButton(
@@ -40,7 +40,7 @@ def ask_login_method(message: Message, bot: TeleBot):
         reply_markup=markup)
 
 
-def handle_callback_query(call: CallbackQuery, bot: TeleBot):
+def handle_callback_query(call: CallbackQuery, bot: TelegramBot):
     chat_id = call.message.chat.id
     service = UserService()
     if call.data == "start_google":
