@@ -4,7 +4,6 @@ from telebot.types import Message
 from utils.get_from_env import get_from_env_api, get_from_env_lang
 from utils.survey_generator import SurveyGenerator
 
-INFO_FOR_GET_SURVEY_TO_PLAYER = 2
 INFO_FOR_SET_SURVEY_TO_PLAYER = 3
 POSITION_RATING = 2
 POSITION_OTHER_PLAYER = 1
@@ -25,14 +24,7 @@ def handle_survey_to_player(message: Message, bot: TeleBot, get_api=get_from_env
         return
     info = text.split(" ")
     n_info = len(info)
-    if n_info == INFO_FOR_GET_SURVEY_TO_PLAYER:
-        other_player = info[POSITION_OTHER_PLAYER]
-        question = language["QUESTION_SURVEY_PLAYER"] + QUESTION_SEPARATOR + other_player
-        survey = SurveyGenerator([question], [ANSWER_TO_QUESTION_RATING])
-        # EL ID de telegram esta en message.from_user.id
-        survey.send_survey(bot, message.from_user.id)
-        # TODO conectar la respuesta del survey generator
-    elif n_info == INFO_FOR_SET_SURVEY_TO_PLAYER:
+    if n_info == INFO_FOR_SET_SURVEY_TO_PLAYER:
         str_rating = info[POSITION_RATING]
         if not str_rating.isdigit():
             bot.reply_to(message, language["MESSAGE_INVALID_VALUE"])
@@ -45,7 +37,7 @@ def handle_survey_to_player(message: Message, bot: TeleBot, get_api=get_from_env
         id_telegram = message.from_user.username if message.from_user.username is not None else DEFAULT_PLAYER
         respond = api_conection.put_survey_to_player(id_telegram, other_player, rating)
         if respond["result"]:
-            message_to_user = language["ANSWER_SURVEY_PLAYER"] + respond["message"]
+            message_to_user = language["ANSWER_SURVEY_PLAYER"] + str(respond["message"])
             bot.reply_to(message, message_to_user)
     else:
         bot.reply_to(message, language["MESSAGE_HELP_SURVEY_PLAYER"])

@@ -1,20 +1,23 @@
 from telebot import TeleBot
 from telebot.types import Message
 
+from utils.survey_generator import SurveyGenerator
+
+
 def handle_survey_test(message: Message, bot: TeleBot):
-    # print(message)
-    # Pregunta de la encuesta
-    question = "¿Cuál es tu lenguaje de programación favorito?"
+    list_survey_info = message.text.split(" ")
+    if len(list_survey_info) >= 4:
+        # Pregunta de la encuesta
+        question = list_survey_info[1]
 
-    # Opciones de respuesta
-    options = ["Python", "JavaScript", "C++", "Otros"]
+        # Opciones de respuesta
+        options = list_survey_info[2:]
+    else:
+        # Pregunta de la encuesta
+        question = "¿Cuál es tu lenguaje de programación favorito?"
 
+        # Opciones de respuesta
+        options = ["Python", "JavaScript", "C++", "Otros"]
+    survey = SurveyGenerator([question], [options])
     # Enviar encuesta al chat
-    bot.send_poll(
-        chat_id=message.chat.id,
-        question=question,
-        options=options,
-        allows_multiple_answers=True,
-        is_anonymous=False  # Encuesta no anónima
-    )
-    # bot.reply_to(message, str(message))
+    survey.send_survey(bot, message.chat.id, False)
