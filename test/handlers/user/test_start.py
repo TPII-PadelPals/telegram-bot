@@ -5,9 +5,6 @@ from handlers.user.start import handle_start, handle_callback_query
 from telebot.types import CallbackQuery, Message
 from requests.exceptions import ConnectionError
 
-# from utils.get_from_env import get_from_env_lang
-# language = get_from_env_lang()
-
 
 class TestHandleStart(unittest.TestCase):
 
