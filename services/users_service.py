@@ -2,7 +2,7 @@ from .base_service import BaseService
 from model.config import Config
 
 
-class UserService(BaseService):
+class UsersService(BaseService):
     def __init__(self):
         """Set the base URL for the service."""
         local_server = ["localhost", "127.0.0.1"]

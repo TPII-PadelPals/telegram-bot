@@ -1,7 +1,7 @@
 from .base_service import BaseService
 
 
-class UserServiceBackend(BaseService):
+class UsersServiceBackend(BaseService):
 
     def get_user_info(self, chat_id):
         """Get the information of a user with the given chat ID."""

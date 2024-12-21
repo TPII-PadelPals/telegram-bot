@@ -22,7 +22,7 @@ class TestHandleStart(unittest.TestCase):
         self.call.message.message_id = 67890
         self.call.message.chat.username = "test_user"
 
-    def test_start_with_user_service_disconnected_replies_error(self):
+    def test_start_with_users_service_disconnected_replies_error(self):
         users_service_mock = MagicMock()
         users_service_mock.get_user_info = MagicMock(return_value=None)
 

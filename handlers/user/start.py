@@ -2,16 +2,16 @@ import time
 from typing import Callable
 from telebot import TeleBot
 from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton, Message, CallbackQuery
-from services.user_service import UserService
+from services.users_service import UsersService
 
 
 def filter_fn(call: CallbackQuery):
     return call.data.startswith("start")
 
 
-def handle_start(message: Message, bot: TeleBot, user_service: UserService = UserService()):
+def handle_start(message: Message, bot: TeleBot, users_service: UsersService = UsersService()):
     chat_id = message.chat.id
-    result = user_service.get_user_info(chat_id)
+    result = users_service.get_user_info(chat_id)
     if result:
         users_count = result["count"]
         if users_count == 0:
@@ -45,11 +45,11 @@ def ask_login_method(message: Message, bot: TeleBot):
 
 def handle_callback_query(call: CallbackQuery,
                           bot: TeleBot,
-                          user_service: UserService = UserService(),
+                          users_service: UsersService = UsersService(),
                           fn_sleep: Callable[[float], None] = time.sleep):
     chat_id = call.message.chat.id
     if call.data == "start_google":
-        auth_url = user_service.generate_google_auth_url(chat_id)
+        auth_url = users_service.generate_google_auth_url(chat_id)
         markup = InlineKeyboardMarkup()
         markup.add(
             InlineKeyboardButton(
