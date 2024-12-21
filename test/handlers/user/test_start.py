@@ -32,6 +32,21 @@ class TestHandleStart(unittest.TestCase):
         self.bot.reply_to.assert_called_once_with(
             self.message, "Ha ocurrido un error. Por favor, intenta de nuevo más tarde.")
 
+    def test_start_with_user_already_registered_replies_welcome(self):
+        user = {"name": "Name Surname"}
+        users = {
+            "data": [user],
+            "count": 1
+        }
+
+        users_service_mock = MagicMock()
+        users_service_mock.get_user_info = MagicMock(return_value=users)
+
+        handle_start(self.message, self.bot, users_service_mock)
+
+        self.bot.reply_to.assert_called_once_with(
+            self.message, f"Bienvenido de nuevo, {user['name']}!")
+
 
 if __name__ == '__main__':
     unittest.main()
