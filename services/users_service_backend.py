@@ -2,6 +2,9 @@ from .base_service import BaseService
 
 
 class UsersServiceBackend(BaseService):
+    def register_user(self, chat_id):
+        """Register a user with the given chat ID."""
+        return self.post("/users", json={'chat_id': str(chat_id)})
 
     def get_user_info(self, chat_id):
         """Get the information of a user with the given chat ID."""
