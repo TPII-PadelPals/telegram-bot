@@ -42,11 +42,11 @@ def ask_login_method(message: Message, bot: TeleBot):
         reply_markup=markup)
 
 
-def handle_callback_query(call: CallbackQuery, bot: TeleBot):
+def handle_callback_query(call: CallbackQuery, bot: TeleBot, user_service: UserService = UserService()):
     chat_id = call.message.chat.id
-    service = UserService()
     if call.data == "start_google":
-        auth_url = service.generate_google_auth_url(chat_id)
+        print("zarlanga")
+        auth_url = user_service.generate_google_auth_url(chat_id)
         markup = InlineKeyboardMarkup()
         markup.add(
             InlineKeyboardButton(

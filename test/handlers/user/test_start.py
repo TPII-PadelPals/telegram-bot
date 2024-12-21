@@ -2,9 +2,7 @@ import unittest
 from unittest.mock import MagicMock
 from telebot.types import CallbackQuery, Message
 from utils.get_from_env import get_from_env_lang
-# , ask_login_method, handle_callback_query
-from handlers.user.start import handle_start
-from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton, Message, CallbackQuery
+from handlers.user.start import handle_start, handle_callback_query
 language = get_from_env_lang()
 
 
@@ -61,6 +59,17 @@ class TestHandleStart(unittest.TestCase):
 
         assert self.bot.reply_to.call_args.args[
             1] == "Bienvenido a PaddlePals! Por favor seleccione un método de registro:"
+
+    def test_handle_callback_query_start_user_pass_replies_error(self):
+        self.call.data = "start_user_pass"
+        users_service_mock = MagicMock()
+
+        handle_callback_query(self.call, self.bot, users_service_mock)
+
+        self.bot.reply_to.assert_called_once_with(
+            self.call.message,
+            "Esta opción no esta disponible actualmente. Por favor, intenta de nuevo más tarde."
+        )
 
 
 if __name__ == '__main__':
