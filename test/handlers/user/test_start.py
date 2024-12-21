@@ -71,6 +71,31 @@ class TestHandleStart(unittest.TestCase):
             "Esta opción no esta disponible actualmente. Por favor, intenta de nuevo más tarde."
         )
 
+    def test_handle_callback_query_start_google_replies_registration(self):
+        self.call.data = "start_google"
+        users_service_mock = MagicMock()
+        users_service_mock.generate_google_auth_url = MagicMock(
+            side_effect=lambda arg: "some_uri" if arg == self.call.message.chat.id else None
+        )
+        sleep_mock = MagicMock()
+
+        handle_callback_query(self.call, self.bot,
+                              users_service_mock, sleep_mock)
+
+        assert self.bot.edit_message_text.call_args.args[
+            0] == "¡Bienvenido! Por favor, regístrate con Google para continuar."
+
+        assert self.bot.edit_message_text.call_args.kwargs[
+            "chat_id"] == self.call.message.chat.id
+
+        assert self.bot.edit_message_text.call_args.kwargs[
+            "message_id"] == self.call.message.message_id
+
+        assert self.bot.send_message.called_once_with(
+            self.call.message,
+            "Esta opción no esta disponible actualmente. Por favor, intenta de nuevo más tarde."
+        )
+
 
 if __name__ == '__main__':
     unittest.main()

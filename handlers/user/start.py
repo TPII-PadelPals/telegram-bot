@@ -1,7 +1,8 @@
+import time
+from typing import Callable
 from telebot import TeleBot
 from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton, Message, CallbackQuery
 from services.user_service import UserService
-import time
 
 
 def filter_fn(call: CallbackQuery):
@@ -42,10 +43,12 @@ def ask_login_method(message: Message, bot: TeleBot):
         reply_markup=markup)
 
 
-def handle_callback_query(call: CallbackQuery, bot: TeleBot, user_service: UserService = UserService()):
+def handle_callback_query(call: CallbackQuery,
+                          bot: TeleBot,
+                          user_service: UserService = UserService(),
+                          fn_sleep: Callable[[float], None] = time.sleep):
     chat_id = call.message.chat.id
     if call.data == "start_google":
-        print("zarlanga")
         auth_url = user_service.generate_google_auth_url(chat_id)
         markup = InlineKeyboardMarkup()
         markup.add(
@@ -57,7 +60,7 @@ def handle_callback_query(call: CallbackQuery, bot: TeleBot, user_service: UserS
             chat_id=chat_id,
             message_id=call.message.message_id,
             reply_markup=markup)
-        time.sleep(8)
+        fn_sleep(8)
         bot.send_message(
             chat_id,
             "Te has registrado correctamente.\nPara encontrar matches, por favor, configura tu ubicación y disponibilidad.")
