@@ -1,8 +1,11 @@
 import unittest
 from unittest.mock import MagicMock
-from telebot.types import CallbackQuery, Message
-from utils.get_from_env import get_from_env_lang
+
 from handlers.user.start import handle_start, handle_callback_query
+from telebot.types import CallbackQuery, Message
+from requests.exceptions import ConnectionError
+
+from utils.get_from_env import get_from_env_lang
 language = get_from_env_lang()
 
 
@@ -24,7 +27,8 @@ class TestHandleStart(unittest.TestCase):
 
     def test_start_with_users_service_disconnected_replies_error(self):
         users_service_mock = MagicMock()
-        users_service_mock.get_user_info = MagicMock(return_value=None)
+        users_service_mock.get_user_info = MagicMock(
+            side_effect=ConnectionError())
 
         handle_start(self.message, self.bot, users_service_mock)
 

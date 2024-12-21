@@ -3,6 +3,7 @@ from typing import Callable
 from telebot import TeleBot
 from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton, Message, CallbackQuery
 from services.users_service import UsersService
+from requests.exceptions import ConnectionError
 
 
 def filter_fn(call: CallbackQuery):
@@ -11,8 +12,8 @@ def filter_fn(call: CallbackQuery):
 
 def handle_start(message: Message, bot: TeleBot, users_service: UsersService = UsersService()):
     chat_id = message.chat.id
-    result = users_service.get_user_info(chat_id)
-    if result:
+    try:
+        result = users_service.get_user_info(chat_id)
         users_count = result["count"]
         if users_count == 0:
             ask_login_method(message, bot)
@@ -23,9 +24,10 @@ def handle_start(message: Message, bot: TeleBot, users_service: UsersService = U
             message,
             f"Bienvenido de nuevo, {user['name']}!")
         return
-    bot.reply_to(
-        message,
-        "Ha ocurrido un error. Por favor, intenta de nuevo más tarde.")
+    except ConnectionError:
+        bot.reply_to(
+            message,
+            "Ha ocurrido un error. Por favor, intenta de nuevo más tarde.")
 
 
 def ask_login_method(message: Message, bot: TeleBot):
