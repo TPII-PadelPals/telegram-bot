@@ -1,5 +1,5 @@
 import requests
-from model.config import Config
+from core.config import settings
 import logging
 
 logging.basicConfig(level=logging.INFO)
@@ -10,8 +10,8 @@ class BaseService:
     def __init__(self):
         """Set the base URL for the service."""
         local_server = ["localhost", "127.0.0.1"]
-        host = f"{Config.SERVICE_HOST}:{Config.SERVICE_PORT}"
-        self.base_url = f"http://{host}" if Config.SERVICE_HOST in local_server else f"https://{host}"
+        host = f"{settings.GATEWAY_HOST}:{settings.GATEWAY_PORT}"
+        self.base_url = f"http://{host}" if settings.GATEWAY_HOST in local_server else f"https://{host}"
         self.x_api_key_header = {"x-api-key": ""}
 
     def generate_url(self, endpoint):

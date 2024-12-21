@@ -34,7 +34,6 @@
   "PLAYER": "Jugador",
   "COURT": "Cancha",
   "COURT_ID": "ID Cancha",
-  "DATE": "Fecha",
   "DATE_FMT": "%d/%m/%Y",
   "TIME": "Horario",
   "TIME_FMT": "%H:%M",

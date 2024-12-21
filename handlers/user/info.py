@@ -1,10 +1,10 @@
-from telebot import TeleBot
+from model.telegram_bot import TelegramBot
 from services.users_service_backend import UsersServiceBackend
 from telebot.types import Message
 import requests
 
 
-def handle_info(message: Message, bot: TeleBot):
+def handle_info(message: Message, bot: TelegramBot):
     chat_id = message.chat.id
     try:
         service = UsersServiceBackend()

@@ -1,6 +1,6 @@
 import time
 from typing import Callable
-from telebot import TeleBot
+from model.telegram_bot import TelegramBot
 from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton, Message, CallbackQuery
 from services.users_service import UsersService
 from requests.exceptions import ConnectionError
@@ -10,7 +10,7 @@ def filter_fn(call: CallbackQuery):
     return call.data.startswith("start")
 
 
-def handle_start(message: Message, bot: TeleBot, users_service: UsersService = UsersService()):
+def handle_start(message: Message, bot: TelegramBot, users_service: UsersService = UsersService()):
     chat_id = message.chat.id
     try:
         result = users_service.get_user_info(chat_id)
@@ -30,7 +30,7 @@ def handle_start(message: Message, bot: TeleBot, users_service: UsersService = U
             "Ha ocurrido un error. Por favor, intenta de nuevo más tarde.")
 
 
-def ask_login_method(message: Message, bot: TeleBot):
+def ask_login_method(message: Message, bot: TelegramBot):
     markup = InlineKeyboardMarkup(row_width=1)
     markup.add(
         InlineKeyboardButton(
@@ -46,7 +46,7 @@ def ask_login_method(message: Message, bot: TeleBot):
 
 
 def handle_callback_query(call: CallbackQuery,
-                          bot: TeleBot,
+                          bot: TelegramBot,
                           users_service: UsersService = UsersService(),
                           fn_sleep: Callable[[float], None] = time.sleep):
     chat_id = call.message.chat.id
