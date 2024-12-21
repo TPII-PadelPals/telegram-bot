@@ -4,6 +4,7 @@ from telebot.types import CallbackQuery, Message
 from utils.get_from_env import get_from_env_lang
 # , ask_login_method, handle_callback_query
 from handlers.user.start import handle_start
+from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton, Message, CallbackQuery
 language = get_from_env_lang()
 
 
@@ -46,6 +47,20 @@ class TestHandleStart(unittest.TestCase):
 
         self.bot.reply_to.assert_called_once_with(
             self.message, f"Bienvenido de nuevo, {user['name']}!")
+
+    def test_start_with_user_not_registered_asks_login(self):
+        users = {
+            "data": [],
+            "count": 0
+        }
+
+        users_service_mock = MagicMock()
+        users_service_mock.get_user_info = MagicMock(return_value=users)
+
+        handle_start(self.message, self.bot, users_service_mock)
+
+        assert self.bot.reply_to.call_args.args[
+            1] == "Bienvenido a PaddlePals! Por favor seleccione un método de registro:"
 
 
 if __name__ == '__main__':
