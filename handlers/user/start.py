@@ -8,10 +8,9 @@ def filter_fn(call: CallbackQuery):
     return call.data.startswith("start")
 
 
-def handle_start(message: Message, bot: TeleBot):
+def handle_start(message: Message, bot: TeleBot, user_service: UserService = UserService()):
     chat_id = message.chat.id
-    service = UserService()
-    result = service.get_user_info(chat_id)
+    result = user_service.get_user_info(chat_id)
     if result:
         users_count = result["count"]
         if users_count == 0:
