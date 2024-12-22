@@ -30,7 +30,6 @@ def create_app(bot_manager: TelegramBotManager) -> FastAPI:
             logger.info(f"Sending message to chat_id {request.chat_id}: {request.message}")
             process_request = MessageProcessing().message_processing(bot.language_manager, request)
             bot.bot.send_message(process_request["chat_id"], process_request["message"])
-            # bot.bot.send_message(request.chat_id, request.message)
             return {"status": "success"}
         except Exception as e:
             logger.error(f"Error sending single message: {e}")
@@ -46,7 +45,6 @@ def create_app(bot_manager: TelegramBotManager) -> FastAPI:
                 logger.info(f"Sending message to chat_id {req.chat_id}: {req.message}")
                 process_request = MessageProcessing().message_processing(bot.language_manager, req)
                 bot.bot.send_message(process_request["chat_id"], process_request["message"])
-                # bot.bot.send_message(req.chat_id, req.message)
             return {"status": "success"}
         except Exception as e:
             logger.error(f"Error sending bulk messages: {e}")
