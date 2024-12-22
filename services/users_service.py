@@ -16,4 +16,4 @@ class UsersService(BaseService):
 
     def generate_google_auth_url(self, chat_id):
         """Generate a URL for Google authentication."""
-        return self.generate_url(f"/google/auth?chat_id={chat_id}")
+        return self.generate_url(f"/google/auth?telegram_id={chat_id}")
