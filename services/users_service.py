@@ -11,9 +11,11 @@ class UsersService(BaseService):
         self.x_api_key_header = {"x-api-key": settings.USERS_SERVICE_API_KEY}
 
     def get_user_info(self, chat_id):
-        """Get the information of a user with the given chat ID."""
+        """Get the information of a user given users's chat ID 
+        which corresponds to the telegram ID in the UsersService"""
         return self.get("/users/", params={"telegram_id": chat_id})
 
     def generate_google_auth_url(self, chat_id):
-        """Generate a URL for Google authentication."""
+        """Generate a URL for Google authentication given user's chat ID 
+        which corresponds to the telegram ID in the UsersService"""
         return self.generate_url(f"/google/auth?telegram_id={chat_id}")
