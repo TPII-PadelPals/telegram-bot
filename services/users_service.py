@@ -5,9 +5,9 @@ from core.config import settings
 class UsersService(BaseService):
     def __init__(self):
         """Set the base URL for the service."""
-        local_server = ["localhost", "127.0.0.1"]
-        host = f"{settings.USERS_SERVICE_HOST}:{settings.USERS_SERVICE_PORT}/api/v1"
-        self.base_url = f"http://{host}" if settings.USERS_SERVICE_HOST in local_server else f"https://{host}"
+        self._set_base_url(settings.USERS_SERVICE_HOST,
+                           settings.USERS_SERVICE_PORT)
+        self.base_url += "/api/v1"
         self.x_api_key_header = {"x-api-key": settings.USERS_SERVICE_API_KEY}
 
     def get_user_info(self, chat_id):

@@ -9,10 +9,18 @@ logger = logging.getLogger(__name__)
 class BaseService:
     def __init__(self):
         """Set the base URL for the service."""
-        local_server = ["localhost", "127.0.0.1"]
-        host = f"{settings.GATEWAY_HOST}:{settings.GATEWAY_PORT}"
-        self.base_url = f"http://{host}" if settings.GATEWAY_HOST in local_server else f"https://{host}"
+        self._set_base_url(settings.GATEWAY_HOST, settings.GATEWAY_PORT)
         self.x_api_key_header = {"x-api-key": ""}
+
+    def _set_base_url(self, host: str = "localhost", port: int | None = None) -> None:
+        """Set the base URL for the service."""
+        local_server = ["localhost", "127.0.0.1"]
+        service_url = f"{host}:{port}" if port is not None else f"{host}"
+        self.base_url = (
+            f"http://{service_url}"
+            if host in local_server
+            else f"https://{service_url}"
+        )
 
     def generate_url(self, endpoint):
         """Generate a full URL from an endpoint."""
@@ -54,5 +62,5 @@ class BaseService:
         try:
             response.raise_for_status()
             return response.json()
-        except requests.exceptions.HTTPError as e:
+        except requests.exceptions.HTTPError as _:
             return None
