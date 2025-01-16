@@ -6,7 +6,7 @@ from services.users_service import UsersService
 from requests.exceptions import ConnectionError
 
 
-LOGIN_CALLBACK_SLEEP = 8
+LOGIN_CALLBACK_TIME = 8
 
 
 def filter_fn(call: CallbackQuery):
@@ -65,7 +65,7 @@ def handle_callback_query(call: CallbackQuery,
             chat_id=chat_id,
             message_id=call.message.message_id,
             reply_markup=markup)
-        fn_sleep(LOGIN_CALLBACK_SLEEP)
+        fn_sleep(LOGIN_CALLBACK_TIME)
         bot.send_message(
             chat_id,
             "Te has registrado correctamente.\nPara encontrar matches, por favor, configura tu ubicación y disponibilidad.")
