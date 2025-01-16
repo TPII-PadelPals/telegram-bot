@@ -19,5 +19,10 @@ class Settings(BaseSettings):
     GATEWAY_HOST: str
     GATEWAY_PORT: int
 
+    # Users service settings
+    USERS_SERVICE_HOST: str
+    USERS_SERVICE_PORT: int
+    USERS_SERVICE_API_KEY: str
+
 
 settings = Settings()

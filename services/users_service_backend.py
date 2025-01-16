@@ -1,8 +1,7 @@
 from .base_service import BaseService
 
 
-class UserService(BaseService):
-
+class UsersServiceBackend(BaseService):
     def register_user(self, chat_id):
         """Register a user with the given chat ID."""
         return self.post("/users", json={'chat_id': str(chat_id)})
