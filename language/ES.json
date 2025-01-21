@@ -153,7 +153,7 @@
   "MESSAGE_RESPOND_TO_MATCHMAKING": "Estado de emparejamiento: ",
   "MESSAGE_SURVEY_PLAYER_ALLOWED": "Ahora puede realizar una encuesta para puntuar a los jugadores con quien participo, para hacerlo \\encuesta_jugador <Nombre del jugador> <puntaje de 1 a 5>.\n Los siguientes jugadores ahora pueden ser punteados: ",
   "QUESTION_SURVEY_PLAYER": "Puntua del 1 al 5 que te parecio este jugador ",
-  "RATING_ERROR": "El valor debe estar entre el 1 y 5.",
+  "RATING_OUT_OF_RANGE_ERROR": "El valor debe estar entre el 1 y 5.",
   "ANSWER_SURVEY_PLAYER": "Se ha registrado su reseña: ",
   "MESSAGE_HELP_SURVEY_PLAYER": "Permite a traves de una encuesta evaluar a algun otro jugador con el que hayas jugado antes.\nEjemplo \\encuesta_jugador <Nombre del jugador> o bien \\encuesta_jugador <Nombre del jugador> <puntaje de 1 a 5>."
 }

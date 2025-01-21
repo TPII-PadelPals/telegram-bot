@@ -21,7 +21,7 @@ class ValidateSurveyPlayer(Validation):
                 return False, language_manager.get("MESSAGE_INVALID_VALUE")
             rating = int(str_rating)
             if rating < self.MIN_RATING or rating > self.MAX_RATING:
-                return False, language_manager.get("RATING_ERROR")
+                return False, language_manager.get("RATING_OUT_OF_RANGE_ERROR")
             return True, None
         # insufficient number of parameters
         return False, language_manager.get("MESSAGE_HELP_SURVEY_PLAYER")
