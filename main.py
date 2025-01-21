@@ -27,8 +27,8 @@ def create_app(bot_manager: TelegramBotManager) -> FastAPI:
         try:
             if request.chat_id < 1000:
                 return {"status": "success"}
-            logger.info(f"Sending message to chat_id {request.chat_id}: {request.message}")
             process_request = MessageProcessing().message_processing(bot.language_manager, request)
+            logger.info(f"Sending message to chat_id {process_request["chat_id"]}: {process_request["message"]}")
             bot.bot.send_message(process_request["chat_id"], process_request["message"])
             return {"status": "success"}
         except Exception as e:
@@ -42,8 +42,8 @@ def create_app(bot_manager: TelegramBotManager) -> FastAPI:
             for req in requests:
                 if req.chat_id < 1000:
                     continue
-                logger.info(f"Sending message to chat_id {req.chat_id}: {req.message}")
                 process_request = MessageProcessing().message_processing(bot.language_manager, req)
+                logger.info(f"Sending message to chat_id {process_request["chat_id"]}: {process_request["message"]}")
                 bot.bot.send_message(process_request["chat_id"], process_request["message"])
             return {"status": "success"}
         except Exception as e:
