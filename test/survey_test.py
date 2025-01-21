@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import MagicMock
 
-from utils.survey_generator import SurveyGenerator
+from model.player_survey.survey_generator import SurveyGenerator
 
 
 class TestSurveyGenerator(unittest.TestCase):
@@ -16,7 +16,7 @@ class TestSurveyGenerator(unittest.TestCase):
                 allows_multiple_answers,
                 is_anonymous: None, return_value=None)
 
-    def test_new_survey_whit_data(self):
+    def test_new_survey_with_data(self):
         try:
             SurveyGenerator(["quest 1"], [["answer 1", "answer 2"]])
         except ValueError:

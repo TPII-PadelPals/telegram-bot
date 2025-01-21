@@ -1,8 +1,7 @@
 from telebot import TeleBot
 from telebot.types import Message
 
-from handlers.player.responder_al_emparejamiento import AMOUNT_OF_INFORMATION_EXPECTED
-from utils.survey_generator import SurveyGenerator
+from model.player_survey.survey_generator import SurveyGenerator
 
 
 AMOUNT_OF_INFORMATION_MIN = 4
