@@ -4,10 +4,10 @@ class SurveyGenerator:
     def __init__(self, questions: list[str], answers: list[list[str]]):
         # verificacion de datos
         if len(questions) != len(answers):
-            raise ValueError("Questions and answers must have same length")
+            raise ValueError("Questions and answers must have same length.")
         for answer in answers:
             if len(answer) < self.MINIMAL_ANSWER_FOR_QUESTION:
-                raise ValueError("The answer must have more than one element")
+                raise ValueError("The answer must have more than one element.")
         # pregunta que se le dara al usuario
         self.questions: list[str] = questions
         # respuestas posibles para cada pregunta

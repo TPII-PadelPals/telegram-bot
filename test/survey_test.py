@@ -26,8 +26,8 @@ class TestSurveyGenerator(unittest.TestCase):
         try:
             SurveyGenerator(["quest 1", "quest 2"], [["answer 1", "answer 2"]])
             raise AssertionError
-        except ValueError:
-            assert True
+        except ValueError as e:
+            assert str(e) == "Questions and answers must have same length."
         except Exception:
             raise AssertionError
 
@@ -35,8 +35,8 @@ class TestSurveyGenerator(unittest.TestCase):
         try:
             SurveyGenerator(["quest 1"], [["answer 1", "answer 2"], ["answer 1", "answer 2"]])
             raise AssertionError
-        except ValueError:
-            assert True
+        except ValueError as e:
+            assert str(e) == "Questions and answers must have same length."
         except Exception:
             raise AssertionError
 
@@ -44,8 +44,8 @@ class TestSurveyGenerator(unittest.TestCase):
         try:
             SurveyGenerator(["quest 1"], [[]])
             raise AssertionError
-        except ValueError:
-            assert True
+        except ValueError as e:
+            assert str(e) == "The answer must have more than one element."
         except Exception:
             raise AssertionError
 
@@ -53,8 +53,8 @@ class TestSurveyGenerator(unittest.TestCase):
         try:
             SurveyGenerator(["quest 1"], [["answer 1"]])
             raise AssertionError
-        except ValueError:
-            assert True
+        except ValueError as e:
+            assert str(e) == "The answer must have more than one element."
         except Exception:
             raise AssertionError
 
