@@ -1,12 +1,15 @@
 from telebot import TeleBot
 from telebot.types import Message
 
+from handlers.player.responder_al_emparejamiento import AMOUNT_OF_INFORMATION_EXPECTED
 from utils.survey_generator import SurveyGenerator
 
 
+AMOUNT_OF_INFORMATION_MIN = 4
+
 def handle_survey_test(message: Message, bot: TeleBot):
     list_survey_info = message.text.split(" ")
-    if len(list_survey_info) >= 4:
+    if len(list_survey_info) >= AMOUNT_OF_INFORMATION_MIN:
         # Pregunta de la encuesta
         question = list_survey_info[1]
 
