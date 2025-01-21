@@ -27,8 +27,9 @@ class TestTelegramBot(unittest.TestCase):
             lambda x: None, return_value=[])
         self.api_mock.put_strokes = unittest.mock.create_autospec(
             lambda x, y: None, return_value="")
+        self.result_of_survey_player = {"result": True, "message": "3"}
         self.api_mock.put_survey_to_player = unittest.mock.create_autospec(
-            lambda id_telegram, other_player, rating: None, return_value={"result": True, "message": "3"})
+            lambda id_telegram, other_player, rating: None, return_value=self.result_of_survey_player)
         self.api_mock.get_reserves = unittest.mock.create_autospec(lambda x: None, return_value=[])
         self.api_mock.respond_to_matchmaking = unittest.mock.create_autospec(lambda id_telegram, info, accept: None, return_value="")
 
@@ -382,10 +383,11 @@ class TestTelegramBot(unittest.TestCase):
             "ANSWER_SURVEY_PLAYER3"
         )
         # la respuesta de la API esta hardcodeada a 3
+        expected_respond = int(self.result_of_survey_player["message"])
         self.api_mock.put_survey_to_player.assert_called_once_with(
             "zzz_jugador",
             "otro_jugador",
-            3
+            expected_respond
         )
 
 
