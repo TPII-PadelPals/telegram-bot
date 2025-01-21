@@ -1,8 +1,6 @@
-import os
 import unittest
 from unittest.mock import patch, MagicMock
-from unittest.mock import Mock, patch
-from telebot.types import Message
+from unittest.mock import patch
 
 from handlers.player import handle_respond_to_matchmaking_accept, handle_respond_to_matchmaking_reject, \
     handle_survey_to_player
@@ -10,7 +8,6 @@ from handlers.player.configurar_disponibilidad import process_time_step
 from handlers.player.configurar_zona import handle_configure_zone, KM_STEERING_SEPARATOR
 from handlers.player.configurar_golpes import handle_configure_strokes
 from handlers.player.ver_reservas import handle_see_reserves
-from model.language_manager import LanguageManager
 
 
 class TestTelegramBot(unittest.TestCase):

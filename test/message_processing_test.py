@@ -11,7 +11,7 @@ class TestMessageProcessing(unittest.TestCase):
         self.request = MagicMock()
         self.request.chat_id = "123456"
 
-    def test_message_processing_whit_out_order(self):
+    def test_message_processing_with_out_order(self):
         message = "HOLA MUNDO"
         self.request.message = message
         result = self.message_processing.message_processing(self.language, self.request)
