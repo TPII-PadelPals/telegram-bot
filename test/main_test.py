@@ -374,20 +374,22 @@ class TestTelegramBot(unittest.TestCase):
 
     def test_handle_survey_to_player_other_player_and_rating_valid(self):
         self.bot.language_manager.get.return_value = "ANSWER_SURVEY_PLAYER"
+        expected_respond_rating = int(self.result_of_survey_player["message"])
+        jugador = "zzz_jugador"
+        otro_jugador = 'otro_jugador'
         message = MagicMock()
-        message.text = '/encuesta_jugador otro_jugador 3'
-        message.from_user.username = "zzz_jugador"
+        message.text = '/encuesta_jugador ' + otro_jugador + ' ' + self.result_of_survey_player["message"]
+        message.from_user.username = jugador
         handle_survey_to_player(message, self.bot, lambda: self.api_mock)
         self.bot.reply_to.assert_called_once_with(
             message,
             "ANSWER_SURVEY_PLAYER3"
         )
         # la respuesta de la API esta hardcodeada a 3
-        expected_respond = int(self.result_of_survey_player["message"])
         self.api_mock.put_survey_to_player.assert_called_once_with(
-            "zzz_jugador",
-            "otro_jugador",
-            expected_respond
+            jugador,
+            otro_jugador,
+            expected_respond_rating
         )
 
 
