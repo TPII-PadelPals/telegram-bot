@@ -27,8 +27,8 @@ def handle_survey_to_player(message: Message, bot: TelegramBot, get_api=get_from
     str_rating = info[POSITION_RATING]
     rating = int(str_rating)
     other_player = info[POSITION_OTHER_PLAYER]
-    id_telegram = message.from_user.username if message.from_user.username is not None else DEFAULT_PLAYER
-    respond = api_conection.put_survey_to_player(id_telegram, other_player, rating)
+    username_telegram = message.from_user.username if message.from_user.username is not None else DEFAULT_PLAYER
+    respond = api_conection.put_survey_to_player(username_telegram, other_player, rating)
     if respond["result"]:
         message_to_user = language_manager.get("ANSWER_SURVEY_PLAYER") + str(respond["message"])
         bot.reply_to(message, message_to_user)
