@@ -32,4 +32,7 @@ def handle_survey_to_player(message: Message, bot: TelegramBot, get_api=get_from
     if respond["result"]:
         message_to_user = language_manager.get("ANSWER_SURVEY_PLAYER") + str(respond["message"])
         bot.reply_to(message, message_to_user)
+    else:
+        message_to_user = language_manager.get("MESSAGE_SURVEY_PLAYER_ERROR") + other_player + "."
+        bot.reply_to(message, message_to_user)
     return
