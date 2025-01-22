@@ -39,10 +39,11 @@ def create_app(bot_manager: TelegramBotManager) -> FastAPI:
     async def send_messages(requests: List[MessageRequest]) -> Dict[str, Any]:
         try:
             logger.info(f"Sending {len(requests)} bulk messages")
+            message_processing = MessageProcessing()
             for req in requests:
                 if req.chat_id < 1000:
                     continue
-                process_request = MessageProcessing().message_processing(bot.language_manager, req)
+                process_request = message_processing.message_processing(bot.language_manager, req)
                 logger.info(f"Sending message to chat_id {process_request["chat_id"]}: {process_request["message"]}")
                 bot.send_message(process_request["chat_id"], process_request["message"])
             return {"status": "success"}
