@@ -18,7 +18,7 @@ class TestMessageProcessing(unittest.TestCase):
         self.assertEqual(result["message"], message)
         self.assertEqual(result["chat_id"], "123456")
 
-    def test_message_processing_whit_survey_player_order(self):
+    def test_message_processing_with_survey_player_order(self):
         message = "survey_player#HOLA;MUNDO"
         self.request.message = message
         result = self.message_processing.message_processing(self.language, self.request)
