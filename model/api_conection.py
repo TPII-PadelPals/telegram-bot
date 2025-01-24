@@ -142,3 +142,14 @@ class ApiConection:
             return f'HTTP error occurred: {http_err}'
         except Exception as err:
             return f'An error occurred: {err}'
+
+    def put_survey_to_player(self, self_nickname, player_rated, rating: int):
+        try:
+            url = f'{self.url}//players/{self_nickname}/surveys?other_player={player_rated}&value={str(rating)}'
+            response = requests.put(url)
+            data = response.json()
+            return data
+        except requests.exceptions.HTTPError as http_err:
+            return f'HTTP error occurred: {http_err}'
+        except Exception as err:
+            return f'An error occurred: {err}'

@@ -206,6 +206,15 @@ class TestApiConection(unittest.TestCase):
         result = self.api.respond_to_matchmaking(4, info, False)
         self.assertEqual(result, "OK")
 
+    @patch('requests.put')
+    def test_put_survey_to_player(self, mock_put):
+        mock_response = Mock()
+        mock_response.status_code = 200
+        mock_response.json.return_value = {"result": True, "message": "3"}
+        mock_put.return_value = mock_response
+
+        result = self.api.put_survey_to_player("self", "other", 3)
+        self.assertEqual(result, {"result": True, "message": "3"})
 
 if __name__ == "__main__":
     unittest.main()
