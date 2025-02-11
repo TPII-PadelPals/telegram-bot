@@ -10,7 +10,8 @@ SEPARATOR_OF_STROKES = ','
 POSITION_OF_HABILITY = 2
 POSITION_OF_STROKES = 1
 MAX_VALUE_FOR_STROKE = 16
-DEFINITION_OF_HABILITY = ["beginner", "intermediate", "advanced"]
+# DEFINITION_OF_HABILITY = ["beginner", "intermediate", "advanced"]
+DEFINITION_OF_HABILITY = [1.0, 2.0, 3.0]
 DEFINITION_OF_STROKE = {
     "serve": "",
     "forehand_ground": "",
