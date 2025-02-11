@@ -1,10 +1,12 @@
 from model.telegram_bot import TelegramBot
 from telebot.types import Message, ReplyKeyboardMarkup
-from services.player_service import PlayerService
+# from services.player_service import PlayerService
+from services.player_service_backend import PlayerServiceBackEnd
 
 DEFAULT_PLAYER = 'francoMartinDiMaria'
 
-player_service = PlayerService()
+# player_service = PlayerService()
+player_service_back_end = PlayerServiceBackEnd()
 
 def handle_configure_location(message: Message, bot: TelegramBot):
     chat_id = message.chat.id
@@ -17,7 +19,7 @@ def process_location_step(message: Message, bot: TelegramBot):
     location = message.text
     nickname = message.from_user.username if message.from_user.username is not None else DEFAULT_PLAYER
 
-    response = player_service.update_location(nickname, location)
+    response = player_service_back_end.update_location(nickname, location)
     if response:
         bot.send_message(chat_id, "¡Ubicación guardada con éxito! ¿Cuántos kilómetros está dispuesto a caminar hasta una cancha de pádel?")
         markup = ReplyKeyboardMarkup(one_time_keyboard=True)
@@ -34,7 +36,7 @@ def process_radius_step(message: Message, bot: TelegramBot, location: str):
 
     parsed_radius = int(radius.replace("<", ""))
 
-    response = player_service.update_radius(nickname, location, parsed_radius)
+    response = player_service_back_end.update_radius(nickname, location, parsed_radius)
     if response:
         bot.send_message(chat_id, f"¡Radio de {radius} km guardado con éxito para la ubicación {location}!")
     else:
