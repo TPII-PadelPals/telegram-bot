@@ -57,7 +57,6 @@ def handle_configure_strokes(message: Message, bot: TelegramBot, get_api=PlayerS
     text = message.text
     api_conection = get_api()
     language_manager = bot.language_manager
-    print("EXEC ASDASD: ", language_manager)
 
     info_list = text.split()
     # validation
