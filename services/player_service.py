@@ -11,13 +11,13 @@ class PlayerService(BaseService):
         self.x_api_key_header = {"x-api-key": settings.PLAYER_SERVICE_API_KEY}
 
 
-    def update_strokes(self, player_nickname: str, strokes: dict):
+    def update_strokes(self, user_public_id_str: str, strokes: dict):
         """Update strokes to player service."""
         # /players/{user_public_id}/strokes/
         # Update Stroke
         return self.put(
-            f"/players/{player_nickname}/strokes/",
+            f"/players/{user_public_id_str}/strokes/",
             headers=self.x_api_key_header,
-            # params={"user_public_id": player_nickname},
+            # params={"user_public_id": user_public_id_str},
             json=strokes
         )

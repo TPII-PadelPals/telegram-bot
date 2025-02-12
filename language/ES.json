@@ -107,9 +107,9 @@
   "MESSAGE_HELP_STROKE": "Indicanos tu habilidad en los siguientes golpes de padel:\n1 - Servicio\n2 - Golpe de derecha en el suelo\n3 - Golpe de revez en el suelo\n4 - forehand_back_wall\n5 - backhand_back_wall\n6 - forehand_side_wall\n7 - backhand_side_wall\n8 - forehand_double_walls\n9 - backhand_double_walls\n10 - forehand_counter_wall\n11 - backhand_counter_wall\n12 - forehand_volley\n13 - backhand_volley\n14 - lob\n15 - Remate\n16 - Bandeja\n\nCon el nivel de habilidad 'principiante', 'intermedio' o 'avanzado'.\n\nEjemplo de configuracion:\n'/configurar_golpes todos principiante'\n'/configurar_golpes 1,5,16 intermedio'\n'/configurar_golpes 2,3,4,6,9,12,15 avanzado'",
   "STROKE_HABILITY": ["principiante", "intermedio", "avanzado"],
   "SENDER_POSITION_STROKE_HABILITY": {
-    "principiante": 0,
-    "intermedio": 1,
-    "avanzado": 2
+    "principiante": 1.0,
+    "intermedio": 2.0,
+    "avanzado": 3.0
   },
   "MESSAGE_INCORRECT_HABILITY": "Los valores de habilidad son: 'principiante', 'intermedio' o 'avanzado'.",
   "MESSAGE_STROKES_UPDATED": "Golpes actualizados, al nivel: ",
@@ -156,5 +156,6 @@
   "QUESTION_SURVEY_PLAYER": "Puntua del 1 al 5 que te parecio este jugador ",
   "RATING_OUT_OF_RANGE_ERROR": "El valor debe estar entre el 1 y 5.",
   "ANSWER_SURVEY_PLAYER": "Se ha registrado su reseña: ",
-  "MESSAGE_HELP_SURVEY_PLAYER": "Permite a traves de una encuesta evaluar a algun otro jugador con el que hayas jugado antes.\nEjemplo /encuesta_jugador <Nombre del jugador> o bien /encuesta_jugador <Nombre del jugador> <puntaje de 1 a 5>."
+  "MESSAGE_HELP_SURVEY_PLAYER": "Permite a traves de una encuesta evaluar a algun otro jugador con el que hayas jugado antes.\nEjemplo /encuesta_jugador <Nombre del jugador> o bien /encuesta_jugador <Nombre del jugador> <puntaje de 1 a 5>.",
+  "ERROR_RECIVE_DATA": "Error, al intentar contactar con los servicios.\nPor favor intente de nuevo mas tarde."
 }
