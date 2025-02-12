@@ -35,6 +35,8 @@ class ValidateConfigStrokes(Validation):
     POSITION_OF_HABILITY = 2
     SEPARATOR_OF_STROKES = ','
     POSITION_OF_STROKES = 1
+    MAX_STROKE_NUMBER = 16
+    MIN_STROKE_NUMBER = 1
 
 
     def validate(self, language_manager: LanguageManager) -> (bool, str|None):
@@ -46,6 +48,8 @@ class ValidateConfigStrokes(Validation):
             strokes_list_str = self.info[self.POSITION_OF_STROKES].split(self.SEPARATOR_OF_STROKES)
             for strokes in strokes_list_str:
                 if not strokes.isdigit():
+                    return False, language_manager.get("MESSAGE_INVALID_VALUE")
+                if int(strokes) > self.MAX_STROKE_NUMBER or self.MIN_STROKE_NUMBER > int(strokes):
                     return False, language_manager.get("MESSAGE_INVALID_VALUE")
             return True, None
         return False, language_manager.get("MESSAGE_HELP_STROKE")

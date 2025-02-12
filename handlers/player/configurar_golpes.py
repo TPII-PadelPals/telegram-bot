@@ -53,10 +53,11 @@ NUMBER_FOR_STROKE = {
 
 # TODO traducir NUMBER_FOR_STROKE y MESSAGE_HELP_STROKE del json
 
-def handle_configure_strokes(message: Message, bot: TelegramBot, get_api=PlayerService):
+def handle_configure_strokes(message: Message, bot: TelegramBot, get_api=PlayerService, user_service=UsersService):
     text = message.text
     api_conection = get_api()
     language_manager = bot.language_manager
+    print("EXEC ASDASD: ", language_manager)
 
     info_list = text.split()
     # validation
@@ -68,7 +69,7 @@ def handle_configure_strokes(message: Message, bot: TelegramBot, get_api=PlayerS
 
     hability = info_list[POSITION_OF_HABILITY].lower()
     id_telegram = message.from_user.id
-    user_id = _get_user_public_id(id_telegram)
+    user_id = _get_user_public_id(id_telegram, user_service)
     if user_id is None:
         bot.reply_to(message, language_manager.get("ERROR_RECIVE_DATA"))
         return
@@ -87,6 +88,7 @@ def handle_configure_strokes(message: Message, bot: TelegramBot, get_api=PlayerS
     response_to_user = _generate_message(strokes_list, hability, language_manager)
     bot.reply_to(message, response_to_user)
 
+
 def _generate_stroke_list(strokes_str: str, language_manager: LanguageManager) -> list[int]:
     if strokes_str.lower() == language_manager.get("ALL").lower():
         strokes_list = list(range(1, MAX_VALUE_FOR_STROKE + 1))
@@ -101,8 +103,8 @@ def _generate_stroke_list(strokes_str: str, language_manager: LanguageManager) -
     return strokes_list
 
 
-def _get_user_public_id(id_telegram):
-    service = UsersService()
+def _get_user_public_id(id_telegram, user_service):
+    service = user_service()
     data = service.get_user_info(id_telegram)
     return data.get("public_id")
 
