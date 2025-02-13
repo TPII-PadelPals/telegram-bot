@@ -1,5 +1,3 @@
-import copy
-
 from model.language_manager import LanguageManager
 from model.telegram_bot import TelegramBot
 from telebot.types import Message
@@ -14,24 +12,6 @@ POSITION_OF_HABILITY = 2
 POSITION_OF_STROKES = 1
 MAX_VALUE_FOR_STROKE = 16
 DEFINITION_OF_HABILITY = [1.0, 2.0, 3.0]
-DEFINITION_OF_STROKE = {
-    "serve": None,
-    "forehand_ground": None,
-    "background_ground": None,
-    "forehand_back_wall": None,
-    "backhand_back_wall": None,
-    "forehand_side_wall": None,
-    "backhand_side_wall": None,
-    "forehand_double_walls": None,
-    "backhand_double_walls": None,
-    "forehand_counter_wall": None,
-    "backhand_counter_wall": None,
-    "forehand_volley": None,
-    "backhand_volley": None,
-    "lob": None,
-    "smash": None,
-    "bandeja": None
-}
 NUMBER_FOR_STROKE = {
     1: "serve",
     2: "forehand_ground",
@@ -74,13 +54,13 @@ def handle_configure_strokes(message: Message, bot: TelegramBot, get_api=PlayerS
         return
     # obtengo el listado de golpes a configurar
     strokes_list = _generate_stroke_list(info_list[POSITION_OF_STROKES], language_manager)
-    strokes_body = copy.copy(DEFINITION_OF_STROKE)
+    strokes_body = {}
     position_of_definition_hability = language_manager.get("SENDER_POSITION_STROKE_HABILITY")
     for number_of_stroke in strokes_list:
         strokes_body[NUMBER_FOR_STROKE[number_of_stroke]] = DEFINITION_OF_HABILITY[position_of_definition_hability[hability]]
     # envio el mensaje a la api
     result = api_conection.update_strokes(user_id, strokes_body)
-    if result.status_code != 200:
+    if result.get("user_public_id") != str(user_id):
         bot.reply_to(message, language_manager.get("ERROR_RECIVE_DATA"))
         return
 

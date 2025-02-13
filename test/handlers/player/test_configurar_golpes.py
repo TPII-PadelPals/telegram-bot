@@ -40,7 +40,7 @@ class TestMatchupsMainCallback(unittest.TestCase):
         self.bot.reply_to = MagicMock()
 
         self.result_strokes = MagicMock()
-        self.result_strokes.status_code = 200
+        self.result_strokes.get = MagicMock(return_value="123")
 
         self.player_service = MagicMock()
         self.player_service.update_strokes = MagicMock(return_value=self.result_strokes)
@@ -80,5 +80,4 @@ class TestMatchupsMainCallback(unittest.TestCase):
         # test
         handle_configure_strokes(self.message, self.bot, get_api=self.get_api, user_service=self.user_service)
         # assert
-        self.bot.reply_to.assert_called_once()
         self.bot.reply_to.assert_called_once_with(self.message, expected_respond)
