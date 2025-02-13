@@ -5,7 +5,6 @@ from services.player_service_backend import PlayerServiceBackEnd
 
 DEFAULT_PLAYER = 'francoMartinDiMaria'
 
-# player_service = PlayerService()
 player_service_back_end = PlayerServiceBackEnd()
 
 def handle_configure_location(message: Message, bot: TelegramBot):
