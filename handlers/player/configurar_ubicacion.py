@@ -1,7 +1,6 @@
 from model.telegram_bot import TelegramBot
 from telebot.types import Message, ReplyKeyboardMarkup
-# from services.player_service import PlayerService
-from services.player_service_backend import PlayerServiceBackEnd
+from services.player_service import PlayerServiceBackEnd
 
 DEFAULT_PLAYER = 'francoMartinDiMaria'
 

@@ -1,6 +1,6 @@
 import unittest
-from unittest.mock import patch, MagicMock
-from telebot.types import CallbackQuery, Message
+from unittest.mock import MagicMock
+from telebot.types import Message
 
 from handlers.player import handle_configure_strokes
 
