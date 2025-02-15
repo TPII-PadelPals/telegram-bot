@@ -2,11 +2,11 @@ from model.language_manager import LanguageManager
 
 
 class Validation:
-    def __init__(self, info: list[str]):
-        self.info = info
+    def __init__(self, message_params: list[str]):
+        self.message_params = message_params
 
 
-    def validate(self, language_manager: LanguageManager) -> (bool, str|None):
+    def is_valid(self, language_manager: LanguageManager) -> (bool, str | None):
         pass
 
 
@@ -17,9 +17,9 @@ class ValidateSurveyPlayer(Validation):
     MIN_RATING = 1
 
 
-    def validate(self, language_manager: LanguageManager) -> (bool, str|None):
-        if len(self.info) == self.INFO_FOR_SET_SURVEY_TO_PLAYER:
-            str_rating = self.info[self.POSITION_RATING]
+    def is_valid(self, language_manager: LanguageManager) -> (bool, str | None):
+        if len(self.message_params) == self.INFO_FOR_SET_SURVEY_TO_PLAYER:
+            str_rating = self.message_params[self.POSITION_RATING]
             if not str_rating.isdigit():
                 return False, language_manager.get("MESSAGE_INVALID_VALUE")
             rating = int(str_rating)
@@ -31,7 +31,7 @@ class ValidateSurveyPlayer(Validation):
 
 
 class ValidateConfigStrokes(Validation):
-    EXPECTED_INFORMATION = 3
+    EXPECTED_PARAMS = 3
     POSITION_OF_HABILITY = 2
     SEPARATOR_OF_STROKES = ','
     POSITION_OF_STROKES = 1
@@ -39,13 +39,13 @@ class ValidateConfigStrokes(Validation):
     MIN_STROKE_NUMBER = 1
 
 
-    def validate(self, language_manager: LanguageManager) -> (bool, str|None):
-        if len(self.info) == self.EXPECTED_INFORMATION:
-            hability = self.info[self.POSITION_OF_HABILITY].lower()
+    def is_valid(self, language_manager: LanguageManager) -> (bool, str | None):
+        if len(self.message_params) == self.EXPECTED_PARAMS:
+            skill = self.message_params[self.POSITION_OF_HABILITY].lower()
             # caso de error en habilidad
-            if not hability in language_manager.get("STROKE_HABILITY"):
+            if not skill in language_manager.get("STROKE_HABILITY"):
                 return False, language_manager.get("MESSAGE_INCORRECT_HABILITY")
-            strokes_list_str = self.info[self.POSITION_OF_STROKES].split(self.SEPARATOR_OF_STROKES)
+            strokes_list_str = self.message_params[self.POSITION_OF_STROKES].split(self.SEPARATOR_OF_STROKES)
             for strokes in strokes_list_str:
                 if not strokes.isdigit():
                     return False, language_manager.get("MESSAGE_INVALID_VALUE")

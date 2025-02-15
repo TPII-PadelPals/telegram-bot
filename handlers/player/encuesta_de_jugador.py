@@ -19,7 +19,7 @@ def handle_survey_to_player(message: Message, bot: TelegramBot, get_api=get_from
     info = text.split(" ")
     # validation
     validation = ValidateSurveyPlayer(info)
-    is_valid, respond = validation.validate(language_manager)
+    is_valid, respond = validation.is_valid(language_manager)
     if not is_valid:
         bot.reply_to(message, respond)
         return

@@ -46,12 +46,12 @@ def handle_configure_strokes(message: Message, bot: TelegramBot, get_api=PlayerS
     split_chat_message = text.split()
     # validation
     validation = ValidateConfigStrokes(split_chat_message)
-    is_valid, response = validation.validate(language_manager)
+    is_valid, response = validation.is_valid(language_manager)
     if not is_valid:
         bot.reply_to(message, response)
         return
 
-    hability = split_chat_message[POSITION_OF_HABILITY].lower()
+    skill_level = split_chat_message[POSITION_OF_HABILITY].lower()
     id_telegram = message.from_user.id
     user_id = _get_user_public_id(id_telegram, user_service)
     if user_id is None:
@@ -59,21 +59,21 @@ def handle_configure_strokes(message: Message, bot: TelegramBot, get_api=PlayerS
         return
     # obtengo el listado de golpes a configurar
     strokes_list = _generate_stroke_list(split_chat_message[POSITION_OF_STROKES], language_manager)
-    strokes_body = _get_strokes_body(strokes_list, hability)
+    strokes_body = _get_strokes_body(strokes_list, skill_level)
     # envio el mensaje a la api
     result = api_conection.update_strokes(user_id, strokes_body)
     if result.get("user_public_id") != str(user_id):
         bot.reply_to(message, language_manager.get("ERROR_RECEIVE_DATA"))
         return
 
-    response_to_user = _generate_message(strokes_list, hability, language_manager)
+    response_to_user = _generate_message(strokes_list, skill_level, language_manager)
     bot.reply_to(message, response_to_user)
 
 
-def _get_strokes_body(strokes_list, hability):
+def _get_strokes_body(strokes_list, skill_level):
     strokes_body = {}
     for number_of_stroke in strokes_list:
-        pos_level = SENDER_POSITION_STROKE_HABILITY[hability]
+        pos_level = SENDER_POSITION_STROKE_HABILITY[skill_level]
         level = SKILL_LEVELS[pos_level]
         stroke = NUMBER_FOR_STROKE[number_of_stroke]
         strokes_body[stroke] = level
@@ -100,9 +100,9 @@ def _get_user_public_id(id_telegram, user_service):
     return data.get("public_id")
 
 
-def _generate_message(strokes_list: list[int], hability: str, language_manager: LanguageManager) -> str:
+def _generate_message(strokes_list: list[int], skill_level: str, language_manager: LanguageManager) -> str:
     response_to_user = language_manager.get("MESSAGE_STROKES_UPDATED")
-    response_to_user += hability
+    response_to_user += skill_level
     response_to_user += "\n"
     number_for_stroke_to_response = language_manager.get("NUMBER_FOR_STROKE")
     for number_of_stroke in strokes_list:
