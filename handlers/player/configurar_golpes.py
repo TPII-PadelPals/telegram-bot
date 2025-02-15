@@ -11,7 +11,7 @@ SEPARATOR_OF_STROKES = ','
 POSITION_OF_HABILITY = 2
 POSITION_OF_STROKES = 1
 MAX_VALUE_FOR_STROKE = 16
-DEFINITION_OF_HABILITY = [1.0, 2.0, 3.0]
+SKILL_LEVELS = [1.0, 2.0, 3.0]
 NUMBER_FOR_STROKE = {
     1: "serve",
     2: "forehand_ground",
@@ -30,6 +30,11 @@ NUMBER_FOR_STROKE = {
     15: "smash",
     16: "bandeja"
 }
+SENDER_POSITION_STROKE_HABILITY = {
+    "principiante": 0,
+    "intermedio": 1,
+    "avanzado": 2
+}
 
 # TODO traducir NUMBER_FOR_STROKE y MESSAGE_HELP_STROKE del json
 
@@ -38,34 +43,41 @@ def handle_configure_strokes(message: Message, bot: TelegramBot, get_api=PlayerS
     api_conection = get_api()
     language_manager = bot.language_manager
 
-    info_list = text.split()
+    split_chat_message = text.split()
     # validation
-    validation = ValidateConfigStrokes(info_list)
-    is_valid, respond = validation.validate(language_manager)
+    validation = ValidateConfigStrokes(split_chat_message)
+    is_valid, response = validation.validate(language_manager)
     if not is_valid:
-        bot.reply_to(message, respond)
+        bot.reply_to(message, response)
         return
 
-    hability = info_list[POSITION_OF_HABILITY].lower()
+    hability = split_chat_message[POSITION_OF_HABILITY].lower()
     id_telegram = message.from_user.id
     user_id = _get_user_public_id(id_telegram, user_service)
     if user_id is None:
-        bot.reply_to(message, language_manager.get("ERROR_RECIVE_DATA"))
+        bot.reply_to(message, language_manager.get("ERROR_RECEIVE_DATA"))
         return
     # obtengo el listado de golpes a configurar
-    strokes_list = _generate_stroke_list(info_list[POSITION_OF_STROKES], language_manager)
-    strokes_body = {}
-    position_of_definition_hability = language_manager.get("SENDER_POSITION_STROKE_HABILITY")
-    for number_of_stroke in strokes_list:
-        strokes_body[NUMBER_FOR_STROKE[number_of_stroke]] = DEFINITION_OF_HABILITY[position_of_definition_hability[hability]]
+    strokes_list = _generate_stroke_list(split_chat_message[POSITION_OF_STROKES], language_manager)
+    strokes_body = _get_strokes_body(strokes_list, hability)
     # envio el mensaje a la api
     result = api_conection.update_strokes(user_id, strokes_body)
     if result.get("user_public_id") != str(user_id):
-        bot.reply_to(message, language_manager.get("ERROR_RECIVE_DATA"))
+        bot.reply_to(message, language_manager.get("ERROR_RECEIVE_DATA"))
         return
 
     response_to_user = _generate_message(strokes_list, hability, language_manager)
     bot.reply_to(message, response_to_user)
+
+
+def _get_strokes_body(strokes_list, hability):
+    strokes_body = {}
+    for number_of_stroke in strokes_list:
+        pos_level = SENDER_POSITION_STROKE_HABILITY[hability]
+        level = SKILL_LEVELS[pos_level]
+        stroke = NUMBER_FOR_STROKE[number_of_stroke]
+        strokes_body[stroke] = level
+    return strokes_body
 
 
 def _generate_stroke_list(strokes_str: str, language_manager: LanguageManager) -> list[int]:
