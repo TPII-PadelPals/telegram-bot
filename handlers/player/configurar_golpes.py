@@ -1,3 +1,5 @@
+from enum import Enum
+
 from model.language_manager import LanguageManager
 from model.telegram_bot import TelegramBot
 from telebot.types import Message
@@ -30,11 +32,6 @@ NUMBER_FOR_STROKE = {
     15: "smash",
     16: "bandeja"
 }
-SENDER_POSITION_STROKE_HABILITY = {
-    "principiante": 0,
-    "intermedio": 1,
-    "avanzado": 2
-}
 
 # TODO traducir NUMBER_FOR_STROKE y MESSAGE_HELP_STROKE del json
 
@@ -59,7 +56,8 @@ def handle_configure_strokes(message: Message, bot: TelegramBot, get_api=PlayerS
         return
     # obtengo el listado de golpes a configurar
     strokes_list = _generate_stroke_list(split_chat_message[POSITION_OF_STROKES], language_manager)
-    strokes_body = _get_strokes_body(strokes_list, skill_level)
+    pos_level = language_manager.get("SENDER_POSITION_STROKE_HABILITY")
+    strokes_body = _get_strokes_body(strokes_list, pos_level[skill_level])
     # envio el mensaje a la api
     result = api_conection.update_strokes(user_id, strokes_body)
     if result.get("user_public_id") != str(user_id):
@@ -70,10 +68,9 @@ def handle_configure_strokes(message: Message, bot: TelegramBot, get_api=PlayerS
     bot.reply_to(message, response_to_user)
 
 
-def _get_strokes_body(strokes_list, skill_level):
+def _get_strokes_body(strokes_list, pos_level):
     strokes_body = {}
     for number_of_stroke in strokes_list:
-        pos_level = SENDER_POSITION_STROKE_HABILITY[skill_level]
         level = SKILL_LEVELS[pos_level]
         stroke = NUMBER_FOR_STROKE[number_of_stroke]
         strokes_body[stroke] = level

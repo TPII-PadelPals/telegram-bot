@@ -29,6 +29,11 @@ class TestMatchupsMainCallback(unittest.TestCase):
                 "15": "smash",
                 "16": "bandeja"
             },
+            "SENDER_POSITION_STROKE_HABILITY": {
+                "principiante": 0,
+                "intermedio": 1,
+                "avanzado": 2
+            },
             "STROKE_HABILITY": ["principiante", "intermedio", "avanzado"],
             "MESSAGE_INVALID_VALUE": "MESSAGE_INVALID_VALUE"
         }

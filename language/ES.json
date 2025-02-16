@@ -101,6 +101,11 @@
       "callback_data": "6"
     }
   ],
+  "SENDER_POSITION_STROKE_HABILITY": {
+    "principiante": 0,
+    "intermedio": 1,
+    "avanzado": 2
+  },
   "DATE": "Fecha",
   "SEE_MATCHES_SEPARATOR": " | ",
   "MESSAGE_SEE_MATCHES_EMPTY": "No hay emparejamientos posibles actualmente.",
