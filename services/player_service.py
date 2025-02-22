@@ -28,4 +28,4 @@ class PlayerServiceBackEnd(BaseService):
 
     def update_radius(self, player_nickname: str, location: str, radius: int):
         """Send location radius to backend."""
-        return self.post(f"/player/{player_nickname}/location/radius", json={'zone_km': radius})
+        return self.post(f"/player/{player_nickname}/location/radius", json={'search_range_km': radius})
