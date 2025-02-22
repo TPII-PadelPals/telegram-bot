@@ -64,3 +64,8 @@ class BaseService:
             return response.json()
         except requests.exceptions.HTTPError as _:
             return None
+
+
+    def set_prefix_url(self, prefix):
+        self.base_url += prefix
+        return

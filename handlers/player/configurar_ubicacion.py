@@ -1,10 +1,10 @@
 from model.telegram_bot import TelegramBot
 from telebot.types import Message, ReplyKeyboardMarkup
-from services.player_service import PlayerService
+from services.player_service import PlayerServiceBackEnd
 
 DEFAULT_PLAYER = 'francoMartinDiMaria'
 
-player_service = PlayerService()
+player_service = PlayerServiceBackEnd()
 
 def handle_configure_location(message: Message, bot: TelegramBot):
     chat_id = message.chat.id

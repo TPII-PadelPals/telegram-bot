@@ -19,6 +19,11 @@ class Settings(BaseSettings):
     GATEWAY_HOST: str
     GATEWAY_PORT: int
 
+    # Players service settings
+    PLAYERS_SERVICE_HOST: str
+    PLAYERS_SERVICE_PORT: int
+    PLAYERS_SERVICE_API_KEY: str
+
     # Users service settings
     USERS_SERVICE_HOST: str
     USERS_SERVICE_PORT: int

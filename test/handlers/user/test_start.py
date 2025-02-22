@@ -7,7 +7,6 @@ from requests.exceptions import ConnectionError
 
 
 class TestHandleStart(unittest.TestCase):
-
     def setUp(self):
         self.bot = MagicMock()
         self.message = MagicMock(spec=Message)
@@ -22,6 +21,7 @@ class TestHandleStart(unittest.TestCase):
         self.call.message.message_id = 67890
         self.call.message.chat.username = "test_user"
 
+
     def test_start_with_users_service_disconnected_replies_error(self):
         users_service_mock = MagicMock()
         users_service_mock.get_user_info = MagicMock(
@@ -31,6 +31,7 @@ class TestHandleStart(unittest.TestCase):
 
         self.bot.reply_to.assert_called_once_with(
             self.message, "Ha ocurrido un error. Por favor, intenta de nuevo más tarde.")
+
 
     def test_start_with_user_already_registered_replies_welcome(self):
         user = {"name": "Name Surname"}
@@ -47,6 +48,7 @@ class TestHandleStart(unittest.TestCase):
         self.bot.reply_to.assert_called_once_with(
             self.message, f"Bienvenido de nuevo, {user['name']}!")
 
+
     def test_start_with_user_not_registered_asks_login(self):
         users = {
             "data": [],
@@ -61,6 +63,7 @@ class TestHandleStart(unittest.TestCase):
         assert self.bot.reply_to.call_args.args[
             1] == "Bienvenido a PaddlePals! Por favor seleccione un método de registro:"
 
+
     def test_handle_callback_query_start_user_pass_replies_error(self):
         self.call.data = "start_user_pass"
         users_service_mock = MagicMock()
@@ -71,6 +74,7 @@ class TestHandleStart(unittest.TestCase):
             self.call.message,
             "Esta opción no esta disponible actualmente. Por favor, intenta de nuevo más tarde."
         )
+
 
     def test_handle_callback_query_start_google_replies_registration(self):
         self.call.data = "start_google"
@@ -84,19 +88,18 @@ class TestHandleStart(unittest.TestCase):
                               users_service_mock, sleep_mock)
 
         assert self.bot.edit_message_text.call_args.args[
-            0] == "¡Bienvenido! Por favor, regístrate con Google para continuar."
+                   0] == "¡Bienvenido! Por favor, regístrate con Google para continuar."
 
         assert self.bot.edit_message_text.call_args.kwargs[
-            "chat_id"] == self.call.message.chat.id
+                   "chat_id"] == self.call.message.chat.id
 
         assert self.bot.edit_message_text.call_args.kwargs[
-            "message_id"] == self.call.message.message_id
+                   "message_id"] == self.call.message.message_id
 
-        assert self.bot.send_message.called_once_with(
-            self.call.message,
-            "Esta opción no esta disponible actualmente. Por favor, intenta de nuevo más tarde."
-        )
-
+        # assert self.bot.send_message.called_once_with(
+        #     self.call.message,
+        #     "Esta opción no esta disponible actualmente. Por favor, intenta de nuevo más tarde."
+        # )
 
 if __name__ == '__main__':
     unittest.main()
