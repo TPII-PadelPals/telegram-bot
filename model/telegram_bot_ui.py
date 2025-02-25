@@ -65,6 +65,8 @@ class TelegramBotUI:
         markup = types.InlineKeyboardMarkup(row_width=row_width)
         
         for button in buttons:
+            if not button.get('text'):
+                raise ValueError("All buttons must have text")
             markup.add(
                 types.InlineKeyboardButton(
                     text=button['text'],
