@@ -3,7 +3,6 @@ from handlers.test.ui_inline_buttons import filter_fn, handle_configure_ui_inlin
 from .encuesta import handle_survey_test
 from .saludar import handle_greet
 from .ver_fmt import handle_format
-from .hello import handle_hello
 
 TEST_MESSAGE_HANDLERS = [{"command": "saludar", "handler": handle_greet},
                          {"command": "ver_fmt", "handler": handle_format},
