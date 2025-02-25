@@ -22,7 +22,11 @@ def handle_configure_ui_inline_buttons(message: Message, bot: TelegramBot):
         {'text': '🥗 Salad - $6', 'callback_data': generate_callback_string('order_salad')}
     ]
     
-    menu = bot.ui.create_inline_keyboard(buttons, row_width=2)
+    try:
+        menu = bot.ui.create_inline_keyboard(buttons, row_width=2)
+    except Exception as e:
+        loger.info(e)
+        return
 
     bot.reply_to(message, "Welcome to our Restaurant Bot! How can I help you today?", reply_markup=menu)
     loger.info("Se ha configurado ui_inline_buttons")
