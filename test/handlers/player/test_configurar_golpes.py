@@ -42,10 +42,10 @@ class TestMatchupsMainCallback(unittest.TestCase):
         self.result_strokes = MagicMock()
         self.result_strokes.get = MagicMock(return_value="123")
 
-        self.player_service = MagicMock()
-        self.player_service.update_strokes = MagicMock(return_value=self.result_strokes)
+        self.players_service = MagicMock()
+        self.players_service.update_strokes = MagicMock(return_value=self.result_strokes)
 
-        self.get_api = MagicMock(return_value=self.player_service)
+        self.get_api = MagicMock(return_value=self.players_service)
 
         self.user_service_api = MagicMock()
         self.user_service_api.get_user_info = MagicMock(return_value={"public_id": 123})
