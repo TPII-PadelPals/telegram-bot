@@ -1,5 +1,5 @@
 from model.telegram_bot import TelegramBot
-from telebot.types import Message, ReplyKeyboardMarkup, KeyboardButton
+from telebot.types import Message, CallbackQuery
 
 from utils.get_from_env import get_from_env_api
 
@@ -10,67 +10,65 @@ loger = logging.getLogger(__name__)
 
 DEFAULT_PLAYER = 'francoMartinDiMaria'
 
-def get_callback_data(text, buttons):
-    for button in buttons:
-        if button["text"] == text:
-            return button["callback_data"]
-    return None
+AVAILABILITY_CONFIGURATION_COMMAND = "configurar_disponibilidad"
+
+def filter_fn(call: CallbackQuery):
+    return call.data.startswith(AVAILABILITY_CONFIGURATION_COMMAND)
+
+def generate_callback_string(data: str):
+    return f"{AVAILABILITY_CONFIGURATION_COMMAND}:{data}"
+
+def availability_callback(call: CallbackQuery, bot: TelegramBot):
+    type = call.data.split(":")[1]
+    if type == 'time':
+        process_time_step(call, bot)
+    elif type == 'day':
+        process_day_step(call, bot)
+    else:
+        bot.send_message(
+            call.message.chat.id,
+            "Se ha producido un error",
+        )    
 
 def handle_configure_availability(message: Message, bot: TelegramBot):
-    markup = ReplyKeyboardMarkup(row_width=2)
-    for button in bot.language_manager.get("AVAILABILITY_TIME_BUTTONS"):
-        markup.add(KeyboardButton(button["text"]))
-
-    msg = bot.reply_to(message, bot.language_manager.get("AVAILABILITY_MESSAGE"), reply_markup=markup, parse_mode="Markdown")
-    bot.register_next_step_handler(msg, process_time_step, bot)
-    loger.info("Se ha configurado la disponibilidad")
+    buttons = [{'text': x["text"], 'callback_data': generate_callback_string(f"time:{x['callback_data']}")} for x in bot.language_manager.get("AVAILABILITY_TIME_BUTTONS")]
+    menu = bot.ui.create_inline_keyboard(buttons, row_width=2)
+    bot.send_message(message.chat.id, bot.language_manager.get("AVAILABLE_TIME_MESSAGE"), reply_markup=menu)
 
 
-def process_time_step(message: Message, bot: TelegramBot):
+def process_time_step(call: CallbackQuery, bot: TelegramBot):
     api_conection = get_from_env_api()
 
-    id_telegram = message.from_user.username if message.from_user.username is not None else DEFAULT_PLAYER
-    text = message.text.strip()
+    callback_data: dict = call.data
+    telegram_id = call.message.chat.username if call.message.chat.username else DEFAULT_PLAYER
+    time_id = int(callback_data.split(':')[-1])
 
-    number = get_callback_data(text, bot.language_manager.get("AVAILABILITY_TIME_BUTTONS"))
-    loger.info(f"Se ha configurado la disponibilidad para el horario {number}")
-
-    if number is None:
-        bot.reply_to(message, 'No se pudo configurar la disponibilidad')
+    if time_id is None:
+        bot.reply_to(call.message, 'No se pudo configurar la disponibilidad')
         return
 
-    api_conection.set_availability(number, id_telegram)
-    bot.reply_to(message, 'Se ha configurado el horario correctamente')
+    api_conection.set_availability(time_id, telegram_id)
+    #bot.edit_message_text(call.message, 'Se ha configurado el horario correctamente')
 
-    markup = ReplyKeyboardMarkup(row_width=2)
-    for button in bot.language_manager.get("AVAILABILITY_DAY_BUTTONS"):
-        markup.add(KeyboardButton(button["text"]))
-
-    msg = bot.send_message(message.chat.id, bot.language_manager.get("AVAILABLE_DAYS_MESSAGE"), reply_markup=markup)
-
-    bot.register_next_step_handler(msg, process_day_step, bot)
-    loger.info("Se ha configurado el horario correctamente")
+    buttons = [{'text': x["text"], 'callback_data': generate_callback_string(f"day:{x['callback_data']}")} for x in bot.language_manager.get("AVAILABILITY_DAY_BUTTONS")]
+    menu = bot.ui.create_inline_keyboard(buttons, row_width=2)
+    bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id,
+                          text=bot.language_manager.get("AVAILABLE_DAYS_MESSAGE"), reply_markup=menu)
 
 
-def process_day_step(message: Message, bot: TelegramBot):
+def process_day_step(call: CallbackQuery, bot: TelegramBot):
     api_conection = get_from_env_api()
 
-    id_telegram = message.from_user.username if message.from_user.username is not None else DEFAULT_PLAYER
-    text = message.text.strip()
+    callback_data: dict = call.data
+    telegram_id = call.message.chat.username if call.message.chat.username else DEFAULT_PLAYER
+    day_id = int(callback_data.split(':')[-1])
 
-    number = get_callback_data(text, bot.language_manager.get("AVAILABILITY_DAY_BUTTONS"))
-    loger.info(f"Se ha configurado la disponibilidad para el dia {number}")
+    if day_id is None:
+        bot.reply_to(call.message, 'No se pudo configurar la disponibilidad')
 
-    if number is None:
-        bot.reply_to(message, 'No se pudo configurar la disponibilidad')
-
-    api_conection.set_available_day(number, id_telegram)
-    bot.reply_to(message, 'Se ha configurado el dia correctamente')
+    api_conection.set_available_day(day_id, telegram_id)
+    #bot.reply_to(call.message, 'Se ha configurado el dia correctamente')
 
 
-    bot.send_message(
-        message.chat.id,
-        "Ya tenes todo listo! Deseas ver los matches que tenes emparejados para vos? Utiliza el comando /ver_emparejamientos",
-       )
-
-    loger.info("Se ha configurado el dia correctamente")
+    bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id,
+                          text="Ya tenes todo listo! Deseas ver los matches que tenes emparejados para vos? Utiliza el comando /ver_emparejamientos")
