@@ -64,10 +64,11 @@ class TelegramBotUI:
         """
         markup = types.InlineKeyboardMarkup(row_width=row_width)
         
+        button_objects = []
         for button in buttons:
             if not button.get('text'):
                 raise ValueError("All buttons must have text")
-            markup.add(
+            button_objects.append(
                 types.InlineKeyboardButton(
                     text=button['text'],
                     callback_data=button.get('callback_data'),
@@ -75,5 +76,9 @@ class TelegramBotUI:
                     switch_inline_query=button.get('switch_inline_query')
                 )
             )
+        
+        for i in range(0, len(button_objects), row_width):
+            row_buttons = button_objects[i:i + row_width]
+            markup.row(*row_buttons)
             
         return markup
