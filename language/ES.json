@@ -37,9 +37,7 @@
   "DATE_FMT": "%d/%m/%Y",
   "TIME": "Horario",
   "TIME_FMT": "%H:%M",
-  "MESSAGE_SELECT_TIME": "Indicanos los horarios que suelas tener disponibles:\n* Mañana [8hs-12hs].\n- Tarde [12hs-18hs].\n- Noche [18hs-00hs].",
-  "MESSAGE_SELECT_DAY": "Selecciona el día disponible:",
-  "AVAILABILITY_MESSAGE": "Indícanos los horarios que suelas tener disponibles:\n  - *Mañana [8hs-12hs]*\n  - *Tarde [12hs-18hs]*\n  - *Noche [18hs-00hs]*\n",
+  "AVAILABLE_TIME_MESSAGE": "Indícanos los horarios que suelas tener disponibles:",
   "AVAILABILITY_TIME_BUTTONS": [
     {
       "text": "Mañana",
@@ -157,5 +155,5 @@
   "RATING_OUT_OF_RANGE_ERROR": "El valor debe estar entre el 1 y 5.",
   "ANSWER_SURVEY_PLAYER": "Se ha registrado su reseña: ",
   "MESSAGE_HELP_SURVEY_PLAYER": "Permite a través de una encuesta evaluar a algún otro jugador con el que hayas jugado antes.\nEjemplo /encuesta_jugador <Nombre del jugador> o bien /encuesta_jugador <Nombre del jugador> <puntaje de 1 a 5>.",
-	"ERROR_RECEIVE_DATA": "Error al intentar contactar con los servicios.\nPor favor intente de nuevo más tarde."
+  "ERROR_RECEIVE_DATA": "Error al intentar contactar con los servicios.\nPor favor intente de nuevo más tarde."
 }
