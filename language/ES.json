@@ -157,5 +157,13 @@
   "RATING_OUT_OF_RANGE_ERROR": "El valor debe estar entre el 1 y 5.",
   "ANSWER_SURVEY_PLAYER": "Se ha registrado su reseña: ",
   "MESSAGE_HELP_SURVEY_PLAYER": "Permite a través de una encuesta evaluar a algún otro jugador con el que hayas jugado antes.\nEjemplo /encuesta_jugador <Nombre del jugador> o bien /encuesta_jugador <Nombre del jugador> <puntaje de 1 a 5>.",
-	"ERROR_RECEIVE_DATA": "Error al intentar contactar con los servicios.\nPor favor intente de nuevo más tarde."
+  "ERROR_RECEIVE_DATA": "Error al intentar contactar con los servicios.\nPor favor intente de nuevo más tarde.",
+  "SELECT_STROKE_MESSAGE": "Selecciona un golpe para configurar:",
+  "SELECT_SKILL_LEVEL_FOR": "Selecciona tu nivel para: {stroke}",
+  "BEGINNER": "Principiante",
+  "INTERMEDIATE": "Intermedio",
+  "ADVANCED": "Avanzado",
+  "BACK": "Volver",
+  "STROKE_UPDATED_SUCCESS": "¡Golpe actualizado con éxito!",
+  "ALL_STROKES": "Todos los golpes"
 }
