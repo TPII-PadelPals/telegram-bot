@@ -37,18 +37,16 @@ class TestTelegramBot(unittest.TestCase):
 
     @patch('handlers.player.configurar_disponibilidad.get_from_env_api')
     def test_availability_process_time_step(self, mock_get_from_env_api):
-        self.bot.language_manager.get.return_value = [{"text": "Button1", "callback_data": "1"}, {"text": "Button2", "callback_data": "2"}]
-        message = MagicMock()
-        message.text = "Button1"
-        message.from_user.username = "test_user"
+        self.bot.language_manager.get.return_value = [{"text": "Button1", "callback_data": 1}, {"text": "Button2", "callback_data": 2}]
+        call = MagicMock()
+        call.data = "Button:1"
+        call.message.chat.username = "test_user"
 
-        process_time_step(message, self.bot)
+        process_time_step(call, self.bot)
 
         api_conection = mock_get_from_env_api()
-        api_conection.set_availability.assert_called_once_with("1", "test_user")
-        self.bot.reply_to.assert_called_once()
-        self.bot.send_message.assert_called_once()
-        self.bot.register_next_step_handler.assert_called_once()
+        api_conection.set_availability.assert_called_once_with(1, "test_user")
+        self.bot.edit_message_text.assert_called_once()
 
     def test_send_ubicacion_help(self):
         self.bot.language_manager.get.return_value = "MESSAGE_HELP_ZONE"
