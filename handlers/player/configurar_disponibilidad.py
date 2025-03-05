@@ -47,7 +47,6 @@ def process_time_step(call: CallbackQuery, bot: TelegramBot):
         return
 
     api_conection.set_availability(time_id, telegram_id)
-    #bot.edit_message_text(call.message, 'Se ha configurado el horario correctamente')
 
     buttons = [{'text': x["text"], 'callback_data': generate_callback_string(f"{DAY}{CALLBACK_STRING_SEPARATOR}{x['callback_data']}")} for x in bot.language_manager.get("AVAILABILITY_DAY_BUTTONS")]
     menu = bot.ui.create_inline_keyboard(buttons, row_width=2)
@@ -66,7 +65,6 @@ def process_day_step(call: CallbackQuery, bot: TelegramBot):
         bot.reply_to(call.message, 'No se pudo configurar la disponibilidad')
 
     api_conection.set_available_day(day_id, telegram_id)
-    #bot.reply_to(call.message, 'Se ha configurado el dia correctamente')
 
 
     bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id,
