@@ -38,7 +38,7 @@ def handle_configure_availability(message: Message, bot: TelegramBot):
 def process_time_step(call: CallbackQuery, bot: TelegramBot):
     api_conection = get_from_env_api()
 
-    callback_data: dict = call.data
+    callback_data = call.data
     telegram_id = call.message.chat.username if call.message.chat.username else DEFAULT_PLAYER
     time_id = int(callback_data.split(CALLBACK_STRING_SEPARATOR)[-1])
 
@@ -57,7 +57,7 @@ def process_time_step(call: CallbackQuery, bot: TelegramBot):
 def process_day_step(call: CallbackQuery, bot: TelegramBot):
     api_conection = get_from_env_api()
 
-    callback_data: dict = call.data
+    callback_data = call.data
     telegram_id = call.message.chat.username if call.message.chat.username else DEFAULT_PLAYER
     day_id = int(callback_data.split(CALLBACK_STRING_SEPARATOR)[-1])
 
