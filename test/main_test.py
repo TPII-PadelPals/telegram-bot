@@ -5,7 +5,6 @@ from unittest.mock import patch
 from handlers.player import handle_respond_to_matchmaking_accept, handle_respond_to_matchmaking_reject, \
     handle_survey_to_player
 from handlers.player.configurar_disponibilidad import process_time_step
-from handlers.player.configurar_zona import handle_configure_zone, KM_STEERING_SEPARATOR
 from handlers.player.configurar_golpes import handle_configure_strokes
 from handlers.player.ver_reservas import handle_see_reserves
 
@@ -49,74 +48,6 @@ class TestTelegramBot(unittest.TestCase):
         self.bot.reply_to.assert_called_once()
         self.bot.send_message.assert_called_once()
         self.bot.register_next_step_handler.assert_called_once()
-
-    def test_send_ubicacion_help(self):
-        self.bot.language_manager.get.return_value = "MESSAGE_HELP_ZONE"
-        message = MagicMock()
-        message.text = '/configurar_zona'
-        handle_configure_zone(
-            message, self.bot, lambda: self.api_mock)
-        self.api_mock.set_zone.assert_not_called()
-        self.bot.reply_to.assert_called_once_with(
-            message,
-            "MESSAGE_HELP_ZONE")
-
-    def test_send_ubicacion_help_border_case(self):
-        self.bot.language_manager.get.return_value = "MESSAGE_HELP_ZONE"
-        message = MagicMock()
-        message.text = '/configurar_zona   '
-        handle_configure_zone(
-            message, self.bot, lambda: self.api_mock)
-        self.api_mock.set_zone.assert_not_called()
-        self.bot.reply_to.assert_called_once_with(
-            message,
-            "MESSAGE_HELP_ZONE")
-
-    def test_send_ubicacion_only_km(self):
-        self.bot.language_manager.get.return_value = "MESSAGE_ZONE_UPDATED_KM"
-        message = MagicMock()
-        message.text = '/configurar_zona 54'
-        message.from_user.username = "123456"
-        handle_configure_zone(
-            message, self.bot, lambda: self.api_mock)
-        self.api_mock.set_zone.assert_called_once()
-        self.bot.reply_to.assert_called_once_with(
-            message, "MESSAGE_ZONE_UPDATED_KM: 54.")
-
-    def test_send_ubicacion_only_zone(self):
-        self.bot.language_manager.get.return_value = "MESSAGE_ZONE_UPDATED_LOCATION"
-        message = MagicMock()
-        message.text = '/configurar_zona CABA'
-        message.from_user.username = "123456"
-        handle_configure_zone(
-            message, self.bot, lambda: self.api_mock)
-        self.api_mock.set_zone.assert_called_once()
-        self.bot.reply_to.assert_called_once_with(
-            message, "MESSAGE_ZONE_UPDATED_LOCATION: CABA.")
-
-    def test_send_ubicacion_all(self):
-        self.bot.language_manager.get.side_effect = [
-            "MESSAGE_ZONE_UPDATED_LOCATION",
-            "MESSAGE_ZONE_UPDATED_KM"
-        ]
-        message = MagicMock()
-        message.text = '/configurar_zona CABA' + KM_STEERING_SEPARATOR + '82'
-        message.from_user.username = "123456"
-        handle_configure_zone(
-            message, self.bot, lambda: self.api_mock)
-        self.api_mock.set_zone.assert_called_once()
-        self.bot.reply_to.assert_called_once_with(
-            message, "MESSAGE_ZONE_UPDATED_LOCATION: CABA.\nMESSAGE_ZONE_UPDATED_KM: 82.")
-
-    def test_send_ubicacion_error_in_km(self):
-        self.bot.language_manager.get.return_value = "MESSAGE_INVALID_VALUE"
-        message = MagicMock()
-        message.text = '/configurar_zona CABA' + KM_STEERING_SEPARATOR + 'asd'
-        handle_configure_zone(
-            message, self.bot, lambda: self.api_mock)
-        self.api_mock.set_zone.assert_not_called()
-        self.bot.reply_to.assert_called_once_with(
-            message, "MESSAGE_INVALID_VALUE")
 
     def test_configure_strokes_help(self):
         self.bot.language_manager.get.return_value = "MESSAGE_HELP_STROKE"
