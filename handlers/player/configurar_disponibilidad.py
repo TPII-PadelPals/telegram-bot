@@ -3,11 +3,6 @@ from telebot.types import Message, CallbackQuery
 
 from utils.get_from_env import get_from_env_api
 
-import logging
-
-logging.basicConfig(level=logging.INFO)
-loger = logging.getLogger(__name__)
-
 DEFAULT_PLAYER = 'francoMartinDiMaria'
 
 AVAILABILITY_CONFIGURATION_COMMAND = "configurar_disponibilidad"
