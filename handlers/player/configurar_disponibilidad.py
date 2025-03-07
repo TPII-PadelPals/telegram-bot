@@ -10,6 +10,7 @@ AVAILABILITY_CONFIGURATION_COMMAND = "configurar_disponibilidad"
 CALLBACK_STRING_SEPARATOR = ':'
 TIME = 'time'
 DAY = 'day'
+INLINE_KEYBOARD_ROW_WIDTH = 2
 
 def filter_fn(call: CallbackQuery):
     return call.data.startswith(AVAILABILITY_CONFIGURATION_COMMAND)
@@ -31,7 +32,7 @@ def availability_callback(call: CallbackQuery, bot: TelegramBot):
 
 def handle_configure_availability(message: Message, bot: TelegramBot):
     buttons = [{'text': x["text"], 'callback_data': generate_callback_string(f"{TIME}{CALLBACK_STRING_SEPARATOR}{x['callback_data']}")} for x in bot.language_manager.get("AVAILABILITY_TIME_BUTTONS")]
-    menu = bot.ui.create_inline_keyboard(buttons, row_width=2)
+    menu = bot.ui.create_inline_keyboard(buttons, row_width=INLINE_KEYBOARD_ROW_WIDTH)
     bot.send_message(message.chat.id, bot.language_manager.get("AVAILABLE_TIME_MESSAGE"), reply_markup=menu)
 
 
@@ -49,7 +50,7 @@ def process_time_step(call: CallbackQuery, bot: TelegramBot):
     api_conection.set_availability(time_id, telegram_id)
 
     buttons = [{'text': x["text"], 'callback_data': generate_callback_string(f"{DAY}{CALLBACK_STRING_SEPARATOR}{x['callback_data']}")} for x in bot.language_manager.get("AVAILABILITY_DAY_BUTTONS")]
-    menu = bot.ui.create_inline_keyboard(buttons, row_width=2)
+    menu = bot.ui.create_inline_keyboard(buttons, row_width=INLINE_KEYBOARD_ROW_WIDTH)
     bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id,
                           text=bot.language_manager.get("AVAILABLE_DAYS_MESSAGE"), reply_markup=menu)
 
