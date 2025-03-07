@@ -2,7 +2,7 @@ from model.telegram_bot import TelegramBot
 from telebot.types import Message
 
 # saludar exit ver_fmt
-COMMANDS = ["/start", "/help", "/registrarse", "/configurar_disponibilidad", "/ver_emparejamientos", "/configurar_golpes", "/ver_reservas", "/aceptar_emparejamiento", "/rechazar_emparejamiento", "/encuesta_jugador"]
+COMMANDS = ["/start", "/help", "/registrarse", "/configurar_disponibilidad", "/ver_emparejamientos", "/configurar_golpes", "/ver_reservas", "/aceptar_emparejamiento", "/rechazar_emparejamiento", "/encuesta_jugador", "/configurar_ubicacion"]
 SEPARATOR_OF_DATA = ": "
 
 def handle_help(message: Message, bot: TelegramBot):

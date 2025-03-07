@@ -117,7 +117,8 @@
     "/ver_reservas": "Visualizacion de las canchas reservadas.",
     "/aceptar_emparejamiento": "Acepta un emparejamiento para poder reservar la cancha.",
     "/rechazar_emparejamiento": "Rechazo de un emparejamiento, este emparejamiento ya no aparecera.",
-    "/encuesta_jugador": "Permite puntuar a un jugador con el que se haya participado en un partido antes."
+    "/encuesta_jugador": "Permite puntuar a un jugador con el que se haya participado en un partido antes.",
+    "/configurar_ubicacion": "Configura la ubicación y el radio en el cual quieras buscar un establecimiento."
   },
   "MESSAGE_RESPOND_TO_MATCHMAKING_HELP": "Para aceptar/rechazar un emparejamiento se deben dar los siguientes datos:\n- oponente: Ej: Pablo.\n- Cancha: Ej: 4\nHora del encuentro: Ej: 15\n\nLa estructura es: /<aceptar_emparejamiento/rechazar_emparejamiento> <Oponente> <Cancha> <Horario>.\nEjemplos:\n/aceptar_emparejamiento Pablo 51 9\n/rechazar_emparejamiento Carlos 32 18",
   "MESSAGE_RESPOND_TO_MATCHMAKING": "Estado de emparejamiento: ",
