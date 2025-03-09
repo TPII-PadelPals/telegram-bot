@@ -6,7 +6,8 @@ from services.users_service import UsersService
 # Constants
 MAX_VALUE_FOR_STROKE = 16
 SKILL_LEVELS = [1.0, 2.0, 3.0]
-NUMBER_FOR_STROKE = {
+STROKES_CONFIGURATION_COMMAND = "configurar_golpes"
+API_STROKES_NAMES = {
     1: "serve",
     2: "forehand_ground",
     3: "background_ground",
@@ -24,9 +25,6 @@ NUMBER_FOR_STROKE = {
     15: "smash",
     16: "bandeja",
 }
-
-STROKES_CONFIGURATION_COMMAND = "configurar_golpes"
-
 
 def filter_fn(call: CallbackQuery):
     return call.data.startswith(STROKES_CONFIGURATION_COMMAND)
@@ -51,9 +49,10 @@ def generate_strokes_markup(bot: TelegramBot):
     language_manager = bot.language_manager
 
     buttons = []
-    for number, stroke_name in NUMBER_FOR_STROKE.items():
-        display_name = language_manager.get("NUMBER_FOR_STROKE").get(
-            str(number), stroke_name
+    strokes_names = language_manager.get("STROKES_NAMES")
+    for number in strokes_names:
+        display_name = strokes_names.get(
+            str(number)
         )
         buttons.append(
             {
@@ -117,13 +116,14 @@ def strokes_callback(call: CallbackQuery, bot: TelegramBot):
     ]
 
     markup = bot.ui.create_inline_keyboard(skill_buttons, row_width=2)
+    strokes_names = language_manager.get("STROKES_NAMES")
 
     if stroke_id == "all":
         stroke_name = language_manager.get("ALL_STROKES")
     else:
         stroke_number = int(stroke_id)
-        stroke_name = language_manager.get("NUMBER_FOR_STROKE").get(
-            str(stroke_number), NUMBER_FOR_STROKE[stroke_number]
+        stroke_name = strokes_names.get(
+            str(stroke_number)
         )
 
     bot.edit_message_text(
@@ -159,12 +159,11 @@ def skill_level_callback(
     strokes_body = {}
     if stroke_id == "all":
         for number in range(1, MAX_VALUE_FOR_STROKE + 1):
-            stroke_name = NUMBER_FOR_STROKE[number]
-            strokes_body[stroke_name] = SKILL_LEVELS[level_idx]
+            api_stroke_name = API_STROKES_NAMES.get(number)
+            strokes_body[api_stroke_name] = SKILL_LEVELS[level_idx]
     else:
-        stroke_number = int(stroke_id)
-        stroke_name = NUMBER_FOR_STROKE[stroke_number]
-        strokes_body[stroke_name] = SKILL_LEVELS[level_idx]
+        api_stroke_name = API_STROKES_NAMES.get(int(stroke_id))
+        strokes_body[api_stroke_name] = SKILL_LEVELS[level_idx]
 
     result = api_connection.update_strokes(user_id, strokes_body)
 
