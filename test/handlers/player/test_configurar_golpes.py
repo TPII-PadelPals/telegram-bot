@@ -6,8 +6,7 @@ from handlers.player.configurar_golpes import (
     handle_configure_strokes,
     strokes_callback,
     skill_level_callback,
-    show_strokes_list_callback,
-    NUMBER_FOR_STROKE,
+    show_strokes_list_callback
 )
 
 
@@ -57,16 +56,33 @@ class TestConfigurarGolpes(unittest.TestCase):
 
     def _mock_language_get(self, key, *args, **kwargs):
         language_map = {
-            "SELECT_STROKE_MESSAGE": "Select a stroke to configure:",
-            "ALL_STROKES": "All strokes",
-            "NUMBER_FOR_STROKE": {str(k): v for k, v in NUMBER_FOR_STROKE.items()},
-            "SELECT_SKILL_LEVEL_FOR": "Select skill level for: {stroke}",
-            "BEGINNER": "Beginner",
-            "INTERMEDIATE": "Intermediate",
-            "ADVANCED": "Advanced",
-            "BACK": "Back",
-            "STROKE_UPDATED_SUCCESS": "Stroke updated successfully!",
-            "ERROR_RECEIVE_DATA": "Error receiving data",
+            "SELECT_STROKE_MESSAGE": "Selecciona un golpe para configurar:",
+            "SELECT_SKILL_LEVEL_FOR": "Selecciona tu nivel para: {stroke}",
+            "ALL_STROKES": "Todos los golpes",
+            "STROKES_NAMES": {
+                "1": "Saque",
+                "2": "Fondos de derecha",
+                "3": "Fondos de revés",
+                "4": "Pared de fondo de derecha",
+                "5": "Pared de fondo de revés",
+                "6": "Pared lateral de derecha",
+                "7": "Pared lateral de revés",
+                "8": "Dobles paredes de derecha",
+                "9": "Dobles paredes de revés",
+                "10": "Contrapared de derecha",
+                "11": "Contrapared de revés",
+                "12": "Volea de derecha",
+                "13": "Volea de revés",
+                "14": "Globo",
+                "15": "Remate",
+                "16": "Bandeja"
+            },
+            "BEGINNER": "Principiante",
+            "INTERMEDIATE": "Intermedio",
+            "ADVANCED": "Avanzado",
+            "BACK": "Volver",
+            "STROKE_UPDATED_SUCCESS": "¡Golpe actualizado con éxito!",
+            "ERROR_RECEIVE_DATA": "Error al intentar contactar con los servicios.\nPor favor intente de nuevo más tarde.",
         }
         return language_map.get(key, key)
 
@@ -79,7 +95,7 @@ class TestConfigurarGolpes(unittest.TestCase):
 
         self.bot.send_message.assert_called_once_with(
             self.message.chat.id,
-            "Select a stroke to configure:",
+            "Selecciona un golpe para configurar:",
             reply_markup="mock_markup",
         )
 
@@ -95,7 +111,7 @@ class TestConfigurarGolpes(unittest.TestCase):
         self.bot.edit_message_text.assert_called_once_with(
             chat_id=self.call.message.chat.id,
             message_id=self.call.message.message_id,
-            text="Select skill level for: serve",
+            text="Selecciona tu nivel para: Saque",
             reply_markup="mock_markup",
         )
 
@@ -111,7 +127,7 @@ class TestConfigurarGolpes(unittest.TestCase):
         self.bot.edit_message_text.assert_called_once_with(
             chat_id=self.call.message.chat.id,
             message_id=self.call.message.message_id,
-            text="Select skill level for: All strokes",
+            text="Selecciona tu nivel para: Todos los golpes",
             reply_markup="mock_markup",
         )
 
@@ -133,7 +149,7 @@ class TestConfigurarGolpes(unittest.TestCase):
         self.assertEqual(strokes_body["serve"], 2.0)
 
         self.bot.answer_callback_query.assert_called_once_with(
-            self.call.id, "Stroke updated successfully!"
+            self.call.id, "¡Golpe actualizado con éxito!"
         )
 
     def test_skill_level_callback_all_strokes(self):
@@ -156,7 +172,7 @@ class TestConfigurarGolpes(unittest.TestCase):
             self.assertEqual(skill_level, 3.0)
 
         self.bot.answer_callback_query.assert_called_once_with(
-            self.call.id, "Stroke updated successfully!"
+            self.call.id, "¡Golpe actualizado con éxito!"
         )
 
     def test_show_strokes_list_callback(self):
@@ -169,6 +185,6 @@ class TestConfigurarGolpes(unittest.TestCase):
         self.bot.edit_message_text.assert_called_once_with(
             chat_id=self.call.message.chat.id,
             message_id=self.call.message.message_id,
-            text="Select a stroke to configure:",
+            text="Selecciona un golpe para configurar:",
             reply_markup="mock_markup",
         )
