@@ -1,4 +1,4 @@
-from .configurar_disponibilidad import handle_configure_availability
+from .configurar_disponibilidad import availability_callback, handle_configure_availability, filter_fn as availability_filter_fn
 from .encuesta_de_jugador import handle_survey_to_player
 from .ver_emparejamientos import matchups_callback, handle_matchups, filter_fn
 from .configurar_ubicacion import handle_address_configuration
@@ -27,4 +27,8 @@ PLAYER_CALLBACK_HANDLERS = [{
     "command": "ver_emparejamientos",
     "handler": matchups_callback,
     "filter_fn": filter_fn,
+},{
+    "command": "configurar_disponibilidad",
+    "handler": availability_callback,
+    "filter_fn": availability_filter_fn,
 }, ]
