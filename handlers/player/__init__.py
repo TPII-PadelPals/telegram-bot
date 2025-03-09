@@ -1,4 +1,4 @@
-from .configurar_disponibilidad import handle_configure_availability
+from .configurar_disponibilidad import availability_callback, handle_configure_availability, filter_fn as availability_filter_fn
 from .configurar_zona import handle_configure_zone
 from .encuesta_de_jugador import handle_survey_to_player
 from .ver_emparejamientos import matchups_callback, handle_matchups, filter_fn
@@ -42,5 +42,9 @@ PLAYER_CALLBACK_HANDLERS = [
         "command": "configurar_golpes",
         "handler": callback_handler_fn,
         "filter_fn": strokes_filter_fn,
+    },{
+        "command": "configurar_disponibilidad",
+        "handler": availability_callback,
+        "filter_fn": availability_filter_fn,
     },
 ]

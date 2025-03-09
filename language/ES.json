@@ -37,9 +37,7 @@
   "DATE_FMT": "%d/%m/%Y",
   "TIME": "Horario",
   "TIME_FMT": "%H:%M",
-  "MESSAGE_SELECT_TIME": "Indicanos los horarios que suelas tener disponibles:\n* Mañana [8hs-12hs].\n- Tarde [12hs-18hs].\n- Noche [18hs-00hs].",
-  "MESSAGE_SELECT_DAY": "Selecciona el día disponible:",
-  "AVAILABILITY_MESSAGE": "Indícanos los horarios que suelas tener disponibles:\n  - *Mañana [8hs-12hs]*\n  - *Tarde [12hs-18hs]*\n  - *Noche [18hs-00hs]*\n",
+  "AVAILABLE_TIME_MESSAGE": "Indícanos los horarios que suelas tener disponibles:",
   "AVAILABILITY_TIME_BUTTONS": [
     {
       "text": "Mañana",
