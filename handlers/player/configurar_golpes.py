@@ -7,6 +7,7 @@ from services.users_service import UsersService
 SKILL_LEVELS = [1.0, 2.0, 3.0]
 STROKES_CONFIGURATION_COMMAND = "configurar_golpes"
 
+
 def filter_fn(call: CallbackQuery):
     return call.data.startswith(STROKES_CONFIGURATION_COMMAND)
 
@@ -99,9 +100,7 @@ def strokes_callback(call: CallbackQuery, bot: TelegramBot):
     if stroke_key == "all":
         stroke_name = language_manager.get("ALL_STROKES")
     else:
-        stroke_name = strokes_names.get(
-            stroke_key
-        )
+        stroke_name = strokes_names.get(stroke_key)
 
     bot.edit_message_text(
         chat_id=call.message.chat.id,

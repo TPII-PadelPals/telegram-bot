@@ -6,7 +6,7 @@ from handlers.player.configurar_golpes import (
     handle_configure_strokes,
     strokes_callback,
     skill_level_callback,
-    show_strokes_list_callback
+    show_strokes_list_callback,
 )
 
 
@@ -75,7 +75,7 @@ class TestConfigurarGolpes(unittest.TestCase):
                 "backhand_volley": "Volea de revés",
                 "lob": "Globo",
                 "smash": "Remate",
-                "bandeja": "Bandeja"
+                "bandeja": "Bandeja",
             },
             "BEGINNER": "Principiante",
             "INTERMEDIATE": "Intermedio",
