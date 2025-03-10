@@ -1,6 +1,6 @@
 from model.telegram_bot import TelegramBot
 from telebot.types import Message, CallbackQuery
-from services.player_service import PlayerService
+from services.players_service import PlayersService
 from services.users_service import UsersService
 
 SKILL_LEVELS = [1.0, 2.0, 3.0]
@@ -112,7 +112,7 @@ def strokes_callback(call: CallbackQuery, bot: TelegramBot):
 def skill_level_callback(
     call: CallbackQuery,
     bot: TelegramBot,
-    get_api=PlayerService,
+    get_api=PlayersService,
     user_service=UsersService,
 ):
     """Handle the skill level selection and update the player's stroke skill"""

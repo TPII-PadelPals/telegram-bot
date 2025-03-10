@@ -3,7 +3,7 @@ from .base_service import BaseService
 from core.config import settings
 
 
-class PlayerService(BaseService):
+class PlayersService(BaseService):
     def __init__(self):
         """Set the base URL for the service."""
         self._set_base_url(settings.PLAYERS_SERVICE_HOST, settings.PLAYERS_SERVICE_PORT)
@@ -17,15 +17,7 @@ class PlayerService(BaseService):
             f"/players/{user_public_id_str}/strokes/",
             json=strokes
         )
-
-
-class PlayerServiceBackEnd(BaseService):
-
-    def update_location(self, player_nickname: str, streetname: str):
-        """Send location to backend to get coordinates."""
-        return self.post(f"/player/{player_nickname}/location", json={'streetname': streetname})
-
-
-    def update_radius(self, player_nickname: str, location: str, radius: int):
-        """Send location radius to backend."""
-        return self.post(f"/player/{player_nickname}/location/radius", json={'search_range_km': radius})
+    
+    def update_partial_player(self, user_public_id, partial_player: dict):
+        """Partially updates a player."""
+        return self.patch(f"/players?user_public_id={user_public_id}", json=partial_player)

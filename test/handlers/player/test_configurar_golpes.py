@@ -1,6 +1,5 @@
 import unittest
-from unittest.mock import MagicMock, patch
-from telebot.types import Message, CallbackQuery
+from unittest.mock import MagicMock
 
 from handlers.player.configurar_golpes import (
     handle_configure_strokes,
@@ -26,12 +25,12 @@ class TestConfigurarGolpes(unittest.TestCase):
         self.result_strokes = MagicMock()
         self.result_strokes.get = MagicMock(return_value="123")
 
-        self.player_service = MagicMock()
-        self.player_service.update_strokes = MagicMock(
+        self.players_service = MagicMock()
+        self.players_service.update_strokes = MagicMock(
             return_value={"user_public_id": "123"}
         )
 
-        self.get_api = MagicMock(return_value=self.player_service)
+        self.get_api = MagicMock(return_value=self.players_service)
 
         self.user_service_api = MagicMock()
         self.user_service_api.get_user_info = MagicMock(
@@ -140,9 +139,9 @@ class TestConfigurarGolpes(unittest.TestCase):
             self.call, self.bot, get_api=self.get_api, user_service=self.user_service
         )
 
-        self.player_service.update_strokes.assert_called_once()
+        self.players_service.update_strokes.assert_called_once()
 
-        args, _ = self.player_service.update_strokes.call_args
+        args, _ = self.players_service.update_strokes.call_args
         user_id, strokes_body = args
         self.assertEqual(user_id, "123")
         self.assertEqual(len(strokes_body), 1)
@@ -161,9 +160,9 @@ class TestConfigurarGolpes(unittest.TestCase):
             self.call, self.bot, get_api=self.get_api, user_service=self.user_service
         )
 
-        self.player_service.update_strokes.assert_called_once()
+        self.players_service.update_strokes.assert_called_once()
 
-        args, _ = self.player_service.update_strokes.call_args
+        args, _ = self.players_service.update_strokes.call_args
         user_id, strokes_body = args
         self.assertEqual(user_id, "123")
         self.assertEqual(len(strokes_body), 16)
