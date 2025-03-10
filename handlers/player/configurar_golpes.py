@@ -3,7 +3,6 @@ from telebot.types import Message, CallbackQuery
 from services.player_service import PlayerService
 from services.users_service import UsersService
 
-# Constants
 SKILL_LEVELS = [1.0, 2.0, 3.0]
 STROKES_CONFIGURATION_COMMAND = "configurar_golpes"
 
