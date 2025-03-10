@@ -29,8 +29,8 @@ class BaseService:
     def get(self, endpoint, params=None, headers={}):
         """Send a GET request."""
         url = f"{self.base_url}{endpoint}"
-        logger.info(f"GET request to {url}, params: {params}")
         headers.update(self.x_api_key_header)
+        logger.info(f"GET request to {url}, params: {params}, headers={headers}")
         response = requests.get(url, params=params, headers=headers)
         return self._handle_response(response)
 
@@ -40,6 +40,14 @@ class BaseService:
         logger.info(f"POST request to {url}, json: {json}")
         headers.update(self.x_api_key_header)
         response = requests.post(url, data=data, json=json, headers=headers)
+        return self._handle_response(response)
+
+    def patch(self, endpoint, data=None, json=None, headers={}):
+        """Send a PATCH request."""
+        url = f"{self.base_url}{endpoint}"
+        logger.info(f"PATCH request to {url}, json: {json}")
+        headers.update(self.x_api_key_header)
+        response = requests.patch(url, data=data, json=json, headers=headers)
         return self._handle_response(response)
 
     def put(self, endpoint, data=None, json=None, headers={}):
@@ -62,7 +70,8 @@ class BaseService:
         try:
             response.raise_for_status()
             return response.json()
-        except requests.exceptions.HTTPError as _:
+        except requests.exceptions.HTTPError as e:
+            logger.info(f"Request error {e}")
             return None
 
 

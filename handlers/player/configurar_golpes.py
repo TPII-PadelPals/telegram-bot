@@ -4,7 +4,7 @@ from model.language_manager import LanguageManager
 from model.telegram_bot import TelegramBot
 from telebot.types import Message
 from model.validation import ValidateConfigStrokes
-from services.player_service import PlayerService
+from services.players_service import PlayersService
 from services.users_service import UsersService
 
 
@@ -35,7 +35,7 @@ NUMBER_FOR_STROKE = {
 
 # TODO traducir NUMBER_FOR_STROKE y MESSAGE_HELP_STROKE del json
 
-def handle_configure_strokes(message: Message, bot: TelegramBot, get_api=PlayerService, user_service=UsersService):
+def handle_configure_strokes(message: Message, bot: TelegramBot, get_api=PlayersService, user_service=UsersService):
     text = message.text
     api_conection = get_api()
     language_manager = bot.language_manager
