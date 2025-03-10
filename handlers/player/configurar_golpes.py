@@ -4,27 +4,8 @@ from services.player_service import PlayerService
 from services.users_service import UsersService
 
 # Constants
-MAX_VALUE_FOR_STROKE = 16
 SKILL_LEVELS = [1.0, 2.0, 3.0]
 STROKES_CONFIGURATION_COMMAND = "configurar_golpes"
-API_STROKES_NAMES = {
-    1: "serve",
-    2: "forehand_ground",
-    3: "background_ground",
-    4: "forehand_back_wall",
-    5: "backhand_back_wall",
-    6: "forehand_side_wall",
-    7: "backhand_side_wall",
-    8: "forehand_double_walls",
-    9: "backhand_double_walls",
-    10: "forehand_counter_wall",
-    11: "backhand_counter_wall",
-    12: "forehand_volley",
-    13: "backhand_volley",
-    14: "lob",
-    15: "smash",
-    16: "bandeja",
-}
 
 def filter_fn(call: CallbackQuery):
     return call.data.startswith(STROKES_CONFIGURATION_COMMAND)
@@ -50,14 +31,11 @@ def generate_strokes_markup(bot: TelegramBot):
 
     buttons = []
     strokes_names = language_manager.get("STROKES_NAMES")
-    for number in strokes_names:
-        display_name = strokes_names.get(
-            str(number)
-        )
+    for key, value in strokes_names.items():
         buttons.append(
             {
-                "text": display_name,
-                "callback_data": generate_callback_string(f"stroke:{number}"),
+                "text": value,
+                "callback_data": generate_callback_string(f"stroke:{key}"),
             }
         )
 
@@ -88,25 +66,25 @@ def strokes_callback(call: CallbackQuery, bot: TelegramBot):
     language_manager = bot.language_manager
 
     stroke_data = call.data
-    stroke_id = stroke_data.split(":")[-1]
+    stroke_key = stroke_data.split(":")[-1]
 
     skill_buttons = [
         {
             "text": language_manager.get("BEGINNER"),
             "callback_data": generate_callback_string(
-                f"skill:{stroke_id}:0"
+                f"skill:{stroke_key}:0"
             ),  # 0 = principiante
         },
         {
             "text": language_manager.get("INTERMEDIATE"),
             "callback_data": generate_callback_string(
-                f"skill:{stroke_id}:1"
+                f"skill:{stroke_key}:1"
             ),  # 1 = intermedio
         },
         {
             "text": language_manager.get("ADVANCED"),
             "callback_data": generate_callback_string(
-                f"skill:{stroke_id}:2"
+                f"skill:{stroke_key}:2"
             ),  # 2 = avanzado
         },
         {
@@ -118,12 +96,11 @@ def strokes_callback(call: CallbackQuery, bot: TelegramBot):
     markup = bot.ui.create_inline_keyboard(skill_buttons, row_width=2)
     strokes_names = language_manager.get("STROKES_NAMES")
 
-    if stroke_id == "all":
+    if stroke_key == "all":
         stroke_name = language_manager.get("ALL_STROKES")
     else:
-        stroke_number = int(stroke_id)
         stroke_name = strokes_names.get(
-            str(stroke_number)
+            stroke_key
         )
 
     bot.edit_message_text(
@@ -144,7 +121,7 @@ def skill_level_callback(
     language_manager = bot.language_manager
 
     parts = call.data.split(":")
-    stroke_id = parts[2]
+    stroke_key = parts[2]
     level_idx = int(parts[3])
 
     telegram_id = call.from_user.id
@@ -155,15 +132,14 @@ def skill_level_callback(
         return
 
     api_connection = get_api()
+    strokes_names = language_manager.get("STROKES_NAMES")
 
     strokes_body = {}
-    if stroke_id == "all":
-        for number in range(1, MAX_VALUE_FOR_STROKE + 1):
-            api_stroke_name = API_STROKES_NAMES.get(number)
-            strokes_body[api_stroke_name] = SKILL_LEVELS[level_idx]
+    if stroke_key == "all":
+        for key, _ in strokes_names.items():
+            strokes_body[key] = SKILL_LEVELS[level_idx]
     else:
-        api_stroke_name = API_STROKES_NAMES.get(int(stroke_id))
-        strokes_body[api_stroke_name] = SKILL_LEVELS[level_idx]
+        strokes_body[stroke_key] = SKILL_LEVELS[level_idx]
 
     result = api_connection.update_strokes(user_id, strokes_body)
 

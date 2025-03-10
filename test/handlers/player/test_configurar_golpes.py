@@ -60,22 +60,22 @@ class TestConfigurarGolpes(unittest.TestCase):
             "SELECT_SKILL_LEVEL_FOR": "Selecciona tu nivel para: {stroke}",
             "ALL_STROKES": "Todos los golpes",
             "STROKES_NAMES": {
-                "1": "Saque",
-                "2": "Fondos de derecha",
-                "3": "Fondos de revés",
-                "4": "Pared de fondo de derecha",
-                "5": "Pared de fondo de revés",
-                "6": "Pared lateral de derecha",
-                "7": "Pared lateral de revés",
-                "8": "Dobles paredes de derecha",
-                "9": "Dobles paredes de revés",
-                "10": "Contrapared de derecha",
-                "11": "Contrapared de revés",
-                "12": "Volea de derecha",
-                "13": "Volea de revés",
-                "14": "Globo",
-                "15": "Remate",
-                "16": "Bandeja"
+                "serve": "Saque",
+                "forehand_ground": "Fondos de derecha",
+                "background_ground": "Fondos de revés",
+                "forehand_back_wall": "Pared de fondo de derecha",
+                "backhand_back_wall": "Pared de fondo de revés",
+                "forehand_side_wall": "Pared lateral de derecha",
+                "backhand_side_wall": "Pared lateral de revés",
+                "forehand_double_walls": "Dobles paredes de derecha",
+                "backhand_double_walls": "Dobles paredes de revés",
+                "forehand_counter_wall": "Contrapared de derecha",
+                "backhand_counter_wall": "Contrapared de revés",
+                "forehand_volley": "Volea de derecha",
+                "backhand_volley": "Volea de revés",
+                "lob": "Globo",
+                "smash": "Remate",
+                "bandeja": "Bandeja"
             },
             "BEGINNER": "Principiante",
             "INTERMEDIATE": "Intermedio",
@@ -102,7 +102,7 @@ class TestConfigurarGolpes(unittest.TestCase):
     def test_strokes_callback_single_stroke(self):
         """Test that strokes_callback creates skill level buttons for a single stroke"""
 
-        self.call.data = "configurar_golpes:stroke:1"
+        self.call.data = "configurar_golpes:stroke:serve"
 
         strokes_callback(self.call, self.bot)
 
@@ -134,7 +134,7 @@ class TestConfigurarGolpes(unittest.TestCase):
     def test_skill_level_callback_single_stroke(self):
         """Test that skill_level_callback updates a single stroke"""
 
-        self.call.data = "configurar_golpes:skill:1:1"
+        self.call.data = "configurar_golpes:skill:serve:1"
 
         skill_level_callback(
             self.call, self.bot, get_api=self.get_api, user_service=self.user_service
