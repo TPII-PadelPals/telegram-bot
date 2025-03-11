@@ -1,109 +1,167 @@
-from enum import Enum
-
-from model.language_manager import LanguageManager
 from model.telegram_bot import TelegramBot
-from telebot.types import Message
-from model.validation import ValidateConfigStrokes
+from telebot.types import Message, CallbackQuery
 from services.players_service import PlayersService
 from services.users_service import UsersService
 
-
-# ["configurar_golpes", lista de golpes, habilidad]
-SEPARATOR_OF_STROKES = ','
-POSITION_OF_HABILITY = 2
-POSITION_OF_STROKES = 1
-MAX_VALUE_FOR_STROKE = 16
 SKILL_LEVELS = [1.0, 2.0, 3.0]
-NUMBER_FOR_STROKE = {
-    1: "serve",
-    2: "forehand_ground",
-    3: "background_ground",
-    4: "forehand_back_wall",
-    5: "backhand_back_wall",
-    6: "forehand_side_wall",
-    7: "backhand_side_wall",
-    8: "forehand_double_walls",
-    9: "backhand_double_walls",
-    10: "forehand_counter_wall",
-    11: "backhand_counter_wall",
-    12: "forehand_volley",
-    13: "backhand_volley",
-    14: "lob",
-    15: "smash",
-    16: "bandeja"
-}
+STROKES_CONFIGURATION_COMMAND = "configurar_golpes"
 
-# TODO traducir NUMBER_FOR_STROKE y MESSAGE_HELP_STROKE del json
 
-def handle_configure_strokes(message: Message, bot: TelegramBot, get_api=PlayersService, user_service=UsersService):
-    text = message.text
-    api_conection = get_api()
+def filter_fn(call: CallbackQuery):
+    return call.data.startswith(STROKES_CONFIGURATION_COMMAND)
+
+
+def generate_callback_string(data: str):
+    return f"{STROKES_CONFIGURATION_COMMAND}:{data}"
+
+
+def callback_handler_fn(call: CallbackQuery, bot: TelegramBot):
+    handlers = {
+        "stroke": strokes_callback,
+        "skill": skill_level_callback,
+        "strokes_list": show_strokes_list_callback,
+    }
+    handler_key = call.data.split(":")[1]
+    handler = handlers.get(handler_key)
+    handler(call, bot)
+
+
+def generate_strokes_markup(bot: TelegramBot):
     language_manager = bot.language_manager
 
-    split_chat_message = text.split()
-    # validation
-    validation = ValidateConfigStrokes(split_chat_message)
-    is_valid, response = validation.is_valid(language_manager)
-    if not is_valid:
-        bot.reply_to(message, response)
-        return
+    buttons = []
+    strokes_names = language_manager.get("STROKES_NAMES")
+    for key, value in strokes_names.items():
+        buttons.append(
+            {
+                "text": value,
+                "callback_data": generate_callback_string(f"stroke:{key}"),
+            }
+        )
 
-    skill_level = split_chat_message[POSITION_OF_HABILITY].lower()
-    id_telegram = message.from_user.id
-    user_id = _get_user_public_id(id_telegram, user_service)
-    if user_id is None:
-        bot.reply_to(message, language_manager.get("ERROR_RECEIVE_DATA"))
-        return
-    # obtengo el listado de golpes a configurar
-    strokes_list = _generate_stroke_list(split_chat_message[POSITION_OF_STROKES], language_manager)
-    pos_level = language_manager.get("SENDER_POSITION_STROKE_HABILITY")
-    strokes_body = _get_strokes_body(strokes_list, pos_level[skill_level])
-    # envio el mensaje a la api
-    result = api_conection.update_strokes(user_id, strokes_body)
-    if result.get("user_public_id") != str(user_id):
-        bot.reply_to(message, language_manager.get("ERROR_RECEIVE_DATA"))
-        return
+    buttons.append(
+        {
+            "text": language_manager.get("ALL_STROKES"),
+            "callback_data": generate_callback_string("stroke:all"),
+        }
+    )
 
-    response_to_user = _generate_message(strokes_list, skill_level, language_manager)
-    bot.reply_to(message, response_to_user)
+    markup = bot.ui.create_inline_keyboard(buttons, row_width=2)
+    return markup
 
 
-def _get_strokes_body(strokes_list, pos_level):
-    strokes_body = {}
-    for number_of_stroke in strokes_list:
-        level = SKILL_LEVELS[pos_level]
-        stroke = NUMBER_FOR_STROKE[number_of_stroke]
-        strokes_body[stroke] = level
-    return strokes_body
+def handle_configure_strokes(message: Message, bot: TelegramBot):
+    """Show the list of strokes using inline buttons"""
+    markup = generate_strokes_markup(bot)
+
+    bot.send_message(
+        message.chat.id,
+        bot.language_manager.get("SELECT_STROKE_MESSAGE"),
+        reply_markup=markup,
+    )
 
 
-def _generate_stroke_list(strokes_str: str, language_manager: LanguageManager) -> list[int]:
-    if strokes_str.lower() == language_manager.get("ALL").lower():
-        strokes_list = list(range(1, MAX_VALUE_FOR_STROKE + 1))
+def strokes_callback(call: CallbackQuery, bot: TelegramBot):
+    """Handle the stroke selection and show skill level options"""
+    language_manager = bot.language_manager
+
+    stroke_data = call.data
+    stroke_key = stroke_data.split(":")[-1]
+
+    skill_buttons = [
+        {
+            "text": language_manager.get("BEGINNER"),
+            "callback_data": generate_callback_string(
+                f"skill:{stroke_key}:0"
+            ),  # 0 = principiante
+        },
+        {
+            "text": language_manager.get("INTERMEDIATE"),
+            "callback_data": generate_callback_string(
+                f"skill:{stroke_key}:1"
+            ),  # 1 = intermedio
+        },
+        {
+            "text": language_manager.get("ADVANCED"),
+            "callback_data": generate_callback_string(
+                f"skill:{stroke_key}:2"
+            ),  # 2 = avanzado
+        },
+        {
+            "text": language_manager.get("BACK"),
+            "callback_data": generate_callback_string(f"strokes_list"),
+        },
+    ]
+
+    markup = bot.ui.create_inline_keyboard(skill_buttons, row_width=2)
+    strokes_names = language_manager.get("STROKES_NAMES")
+
+    if stroke_key == "all":
+        stroke_name = language_manager.get("ALL_STROKES")
     else:
-        strokes_list_str = strokes_str.split(SEPARATOR_OF_STROKES)
-        strokes_list = []
-        for number_of_stroke_str in strokes_list_str:
-            number_of_stroke = int(number_of_stroke_str)
-            if number_of_stroke == 0 or number_of_stroke > MAX_VALUE_FOR_STROKE:
-                continue
-            strokes_list.append(number_of_stroke)
-    return strokes_list
+        stroke_name = strokes_names.get(stroke_key)
+
+    bot.edit_message_text(
+        chat_id=call.message.chat.id,
+        message_id=call.message.message_id,
+        text=language_manager.get("SELECT_SKILL_LEVEL_FOR").format(stroke=stroke_name),
+        reply_markup=markup,
+    )
 
 
-def _get_user_public_id(id_telegram, user_service):
+def skill_level_callback(
+    call: CallbackQuery,
+    bot: TelegramBot,
+    get_api=PlayersService,
+    user_service=UsersService,
+):
+    """Handle the skill level selection and update the player's stroke skill"""
+    language_manager = bot.language_manager
+
+    parts = call.data.split(":")
+    stroke_key = parts[2]
+    level_idx = int(parts[3])
+
+    telegram_id = call.from_user.id
+    user_id = get_user_public_id(telegram_id, user_service)
+
+    if user_id is None:
+        bot.answer_callback_query(call.id, language_manager.get("ERROR_RECEIVE_DATA"))
+        return
+
+    api_connection = get_api()
+    strokes_names = language_manager.get("STROKES_NAMES")
+
+    strokes_body = {}
+    if stroke_key == "all":
+        for key, _ in strokes_names.items():
+            strokes_body[key] = SKILL_LEVELS[level_idx]
+    else:
+        strokes_body[stroke_key] = SKILL_LEVELS[level_idx]
+
+    result = api_connection.update_strokes(user_id, strokes_body)
+
+    if result.get("user_public_id") != str(user_id):
+        bot.answer_callback_query(call.id, language_manager.get("ERROR_RECEIVE_DATA"))
+        return
+
+    bot.answer_callback_query(call.id, language_manager.get("STROKE_UPDATED_SUCCESS"))
+
+    show_strokes_list_callback(call, bot)
+
+
+def show_strokes_list_callback(call: CallbackQuery, bot: TelegramBot):
+    markup = generate_strokes_markup(bot)
+
+    bot.edit_message_text(
+        chat_id=call.message.chat.id,
+        message_id=call.message.message_id,
+        text=bot.language_manager.get("SELECT_STROKE_MESSAGE"),
+        reply_markup=markup,
+    )
+
+
+def get_user_public_id(telegram_id, user_service):
     service = user_service()
-    data = service.get_user_info(id_telegram)
-    return data.get("public_id")
-
-
-def _generate_message(strokes_list: list[int], skill_level: str, language_manager: LanguageManager) -> str:
-    response_to_user = language_manager.get("MESSAGE_STROKES_UPDATED")
-    response_to_user += skill_level
-    response_to_user += "\n"
-    number_for_stroke_to_response = language_manager.get("NUMBER_FOR_STROKE")
-    for number_of_stroke in strokes_list:
-        # agrego el golpe a la respuesta del usuario
-        response_to_user += number_for_stroke_to_response[str(number_of_stroke)]
-        response_to_user += "\n"
-    return response_to_user
+    data = service.get_user_info(telegram_id)
+    return data.get("data")[0].get("public_id") if data.get("data") else None
