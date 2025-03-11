@@ -20,4 +20,4 @@ class PlayersService(BaseService):
     
     def update_partial_player(self, user_public_id, partial_player: dict):
         """Partially updates a player."""
-        return self.patch(f"/players?user_public_id={user_public_id}", json=partial_player)
+        return self.patch(f"/players/?user_public_id={user_public_id}", json=partial_player)
