@@ -1,7 +1,10 @@
 from model.telegram_bot import TelegramBot
 from telebot.types import Message, CallbackQuery
-
+from services.players_service import PlayersService
+from services.users_service import UsersService
 from utils.get_from_env import get_from_env_api
+
+
 
 DEFAULT_PLAYER = "francoMartinDiMaria"
 
@@ -52,20 +55,34 @@ def handle_configure_availability(message: Message, bot: TelegramBot):
     )
 
 
-def process_time_step(call: CallbackQuery, bot: TelegramBot):
-    api_conection = get_from_env_api()
+def process_time_step(
+        call: CallbackQuery,
+        bot: TelegramBot,
+        players_service=PlayersService,
+        users_service=UsersService
+    ):
 
     callback_data = call.data
-    telegram_id = (
-        call.message.chat.username if call.message.chat.username else DEFAULT_PLAYER
-    )
+    telegram_id = call.from_user.id
+
+    data = users_service().get_user_info(telegram_id)
+    user_public_id = data.get("data")[0].get("public_id") if data.get("data") else None
+    
+    if not user_public_id:
+        bot.answer_callback_query(call.id, bot.language_manager.get("ERROR_RECEIVE_DATA"))
+        return
+
     time_id = int(callback_data.split(CALLBACK_STRING_SEPARATOR)[-1])
 
     if time_id is None:
         bot.reply_to(call.message, "No se pudo configurar la disponibilidad")
         return
+    
+    partial_player = {
+        "time_availability": 5
+    }
 
-    api_conection.set_availability(time_id, telegram_id)
+    response = players_service().update_partial_player(user_public_id, partial_player)
 
     buttons = [
         {
@@ -76,6 +93,7 @@ def process_time_step(call: CallbackQuery, bot: TelegramBot):
         }
         for x in bot.language_manager.get("AVAILABILITY_DAY_BUTTONS")
     ]
+
     menu = bot.ui.create_inline_keyboard(buttons, row_width=INLINE_KEYBOARD_ROW_WIDTH)
     bot.edit_message_text(
         chat_id=call.message.chat.id,

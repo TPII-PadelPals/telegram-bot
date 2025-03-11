@@ -43,31 +43,31 @@
   "AVAILABILITY_DAY_BUTTONS": [
     {
       "text": "Lunes",
-      "callback_data": "0"
-    },
-    {
-      "text": "Martes",
       "callback_data": "1"
     },
     {
-      "text": "Miércoles",
+      "text": "Martes",
       "callback_data": "2"
     },
     {
-      "text": "Jueves",
+      "text": "Miércoles",
       "callback_data": "3"
     },
     {
-      "text": "Viernes",
+      "text": "Jueves",
       "callback_data": "4"
     },
     {
-      "text": "Sábado",
+      "text": "Viernes",
       "callback_data": "5"
     },
     {
-      "text": "Domingo",
+      "text": "Sábado",
       "callback_data": "6"
+    },
+    {
+      "text": "Domingo",
+      "callback_data": "7"
     }
   ],
   "SENDER_POSITION_STROKE_HABILITY": {
