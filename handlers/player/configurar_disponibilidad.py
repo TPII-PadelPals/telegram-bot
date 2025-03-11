@@ -65,24 +65,32 @@ def process_time_step(
     callback_data = call.data
     telegram_id = call.from_user.id
 
-    data = users_service().get_user_info(telegram_id)
-    user_public_id = data.get("data")[0].get("public_id") if data.get("data") else None
+    response = users_service().get_user_info(telegram_id)
+    user_public_id = response.get("data")[0].get("public_id") if response.get("data") else None
     
     if not user_public_id:
-        bot.answer_callback_query(call.id, bot.language_manager.get("ERROR_RECEIVE_DATA"))
+        bot.answer_callback_query(call.id, bot.language_manager.get("ERROR_USER_NOT_FOUND"))
         return
 
     time_id = int(callback_data.split(CALLBACK_STRING_SEPARATOR)[-1])
 
     if time_id is None:
-        bot.reply_to(call.message, "No se pudo configurar la disponibilidad")
+        bot.reply_to(call.message, bot.language_manager.get("ERROR_SET_TIME_AVAILABILITY"))
         return
     
     partial_player = {
-        "time_availability": 5
+        "time_availability": time_id
     }
 
     response = players_service().update_partial_player(user_public_id, partial_player)
+
+    if response.status_code == 404:
+        bot.answer_callback_query(call.id, bot.language_manager.get("ERROR_USER_NOT_FOUND"))
+        return
+    elif response.status_code == 422:
+        return
+    elif response.status_code == 500:
+        return
 
     buttons = [
         {
