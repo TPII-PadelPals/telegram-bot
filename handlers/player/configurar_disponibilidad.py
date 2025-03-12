@@ -98,7 +98,7 @@ def process_time_step(
         reply_markup=day_options,
         )
     else:
-        bot.send_message(call.id, bot.language_manager.get("ERROR_SET_TIME_AVAILABILITY"))
+        bot.reply_to(call.id, bot.language_manager.get("ERROR_SET_TIME_AVAILABILITY"))
 
 
 def generate_day_markup_options(bot: TelegramBot):
