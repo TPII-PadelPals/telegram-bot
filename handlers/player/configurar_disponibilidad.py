@@ -37,21 +37,21 @@ def availability_callback(call: CallbackQuery, bot: TelegramBot):
             "Se ha producido un error",
         )
 
-def generate_time_markup_options(bot: TelegramBot):
+def generate_markup_options(bot: TelegramBot, callback_type: str, language_manager_msg: str):
     buttons = [
         {
             "text": x["text"],
             "callback_data": generate_callback_string(
-                f"{TIME}{CALLBACK_STRING_SEPARATOR}{x['callback_data']}"
+                f"{callback_type}{CALLBACK_STRING_SEPARATOR}{x['callback_data']}"
             ),
         }
-        for x in bot.language_manager.get("AVAILABILITY_TIME_BUTTONS")
+        for x in bot.language_manager.get(language_manager_msg)
     ]
     return bot.ui.create_inline_keyboard(buttons, row_width=INLINE_KEYBOARD_ROW_WIDTH)
 
 
 def handle_configure_availability(message: Message, bot: TelegramBot):
-    time_options = generate_time_markup_options(bot)
+    time_options = generate_markup_options(bot, TIME, "AVAILABILITY_TIME_BUTTONS")
     
     bot.send_message(
         message.chat.id,
@@ -90,7 +90,7 @@ def process_time_step(
     response = players_service().update_partial_player(user_public_id, partial_player)
 
     if response:
-        day_options = generate_day_markup_options(bot)
+        day_options = generate_markup_options(bot, DAY, "AVAILABILITY_DAY_BUTTONS")
         bot.edit_message_text(
         chat_id=call.message.chat.id,
         message_id=call.message.message_id,
@@ -99,20 +99,6 @@ def process_time_step(
         )
     else:
         bot.reply_to(call.id, bot.language_manager.get("ERROR_SET_TIME_AVAILABILITY"))
-
-
-def generate_day_markup_options(bot: TelegramBot):
-    buttons = [
-        {
-            "text": x["text"],
-            "callback_data": generate_callback_string(
-                f"{DAY}{CALLBACK_STRING_SEPARATOR}{x['callback_data']}"
-            ),
-        }
-        for x in bot.language_manager.get("AVAILABILITY_DAY_BUTTONS")
-    ]
-
-    return bot.ui.create_inline_keyboard(buttons, row_width=INLINE_KEYBOARD_ROW_WIDTH)
 
 
 def process_day_step(call: CallbackQuery, bot: TelegramBot):
