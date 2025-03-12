@@ -1,3 +1,4 @@
+import uuid
 from model.telegram_bot import TelegramBot
 from telebot.types import Message, CallbackQuery
 from services.players_service import PlayersService
@@ -36,8 +37,7 @@ def availability_callback(call: CallbackQuery, bot: TelegramBot):
             "Se ha producido un error",
         )
 
-
-def handle_configure_availability(message: Message, bot: TelegramBot):
+def generate_time_markup_options(bot: TelegramBot):
     buttons = [
         {
             "text": x["text"],
@@ -47,11 +47,16 @@ def handle_configure_availability(message: Message, bot: TelegramBot):
         }
         for x in bot.language_manager.get("AVAILABILITY_TIME_BUTTONS")
     ]
-    menu = bot.ui.create_inline_keyboard(buttons, row_width=INLINE_KEYBOARD_ROW_WIDTH)
+    return bot.ui.create_inline_keyboard(buttons, row_width=INLINE_KEYBOARD_ROW_WIDTH)
+
+
+def handle_configure_availability(message: Message, bot: TelegramBot):
+    time_options = generate_time_markup_options(bot)
+    
     bot.send_message(
         message.chat.id,
         bot.language_manager.get("AVAILABLE_TIME_MESSAGE"),
-        reply_markup=menu,
+        reply_markup=time_options,
     )
 
 
@@ -84,14 +89,19 @@ def process_time_step(
 
     response = players_service().update_partial_player(user_public_id, partial_player)
 
-    if response.status_code == 404:
-        bot.answer_callback_query(call.id, bot.language_manager.get("ERROR_USER_NOT_FOUND"))
-        return
-    elif response.status_code == 422:
-        return
-    elif response.status_code == 500:
-        return
+    if response:
+        day_options = generate_day_markup_options(bot)
+        bot.edit_message_text(
+        chat_id=call.message.chat.id,
+        message_id=call.message.message_id,
+        text=bot.language_manager.get("AVAILABLE_DAYS_MESSAGE"),
+        reply_markup=day_options,
+        )
+    else:
+        bot.send_message(call.id, bot.language_manager.get("ERROR_SET_TIME_AVAILABILITY"))
 
+
+def generate_day_markup_options(bot: TelegramBot):
     buttons = [
         {
             "text": x["text"],
@@ -102,13 +112,7 @@ def process_time_step(
         for x in bot.language_manager.get("AVAILABILITY_DAY_BUTTONS")
     ]
 
-    menu = bot.ui.create_inline_keyboard(buttons, row_width=INLINE_KEYBOARD_ROW_WIDTH)
-    bot.edit_message_text(
-        chat_id=call.message.chat.id,
-        message_id=call.message.message_id,
-        text=bot.language_manager.get("AVAILABLE_DAYS_MESSAGE"),
-        reply_markup=menu,
-    )
+    return bot.ui.create_inline_keyboard(buttons, row_width=INLINE_KEYBOARD_ROW_WIDTH)
 
 
 def process_day_step(call: CallbackQuery, bot: TelegramBot):
