@@ -1,4 +1,3 @@
-import uuid
 from model.telegram_bot import TelegramBot
 from telebot.types import Message, CallbackQuery
 from services.players_service import PlayersService
