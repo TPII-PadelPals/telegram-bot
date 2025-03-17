@@ -111,6 +111,7 @@
   "ERROR_SET_TIME_AVAILABILITY": "No se pudo configurar la disponibilidad. Por favor inténtelo nuevamente.",
   "ERROR_RECEIVE_DATA": "Error al intentar contactar con los servicios.\nPor favor intente de nuevo más tarde.",
   "ERROR_USER_NOT_FOUND": "Usted no se encuentra registrado.\nPor favor intente registrarse con el comando /start y vuelva a intentarlo.",
+  "SUCCESSFUL_AVAILABILITY_CONFIGURATION": "Ya tenes todo listo! Deseas ver los matches que tenes emparejados para vos? Utiliza el comando /ver_emparejamientos",
   "SELECT_STROKE_MESSAGE": "Selecciona un golpe para configurar:",
   "SELECT_SKILL_LEVEL_FOR": "Selecciona tu nivel para: {stroke}",
   "BEGINNER": "Principiante",

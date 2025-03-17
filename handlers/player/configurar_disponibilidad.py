@@ -5,9 +5,6 @@ from services.users_service import UsersService
 from utils.get_from_env import get_from_env_api
 
 
-
-DEFAULT_PLAYER = "francoMartinDiMaria"
-
 AVAILABILITY_CONFIGURATION_COMMAND = "configurar_disponibilidad"
 
 CALLBACK_STRING_SEPARATOR = ":"
@@ -100,22 +97,43 @@ def process_time_step(
         bot.reply_to(call.id, bot.language_manager.get("ERROR_SET_TIME_AVAILABILITY"))
 
 
-def process_day_step(call: CallbackQuery, bot: TelegramBot):
-    api_conection = get_from_env_api()
+def process_day_step(
+        call: CallbackQuery,
+        bot: TelegramBot,
+        players_service=PlayersService,
+        users_service=UsersService,
+    ):
 
     callback_data = call.data
-    telegram_id = (
-        call.message.chat.username if call.message.chat.username else DEFAULT_PLAYER
-    )
-    day_id = int(callback_data.split(CALLBACK_STRING_SEPARATOR)[-1])
+    telegram_id = call.from_user.id
 
-    if day_id is None:
-        bot.reply_to(call.message, "No se pudo configurar la disponibilidad")
+    response = users_service().get_user_info(telegram_id)
+    user_public_id = response.get("data")[0].get("public_id") if response.get("data") else None
 
-    api_conection.set_available_day(day_id, telegram_id)
+    if not user_public_id:
+        bot.answer_callback_query(call.id, bot.language_manager.get("ERROR_USER_NOT_FOUND"))
+        return
 
-    bot.edit_message_text(
+
+    week_day = int(callback_data.split(CALLBACK_STRING_SEPARATOR)[-1])
+
+    if not week_day:
+        bot.reply_to(call.message, bot.language_manager.get("ERROR_SET_TIME_AVAILABILITY"))
+
+    availability_days = {
+        "available_days": [
+            {"week_day": week_day, "is_available": True},
+        ]
+    }
+
+    response = players_service().update_availability(user_public_id, availability_days)
+
+
+    if response:
+        bot.edit_message_text(
         chat_id=call.message.chat.id,
         message_id=call.message.message_id,
-        text="Ya tenes todo listo! Deseas ver los matches que tenes emparejados para vos? Utiliza el comando /ver_emparejamientos",
-    )
+        text=bot.language_manager.get("SUCCESSFUL_AVAILABILITY_CONFIGURATION"),
+        )
+    else:
+        bot.reply_to(call.id, bot.language_manager.get("ERROR_SET_TIME_AVAILABILITY"))
