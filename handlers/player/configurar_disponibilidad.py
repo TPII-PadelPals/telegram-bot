@@ -76,7 +76,7 @@ def process_time_step(
     time_id = int(callback_data.split(CALLBACK_STRING_SEPARATOR)[-1])
 
     if time_id is None:
-        bot.reply_to(call.message, bot.language_manager.get("ERROR_SET_TIME_AVAILABILITY"))
+        bot.reply_to(call.message, bot.language_manager.get("ERROR_SET_AVAILABILITY"))
         return
     
     partial_player = {
@@ -94,7 +94,7 @@ def process_time_step(
         reply_markup=day_options,
         )
     else:
-        bot.reply_to(call.id, bot.language_manager.get("ERROR_SET_TIME_AVAILABILITY"))
+        bot.reply_to(call.id, bot.language_manager.get("ERROR_SET_AVAILABILITY"))
 
 
 def process_day_step(
@@ -118,7 +118,7 @@ def process_day_step(
     week_day = int(callback_data.split(CALLBACK_STRING_SEPARATOR)[-1])
 
     if not week_day:
-        bot.reply_to(call.message, bot.language_manager.get("ERROR_SET_TIME_AVAILABILITY"))
+        bot.reply_to(call.message, bot.language_manager.get("ERROR_SET_AVAILABILITY"))
 
     availability_days = {
         "available_days": [
@@ -136,4 +136,4 @@ def process_day_step(
         text=bot.language_manager.get("SUCCESSFUL_AVAILABILITY_CONFIGURATION"),
         )
     else:
-        bot.reply_to(call.id, bot.language_manager.get("ERROR_SET_TIME_AVAILABILITY"))
+        bot.reply_to(call.id, bot.language_manager.get("ERROR_SET_AVAILABILITY"))

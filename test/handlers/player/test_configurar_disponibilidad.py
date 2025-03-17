@@ -50,7 +50,7 @@ class TestConfigurarDisponibilidad(unittest.TestCase):
                 "callback_data": "7"
                 }
             ],
-            "ERROR_SET_TIME_AVAILABILITY": "No se pudo configurar la disponibilidad. Por favor inténtelo nuevamente.",
+            "ERROR_SET_AVAILABILITY": "No se pudo configurar la disponibilidad. Por favor inténtelo nuevamente.",
             "ERROR_RECEIVE_DATA": "Error al intentar contactar con los servicios.\nPor favor intente de nuevo más tarde.",
             "ERROR_USER_NOT_FOUND": "Usted no se encuentra registrado.\nPor favor intente registrarse con el comando /start y vuelva a intentarlo.",
         }
