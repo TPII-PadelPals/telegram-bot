@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import MagicMock
 
-from handlers.player.configurar_disponibilidad import handle_configure_availability, process_time_step
+from handlers.player.configurar_disponibilidad import handle_configure_availability, process_day_step, process_time_step
 
 
 class TestConfigurarDisponibilidad(unittest.TestCase):
@@ -53,6 +53,7 @@ class TestConfigurarDisponibilidad(unittest.TestCase):
             "ERROR_SET_AVAILABILITY": "No se pudo configurar la disponibilidad. Por favor inténtelo nuevamente.",
             "ERROR_RECEIVE_DATA": "Error al intentar contactar con los servicios.\nPor favor intente de nuevo más tarde.",
             "ERROR_USER_NOT_FOUND": "Usted no se encuentra registrado.\nPor favor intente registrarse con el comando /start y vuelva a intentarlo.",
+            "SUCCESSFUL_AVAILABILITY_CONFIGURATION": "Ya tenes todo listo! Deseas ver los matches que tenes emparejados para vos? Utiliza el comando /ver_emparejamientos",
         }
 
         self.bot.language_manager.get = MagicMock(side_effect=self._mock_language_manager_get)
@@ -74,6 +75,15 @@ class TestConfigurarDisponibilidad(unittest.TestCase):
                 'latitude': None, 
                 'longitude': None, 
                 'time_availability': 5
+            }
+        )
+
+        self.players_service.update_availability = MagicMock(
+            return_value={
+                'user_public_id': 'c9270134-7e5e-4e77-b6a8-b7998598c8a1',
+                'available_days': [
+                    {'is_available': True, 'week_day': 5}
+                ],
             }
         )
 
@@ -132,7 +142,32 @@ class TestConfigurarDisponibilidad(unittest.TestCase):
         self.assertEqual(time_availability_body["time_availability"], 7)
 
         self.bot.edit_message_text.assert_called_once()
-    
+
+    def test_process_day_step_update_one_day(self):
+        """Test that process_time_step updates a single day availability"""
+
+        self.call.data = "configurar_disponibilidad:day:1"
+
+        process_day_step(
+            self.call, self.bot, players_service=self.get_api, users_service=self.users_service
+        )
+
+        self.players_service.update_availability.assert_called_once()
+
+        args, _ = self.players_service.update_availability.call_args
+
+        user_id, player_availability_body = args
+        
+        self.assertEqual(user_id, "c9270134-7e5e-4e77-b6a8-b7998598c8a1")
+        self.assertEqual(len(player_availability_body), 1)
+        self.assertEqual(player_availability_body["available_days"], [{'is_available': True, 'week_day': 1}])
+
+        self.bot.edit_message_text.assert_called_once_with(
+            chat_id=self.call.message.chat.id,
+            message_id=self.call.message.message_id,
+            text=self.language_manager.get("SUCCESSFUL_AVAILABILITY_CONFIGURATION")
+        )
+
     def test_process_time_step_user_not_found(self):
         """Test that process_time_step sends an error when user is not found"""
 
