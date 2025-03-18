@@ -1,8 +1,8 @@
+import uuid
 from model.telegram_bot import TelegramBot
 from telebot.types import Message, CallbackQuery
 from services.players_service import PlayersService
 from services.users_service import UsersService
-from utils.get_from_env import get_from_env_api
 
 
 AVAILABILITY_CONFIGURATION_COMMAND = "configurar_disponibilidad"
@@ -21,12 +21,17 @@ def generate_callback_string(data: str):
     return f"{AVAILABILITY_CONFIGURATION_COMMAND}{CALLBACK_STRING_SEPARATOR}{data}"
 
 
-def availability_callback(call: CallbackQuery, bot: TelegramBot):
+def availability_callback(call: CallbackQuery, bot: TelegramBot, users_service=UsersService):
+    telegram_id = call.from_user.id
+
+    response = users_service().get_user_info(telegram_id)
+    user_public_id = response.get("data")[0].get("public_id") if response.get("data") else None
+
     type = call.data.split(CALLBACK_STRING_SEPARATOR)[1]
     if type == TIME:
-        process_time_step(call, bot)
+        process_time_step(call, bot, user_public_id)
     elif type == DAY:
-        process_day_step(call, bot)
+        process_day_step(call, bot, user_public_id)
     else:
         bot.send_message(
             call.message.chat.id,
@@ -59,15 +64,10 @@ def handle_configure_availability(message: Message, bot: TelegramBot):
 def process_time_step(
         call: CallbackQuery,
         bot: TelegramBot,
+        user_public_id: uuid.UUID,
         players_service=PlayersService,
-        users_service=UsersService
     ):
-
     callback_data = call.data
-    telegram_id = call.from_user.id
-
-    response = users_service().get_user_info(telegram_id)
-    user_public_id = response.get("data")[0].get("public_id") if response.get("data") else None
     
     if not user_public_id:
         bot.answer_callback_query(call.id, bot.language_manager.get("ERROR_USER_NOT_FOUND"))
@@ -100,15 +100,10 @@ def process_time_step(
 def process_day_step(
         call: CallbackQuery,
         bot: TelegramBot,
+        user_public_id: uuid.UUID,
         players_service=PlayersService,
-        users_service=UsersService,
     ):
-
     callback_data = call.data
-    telegram_id = call.from_user.id
-
-    response = users_service().get_user_info(telegram_id)
-    user_public_id = response.get("data")[0].get("public_id") if response.get("data") else None
 
     if not user_public_id:
         bot.answer_callback_query(call.id, bot.language_manager.get("ERROR_USER_NOT_FOUND"))
