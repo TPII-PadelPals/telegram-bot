@@ -24,7 +24,7 @@ def generate_callback_string(data: str):
 def availability_callback(call: CallbackQuery, bot: TelegramBot, users_service=UsersService):
     telegram_id = call.from_user.id
 
-    response = users_service().get_user_info(telegram_id)
+    response = UsersService().get_user_info(telegram_id)
     user_public_id = response.get("data")[0].get("public_id") if response.get("data") else None
 
     type = call.data.split(CALLBACK_STRING_SEPARATOR)[1]
@@ -65,7 +65,6 @@ def process_time_step(
         call: CallbackQuery,
         bot: TelegramBot,
         user_public_id: uuid.UUID,
-        players_service=PlayersService,
     ):
     callback_data = call.data
     
@@ -83,7 +82,7 @@ def process_time_step(
         "time_availability": time_id
     }
 
-    response = players_service().update_partial_player(user_public_id, partial_player)
+    response = PlayersService().update_partial_player(user_public_id, partial_player)
 
     if response:
         day_options = generate_markup_options(bot, DAY, "AVAILABILITY_DAY_BUTTONS")
@@ -101,7 +100,6 @@ def process_day_step(
         call: CallbackQuery,
         bot: TelegramBot,
         user_public_id: uuid.UUID,
-        players_service=PlayersService,
     ):
     callback_data = call.data
 
@@ -121,7 +119,7 @@ def process_day_step(
         ]
     }
 
-    response = players_service().update_availability(user_public_id, availability_days)
+    response = PlayersService().update_availability(user_public_id, availability_days)
 
 
     if response:
