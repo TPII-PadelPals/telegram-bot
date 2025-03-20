@@ -1,10 +1,10 @@
 import unittest
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, patch
 
 from handlers.player.configurar_disponibilidad import handle_configure_availability, process_day_step, process_time_step
 
-
 class TestConfigurarDisponibilidad(unittest.TestCase):
+
     def setUp(self):
         self.bot = MagicMock()
         
@@ -65,36 +65,22 @@ class TestConfigurarDisponibilidad(unittest.TestCase):
         self.bot.edit_message_text = MagicMock()
         self.bot.answer_callback_query = MagicMock()
 
-        self.players_service = MagicMock()
-        self.players_service.update_partial_player = MagicMock(
-            return_value={
-                'user_public_id': 'c9270134-7e5e-4e77-b6a8-b7998598c8a1',
-                'telegram_id': 12345, 
-                'search_range_km': None, 
-                'address': None, 
-                'latitude': None, 
-                'longitude': None, 
-                'time_availability': 5
-            }
-        )
+        self.mock_players_update_partial_player = {
+            'user_public_id': 'c9270134-7e5e-4e77-b6a8-b7998598c8a1',
+            'telegram_id': 12345, 
+            'search_range_km': None, 
+            'address': None, 
+            'latitude': None, 
+            'longitude': None, 
+            'time_availability': 5
+        }
 
-        self.players_service.update_availability = MagicMock(
-            return_value={
+        self.mock_players_update_availability = {
                 'user_public_id': 'c9270134-7e5e-4e77-b6a8-b7998598c8a1',
                 'available_days': [
                     {'is_available': True, 'week_day': 5}
                 ],
-            }
-        )
-
-        self.get_api = MagicMock(return_value=self.players_service)
-
-        self.users_service_api = MagicMock()
-        self.users_service_api.get_user_info = MagicMock(
-            return_value={"data": [{"public_id": "c9270134-7e5e-4e77-b6a8-b7998598c8a1"}]}
-        )
-
-        self.users_service = MagicMock(return_value=self.users_service_api)
+        }
 
         self.message = MagicMock()
         self.message.chat = MagicMock()
@@ -122,19 +108,23 @@ class TestConfigurarDisponibilidad(unittest.TestCase):
             self.language_manager["AVAILABLE_TIME_MESSAGE"],
             reply_markup="mock_markup",
         )
-
-    def test_process_time_step_update_one_time(self):
+    
+    @patch('handlers.player.configurar_disponibilidad.PlayersService')
+    def test_process_time_step_update_one_time(self, mock_players_service):
         """Test that process_time_step updates a single time availability"""
 
         self.call.data = "configurar_disponibilidad:time:7"
 
+        mock_service = mock_players_service.return_value
+        mock_service.update_partial_player.return_value = self.mock_players_update_partial_player
+
         process_time_step(
-            self.call, self.bot, players_service=self.get_api, users_service=self.users_service
+            self.call, self.bot, "c9270134-7e5e-4e77-b6a8-b7998598c8a1"
         )
 
-        self.players_service.update_partial_player.assert_called_once()
+        mock_service.update_partial_player.assert_called_once()
 
-        args, _ = self.players_service.update_partial_player.call_args
+        args, _ = mock_service.update_partial_player.call_args
 
         user_id, time_availability_body = args
         self.assertEqual(user_id, "c9270134-7e5e-4e77-b6a8-b7998598c8a1")
@@ -143,18 +133,22 @@ class TestConfigurarDisponibilidad(unittest.TestCase):
 
         self.bot.edit_message_text.assert_called_once()
 
-    def test_process_day_step_update_one_day(self):
+    @patch('handlers.player.configurar_disponibilidad.PlayersService')
+    def test_process_day_step_update_one_day(self, mock_players_service):
         """Test that process_time_step updates a single day availability"""
 
         self.call.data = "configurar_disponibilidad:day:1"
 
+        mock_service = mock_players_service.return_value
+        mock_service.update_availability.return_value = self.mock_players_update_availability
+
         process_day_step(
-            self.call, self.bot, players_service=self.get_api, users_service=self.users_service
+            self.call, self.bot, "c9270134-7e5e-4e77-b6a8-b7998598c8a1"
         )
 
-        self.players_service.update_availability.assert_called_once()
+        mock_service.update_availability.assert_called_once()
 
-        args, _ = self.players_service.update_availability.call_args
+        args, _ = mock_service.update_availability.call_args
 
         user_id, player_availability_body = args
         
@@ -167,19 +161,25 @@ class TestConfigurarDisponibilidad(unittest.TestCase):
             message_id=self.call.message.message_id,
             text=self.language_manager.get("SUCCESSFUL_AVAILABILITY_CONFIGURATION")
         )
-
-    def test_process_time_step_user_not_found(self):
+    
+    @patch('handlers.player.configurar_disponibilidad.UsersService')
+    @patch('handlers.player.configurar_disponibilidad.PlayersService')
+    def test_process_time_step_user_not_found(self, mock_users_service, mock_players_service):
         """Test that process_time_step sends an error when user is not found"""
 
         self.call.data = "configurar_disponibilidad:time:7"
 
-        self.users_service_api.get_user_info.return_value = {"data": []}
+        mock_service_users = mock_users_service.return_value
+        mock_service_users.get_user_info.return_value = {"data": []}
+
+        mock_service = mock_players_service.return_value
+        mock_service.update_partial_player.return_value = self.mock_players_update_partial_player
 
         process_time_step(
-            self.call, self.bot, players_service=self.get_api, users_service=self.users_service
+            self.call, self.bot, None
         )
 
-        self.players_service.update_partial_player.assert_not_called()
+        mock_players_service.update_partial_player.assert_not_called()
 
         self.bot.answer_callback_query.assert_called_once_with(
             self.call.id, self.language_manager["ERROR_USER_NOT_FOUND"]
