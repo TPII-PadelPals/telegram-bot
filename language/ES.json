@@ -43,31 +43,31 @@
   "AVAILABILITY_DAY_BUTTONS": [
     {
       "text": "Lunes",
-      "callback_data": "0"
-    },
-    {
-      "text": "Martes",
       "callback_data": "1"
     },
     {
-      "text": "Miércoles",
+      "text": "Martes",
       "callback_data": "2"
     },
     {
-      "text": "Jueves",
+      "text": "Miércoles",
       "callback_data": "3"
     },
     {
-      "text": "Viernes",
+      "text": "Jueves",
       "callback_data": "4"
     },
     {
-      "text": "Sábado",
+      "text": "Viernes",
       "callback_data": "5"
     },
     {
-      "text": "Domingo",
+      "text": "Sábado",
       "callback_data": "6"
+    },
+    {
+      "text": "Domingo",
+      "callback_data": "7"
     }
   ],
   "SENDER_POSITION_STROKE_HABILITY": {
@@ -108,7 +108,10 @@
   "RATING_OUT_OF_RANGE_ERROR": "El valor debe estar entre el 1 y 5.",
   "ANSWER_SURVEY_PLAYER": "Se ha registrado su reseña: ",
   "MESSAGE_HELP_SURVEY_PLAYER": "Permite a través de una encuesta evaluar a algún otro jugador con el que hayas jugado antes.\nEjemplo /encuesta_jugador <Nombre del jugador> o bien /encuesta_jugador <Nombre del jugador> <puntaje de 1 a 5>.",
+  "ERROR_SET_AVAILABILITY": "No se pudo configurar la disponibilidad. Por favor inténtelo nuevamente.",
   "ERROR_RECEIVE_DATA": "Error al intentar contactar con los servicios.\nPor favor intente de nuevo más tarde.",
+  "ERROR_USER_NOT_FOUND": "Usted no se encuentra registrado.\nPor favor intente registrarse con el comando /start y vuelva a intentarlo.",
+  "SUCCESSFUL_AVAILABILITY_CONFIGURATION": "Ya tenes todo listo! Deseas ver los matches que tenes emparejados para vos? Utiliza el comando /ver_emparejamientos",
   "SELECT_STROKE_MESSAGE": "Selecciona un golpe para configurar:",
   "SELECT_SKILL_LEVEL_FOR": "Selecciona tu nivel para: {stroke}",
   "BEGINNER": "Principiante",

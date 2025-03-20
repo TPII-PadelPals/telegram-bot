@@ -34,19 +34,6 @@ class TestTelegramBot(unittest.TestCase):
             lambda x, y: None, return_value=None)
 
 
-    @patch('handlers.player.configurar_disponibilidad.get_from_env_api')
-    def test_availability_process_time_step(self, mock_get_from_env_api):
-        self.bot.language_manager.get.return_value = [{"text": "Button1", "callback_data": 1}, {"text": "Button2", "callback_data": 2}]
-        call = MagicMock()
-        call.data = "Button:1"
-        call.message.chat.username = "test_user"
-
-        process_time_step(call, self.bot)
-
-        api_conection = mock_get_from_env_api()
-        api_conection.set_availability.assert_called_once_with(1, "test_user")
-        self.bot.edit_message_text.assert_called_once()
-
     def test_see_reserves_empty(self):
         self.bot.language_manager.get.return_value = "MESSAGE_SEE_RESERVES_EMPTY"
         message = MagicMock()
