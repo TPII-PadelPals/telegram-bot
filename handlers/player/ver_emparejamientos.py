@@ -3,12 +3,12 @@ from telebot.types import Message, InlineKeyboardMarkup, InlineKeyboardButton, C
 from datetime import datetime as dt
 from telebot.types import Message, CallbackQuery
 from services.users_service import UsersService
-from services.match_service import MatchService
+from services.matches_service import MatchesService
 
 VIEW_PADDLE_MATCHUPS_COMMAND = "ver_emparejamientos"
 
 users_service = UsersService()
-match_service = MatchService()
+match_service = MatchesService()
 
 def filter_fn(call: CallbackQuery):
     return call.data.startswith(VIEW_PADDLE_MATCHUPS_COMMAND)

@@ -2,7 +2,7 @@ from uuid import UUID
 from .base_service import BaseService
 from core.config import settings
 
-class MatchService(BaseService):
+class MatchesService(BaseService):
 
     def __init__(self):
         """Set the base URL for the service."""
