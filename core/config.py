@@ -29,5 +29,9 @@ class Settings(BaseSettings):
     USERS_SERVICE_PORT: int
     USERS_SERVICE_API_KEY: str
 
+    # Matches service settings
+    MATCHES_SERVICE_HOST: str
+    MATCHES_SERVICE_PORT: int
+    MATCHES_SERVICE_API_KEY: str
 
 settings = Settings()

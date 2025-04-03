@@ -14,6 +14,10 @@ class UsersService(BaseService):
         """Get the information of a user given users's chat ID 
         which corresponds to the telegram ID in the UsersService"""
         return self.get("/users/", params={"telegram_id": chat_id})
+    
+    def get_user_by_id(self, user_public_id):
+        """Get the information of a user given users's public ID"""
+        return self.get(f"/users/{user_public_id}/")
 
     def generate_google_auth_url(self, chat_id):
         """Generate a URL for Google authentication given user's chat ID 
