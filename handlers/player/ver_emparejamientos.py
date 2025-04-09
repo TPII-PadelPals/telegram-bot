@@ -1,3 +1,4 @@
+from enum import Enum
 from model.telegram_bot import TelegramBot
 from telebot.types import Message, InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery
 from datetime import datetime as dt
@@ -5,7 +6,15 @@ from telebot.types import Message, CallbackQuery
 from services.users_service import UsersService
 from services.matches_service import MatchesService
 
+class ReserveStatus(str, Enum):
+    ASSIGNED = "assigned"
+    SIMILAR = "similar"
+    PROVISIONAL = "Provisional"
+    INSIDE = "Inside"
+    REJECTED = "Rejected"
+
 VIEW_PADDLE_MATCHUPS_COMMAND = "ver_emparejamientos"
+PLAYER_MATCHES_STATUS = [ReserveStatus.ASSIGNED, ReserveStatus.INSIDE]
 
 users_service = UsersService()
 match_service = MatchesService()
@@ -52,6 +61,31 @@ def matchups_back_keyboard():
         ]
     )
 
+
+def check_players_has_required_status(matchup: dict, user_public_id: str | None):
+    """ Check if any player in the match has a status in PLAYER_MATCHES_STATUS """
+    match_players = matchup.get('match_players', [])
+    if not match_players:
+        return False
+    for player in match_players:
+        if player.get('reserve') in PLAYER_MATCHES_STATUS and player.get('user_public_id') == user_public_id:
+            return True
+    return False
+
+
+def filter_matchups_by_players_status(matchups: list, user_public_id: str | None):
+    """ Filter matchups by player status using check_players_has_required_status"""
+    matches_selected = []
+    for match in matchups:
+        if check_players_has_required_status(match, user_public_id):
+            matches_selected.append(match)
+    return matches_selected
+
+def validate_and_filter_matchups(user_public_id: str | None):
+    user_matches = match_service.get_user_matches(user_public_id)
+    matches = user_matches.get("data") if user_matches else []
+    return filter_matchups_by_players_status(matches, user_public_id)
+
 def handle_matchups(message: Message, bot: TelegramBot):
     chat_id = message.chat.id
     user_public_id = get_user_public_id(chat_id)
@@ -59,8 +93,8 @@ def handle_matchups(message: Message, bot: TelegramBot):
         bot.send_message(chat_id, bot.language_manager.get("MESSAGE_SEE_MATCHES_EMPTY"))
         return
 
-    user_matches = match_service.get_user_matches(user_public_id)
-    matches = user_matches.get("data") if user_matches else []
+    matches = validate_and_filter_matchups(user_public_id)
+
     if not matches:
         bot.reply_to(message, bot.language_manager.get("MESSAGE_SEE_MATCHES_EMPTY"))
         return
@@ -84,9 +118,8 @@ def matchups_main_callback(call: CallbackQuery, bot: TelegramBot):
     
     callback_data = call.data
     match_public_id = callback_data.split(':')[-1]
-    user_matches = match_service.get_user_matches(user_public_id)
-    matches = user_matches.get("data") if user_matches else []
-
+    matches = validate_and_filter_matchups(user_public_id)
+    
     if not matches:
         text_response = bot.language_manager.get("MESSAGE_SEE_MATCHES_EMPTY")
         bot.reply_to(call.message, text_response)
@@ -124,9 +157,8 @@ def matchups_back_callback(call: CallbackQuery, bot: TelegramBot):
         bot.send_message(chat_id, bot.language_manager.get("MESSAGE_SEE_MATCHES_EMPTY"))
         return
     
-    user_matches = match_service.get_user_matches(user_public_id)
-    matches = user_matches.get("data") if user_matches else []
-    
+    matches = validate_and_filter_matchups(user_public_id)
+
     if not matches:
         text_response = bot.language_manager.get("MESSAGE_SEE_MATCHES_EMPTY")
         bot.reply_to(call.message, text_response)
