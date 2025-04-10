@@ -63,21 +63,29 @@ def matchups_back_keyboard():
 
 
 def check_players_has_required_status(matchup: dict, user_public_id: str | None):
-    """ Check if any player in the match has a status in PLAYER_MATCHES_STATUS """
+    """ Check if any player in the match has a status in PLAYER_MATCHES_STATUS and if the user is in the match """
     match_players = matchup.get('match_players', [])
-    if not match_players:
-        return False
+
+    return_players = []
+    includes_user = False
+
     for player in match_players:
-        if player.get('reserve') in PLAYER_MATCHES_STATUS and player.get('user_public_id') == user_public_id:
-            return True
-    return False
+        if player.get('reserve') in PLAYER_MATCHES_STATUS:
+            return_players.append(player)
+
+        if player.get('user_public_id') == user_public_id:
+            includes_user = True
+
+    return includes_user, return_players
 
 
 def filter_matchups_by_players_status(matchups: list, user_public_id: str | None):
     """ Filter matchups by player status using check_players_has_required_status"""
     matches_selected = []
     for match in matchups:
-        if check_players_has_required_status(match, user_public_id):
+        has_user, players = check_players_has_required_status(match, user_public_id)
+        if has_user and players:
+            match['match_players'] = players
             matches_selected.append(match)
     return matches_selected
 
