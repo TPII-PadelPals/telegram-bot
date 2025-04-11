@@ -3,6 +3,7 @@ from unittest.mock import patch, MagicMock
 from telebot.types import CallbackQuery, Message
 from handlers.player.ver_emparejamientos import matchups_main_callback, matchups_back_callback, generate_callback_string, handle_matchups
 
+
 class TestMatchupsMainCallback(unittest.TestCase):
 
     def setUp(self):
@@ -24,7 +25,7 @@ class TestMatchupsMainCallback(unittest.TestCase):
 
         self.sample_match = {
             "public_id": "1",
-            "court_id": "1",
+            "court_name": "1",
             "date": "2023-10-10",
             "time": "10",
             "status": "pending",
@@ -43,7 +44,8 @@ class TestMatchupsMainCallback(unittest.TestCase):
 
         handle_matchups(self.message, self.bot)
 
-        self.bot.reply_to.assert_called_once_with(self.message, self.bot.language_manager.get("MESSAGE_SEE_MATCHES_EMPTY"))
+        self.bot.reply_to.assert_called_once_with(
+            self.message, self.bot.language_manager.get("MESSAGE_SEE_MATCHES_EMPTY"))
         self.bot.send_message.assert_not_called()
 
     @patch('handlers.player.ver_emparejamientos.get_user_public_id')
@@ -56,7 +58,8 @@ class TestMatchupsMainCallback(unittest.TestCase):
         handle_matchups(self.message, self.bot)
 
         self.bot.send_message.assert_called_once()
-        self.assertIn(self.bot.language_manager.get("MESSAGE_SEE_MATCHES"), self.bot.send_message.call_args[0])
+        self.assertIn(self.bot.language_manager.get(
+            "MESSAGE_SEE_MATCHES"), self.bot.send_message.call_args[0])
         self.bot.reply_to.assert_not_called()
 
     @patch('handlers.player.ver_emparejamientos.get_user_public_id')
@@ -66,7 +69,8 @@ class TestMatchupsMainCallback(unittest.TestCase):
 
         handle_matchups(self.message, self.bot)
 
-        self.bot.send_message.assert_called_once_with(self.message.chat.id, self.bot.language_manager.get("MESSAGE_SEE_MATCHES_EMPTY"))
+        self.bot.send_message.assert_called_once_with(
+            self.message.chat.id, self.bot.language_manager.get("MESSAGE_SEE_MATCHES_EMPTY"))
         self.bot.reply_to.assert_not_called()
 
     @patch('handlers.player.ver_emparejamientos.get_user_public_id')
@@ -79,12 +83,13 @@ class TestMatchupsMainCallback(unittest.TestCase):
             "%H:%M",
         ]
         mock_validate_and_filter_matchups.return_value = [self.sample_match]
-        mock_users_service.get_user_by_id.return_value = {"name": "Player Name"}
-        
+        mock_users_service.get_user_by_id.return_value = {
+            "name": "Player Name"}
+
         self.call.data = generate_callback_string('1')
-        
+
         matchups_main_callback(self.call, self.bot)
-        
+
         self.bot.edit_message_text.assert_called_once()
         args = self.bot.edit_message_text.call_args[1]
         self.assertIn("Establecimiento: 1", args['text'])
@@ -100,11 +105,11 @@ class TestMatchupsMainCallback(unittest.TestCase):
     def test_matchups_main_callback_invalid(self, mock_validate_and_filter_matchups, mock_get_user_id):
         mock_get_user_id.return_value = "test_user_id"
         mock_validate_and_filter_matchups.return_value = []
-        
+
         self.call.data = generate_callback_string('999')
-        
+
         matchups_main_callback(self.call, self.bot)
-        
+
         self.bot.edit_message_text.assert_not_called()
 
     @patch('handlers.player.ver_emparejamientos.get_user_public_id')
@@ -113,24 +118,26 @@ class TestMatchupsMainCallback(unittest.TestCase):
         mock_get_user_id.return_value = "test_user_id"
         mock_validate_and_filter_matchups.return_value = []
         self.bot.language_manager.get.return_value = "MESSAGE_SEE_MATCHES_EMPTY"
-        
+
         self.call.data = generate_callback_string('1')
-        
+
         matchups_main_callback(self.call, self.bot)
-        
-        self.bot.reply_to.assert_called_once_with(self.call.message, self.bot.language_manager.get("MESSAGE_SEE_MATCHES_EMPTY"))
+
+        self.bot.reply_to.assert_called_once_with(
+            self.call.message, self.bot.language_manager.get("MESSAGE_SEE_MATCHES_EMPTY"))
         self.bot.edit_message_text.assert_not_called()
 
     @patch('handlers.player.ver_emparejamientos.get_user_public_id')
     def test_matchups_main_callback_no_user_id(self, mock_get_user_id):
         mock_get_user_id.return_value = None
         self.bot.language_manager.get.return_value = "MESSAGE_SEE_MATCHES_EMPTY"
-        
+
         self.call.data = generate_callback_string('1')
-        
+
         matchups_main_callback(self.call, self.bot)
-        
-        self.bot.send_message.assert_called_once_with(self.call.from_user.id, self.bot.language_manager.get("MESSAGE_SEE_MATCHES_EMPTY"))
+
+        self.bot.send_message.assert_called_once_with(
+            self.call.from_user.id, self.bot.language_manager.get("MESSAGE_SEE_MATCHES_EMPTY"))
         self.bot.edit_message_text.assert_not_called()
 
     @patch('handlers.player.ver_emparejamientos.get_user_public_id')
@@ -142,7 +149,8 @@ class TestMatchupsMainCallback(unittest.TestCase):
 
         matchups_back_callback(self.call, self.bot)
 
-        self.bot.reply_to.assert_called_once_with(self.call.message, self.bot.language_manager.get("MESSAGE_SEE_MATCHES_EMPTY"))
+        self.bot.reply_to.assert_called_once_with(
+            self.call.message, self.bot.language_manager.get("MESSAGE_SEE_MATCHES_EMPTY"))
         self.bot.edit_message_text.assert_not_called()
 
     @patch('handlers.player.ver_emparejamientos.get_user_public_id')
@@ -155,7 +163,8 @@ class TestMatchupsMainCallback(unittest.TestCase):
         matchups_back_callback(self.call, self.bot)
 
         self.bot.edit_message_text.assert_called_once()
-        self.assertIn(self.bot.language_manager.get("MESSAGE_SEE_MATCHES"), self.bot.edit_message_text.call_args[1]['text'])
+        self.assertIn(self.bot.language_manager.get(
+            "MESSAGE_SEE_MATCHES"), self.bot.edit_message_text.call_args[1]['text'])
         self.bot.reply_to.assert_not_called()
 
     @patch('handlers.player.ver_emparejamientos.get_user_public_id')
@@ -165,8 +174,10 @@ class TestMatchupsMainCallback(unittest.TestCase):
 
         matchups_back_callback(self.call, self.bot)
 
-        self.bot.send_message.assert_called_once_with(self.call.message.chat.id, self.bot.language_manager.get("MESSAGE_SEE_MATCHES_EMPTY"))
+        self.bot.send_message.assert_called_once_with(
+            self.call.message.chat.id, self.bot.language_manager.get("MESSAGE_SEE_MATCHES_EMPTY"))
         self.bot.edit_message_text.assert_not_called()
+
 
 if __name__ == '__main__':
     unittest.main()
