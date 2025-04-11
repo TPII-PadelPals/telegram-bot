@@ -29,17 +29,17 @@ class TestMatchupsMainCallback(unittest.TestCase):
             "time": "10",
             "status": "pending",
             "match_players": [
-                {"reserve": "confirmed", "user_id": "user1"},
-                {"reserve": "pending", "user_id": "user2"}
+                {"reserve": "assigned", "user_id": "user1"},
+                {"reserve": "Inside", "user_id": "user2"}
             ]
         }
 
     @patch('handlers.player.ver_emparejamientos.get_user_public_id')
-    @patch('handlers.player.ver_emparejamientos.match_service')
-    def test_handle_matchups_no_matches(self, mock_match_service, mock_get_user_id):
+    @patch('handlers.player.ver_emparejamientos.validate_and_filter_matchups')
+    def test_handle_matchups_no_matches(self, mock_validate_and_filter_matchups, mock_get_user_id):
         mock_get_user_id.return_value = "test_user_id"
         self.bot.language_manager.get.return_value = "MESSAGE_SEE_MATCHES_EMPTY"
-        mock_match_service.get_user_matches.return_value = {"data": []}
+        mock_validate_and_filter_matchups.return_value = []
 
         handle_matchups(self.message, self.bot)
 
@@ -47,11 +47,11 @@ class TestMatchupsMainCallback(unittest.TestCase):
         self.bot.send_message.assert_not_called()
 
     @patch('handlers.player.ver_emparejamientos.get_user_public_id')
-    @patch('handlers.player.ver_emparejamientos.match_service')
-    def test_handle_matchups_with_matches(self, mock_match_service, mock_get_user_id):
+    @patch('handlers.player.ver_emparejamientos.validate_and_filter_matchups')
+    def test_handle_matchups_with_matches(self, mock_validate_and_filter_matchups, mock_get_user_id):
         mock_get_user_id.return_value = "test_user_id"
         self.bot.language_manager.get.return_value = "MESSAGE_SEE_MATCHES"
-        mock_match_service.get_user_matches.return_value = {"data": [self.sample_match]}
+        mock_validate_and_filter_matchups.return_value = [self.sample_match]
 
         handle_matchups(self.message, self.bot)
 
@@ -70,15 +70,15 @@ class TestMatchupsMainCallback(unittest.TestCase):
         self.bot.reply_to.assert_not_called()
 
     @patch('handlers.player.ver_emparejamientos.get_user_public_id')
-    @patch('handlers.player.ver_emparejamientos.match_service')
+    @patch('handlers.player.ver_emparejamientos.validate_and_filter_matchups')
     @patch('handlers.player.ver_emparejamientos.users_service')
-    def test_matchups_main_callback_valid(self, mock_users_service, mock_match_service, mock_get_user_id):
+    def test_matchups_main_callback_valid(self, mock_users_service, mock_validate_and_filter_matchups, mock_get_user_id):
         mock_get_user_id.return_value = "test_user_id"
         self.bot.language_manager.get.side_effect = [
             "%d/%m/%Y",
             "%H:%M",
         ]
-        mock_match_service.get_user_matches.return_value = {"data": [self.sample_match]}
+        mock_validate_and_filter_matchups.return_value = [self.sample_match]
         mock_users_service.get_user_by_id.return_value = {"name": "Player Name"}
         
         self.call.data = generate_callback_string('1')
@@ -93,13 +93,13 @@ class TestMatchupsMainCallback(unittest.TestCase):
         self.assertIn("Horario: 10:00", args['text'])
         self.assertIn("Estado: pending", args['text'])
         self.assertIn("Jugador 1: Player Name", args['text'])
-        self.assertIn("Estado: confirmed", args['text'])
+        self.assertIn("Estado: assigned", args['text'])
 
     @patch('handlers.player.ver_emparejamientos.get_user_public_id')
-    @patch('handlers.player.ver_emparejamientos.match_service')
-    def test_matchups_main_callback_invalid(self, mock_match_service, mock_get_user_id):
+    @patch('handlers.player.ver_emparejamientos.validate_and_filter_matchups')
+    def test_matchups_main_callback_invalid(self, mock_validate_and_filter_matchups, mock_get_user_id):
         mock_get_user_id.return_value = "test_user_id"
-        mock_match_service.get_user_matches.return_value = {"data": []}
+        mock_validate_and_filter_matchups.return_value = []
         
         self.call.data = generate_callback_string('999')
         
@@ -108,10 +108,10 @@ class TestMatchupsMainCallback(unittest.TestCase):
         self.bot.edit_message_text.assert_not_called()
 
     @patch('handlers.player.ver_emparejamientos.get_user_public_id')
-    @patch('handlers.player.ver_emparejamientos.match_service')
-    def test_matchups_main_callback_no_matches(self, mock_match_service, mock_get_user_id):
+    @patch('handlers.player.ver_emparejamientos.validate_and_filter_matchups')
+    def test_matchups_main_callback_no_matches(self, mock_validate_and_filter_matchups, mock_get_user_id):
         mock_get_user_id.return_value = "test_user_id"
-        mock_match_service.get_user_matches.return_value = {"data": []}
+        mock_validate_and_filter_matchups.return_value = []
         self.bot.language_manager.get.return_value = "MESSAGE_SEE_MATCHES_EMPTY"
         
         self.call.data = generate_callback_string('1')
@@ -134,11 +134,11 @@ class TestMatchupsMainCallback(unittest.TestCase):
         self.bot.edit_message_text.assert_not_called()
 
     @patch('handlers.player.ver_emparejamientos.get_user_public_id')
-    @patch('handlers.player.ver_emparejamientos.match_service')
-    def test_matchups_back_callback_no_matches(self, mock_match_service, mock_get_user_id):
+    @patch('handlers.player.ver_emparejamientos.validate_and_filter_matchups')
+    def test_matchups_back_callback_no_matches(self, mock_validate_and_filter_matchups, mock_get_user_id):
         mock_get_user_id.return_value = "test_user_id"
         self.bot.language_manager.get.return_value = "MESSAGE_SEE_MATCHES_EMPTY"
-        mock_match_service.get_user_matches.return_value = {"data": []}
+        mock_validate_and_filter_matchups.return_value = []
 
         matchups_back_callback(self.call, self.bot)
 
@@ -146,11 +146,11 @@ class TestMatchupsMainCallback(unittest.TestCase):
         self.bot.edit_message_text.assert_not_called()
 
     @patch('handlers.player.ver_emparejamientos.get_user_public_id')
-    @patch('handlers.player.ver_emparejamientos.match_service')
-    def test_matchups_back_callback_with_matches(self, mock_match_service, mock_get_user_id):
+    @patch('handlers.player.ver_emparejamientos.validate_and_filter_matchups')
+    def test_matchups_back_callback_with_matches(self, mock_validate_and_filter_matchups, mock_get_user_id):
         mock_get_user_id.return_value = "test_user_id"
         self.bot.language_manager.get.return_value = "MESSAGE_SEE_MATCHES"
-        mock_match_service.get_user_matches.return_value = {"data": [self.sample_match]}
+        mock_validate_and_filter_matchups.return_value = [self.sample_match]
 
         matchups_back_callback(self.call, self.bot)
 
