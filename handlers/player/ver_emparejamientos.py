@@ -1,4 +1,5 @@
 from enum import Enum
+import uuid
 from model.telegram_bot import TelegramBot
 from telebot.types import Message, InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery
 from datetime import datetime as dt
@@ -17,6 +18,7 @@ class ReserveStatus(str, Enum):
 
 VIEW_PADDLE_MATCHUPS_COMMAND = "ver_emparejamientos"
 PLAYER_MATCHES_STATUS = [ReserveStatus.ASSIGNED, ReserveStatus.INSIDE]
+INLINE_KEYWORD_ROW_WIDTH = 2
 
 users_service = UsersService()
 match_service = MatchesService()
@@ -62,17 +64,15 @@ def matchups_keyboard_line(bot: TelegramBot, matchup: dict):
     )
 
 
-def matchups_back_keyboard():
-    return InlineKeyboardMarkup(
-        keyboard=[
-            [
-                InlineKeyboardButton(
-                    text='⬅',
-                    callback_data=generate_callback_string('back')
-                )
-            ]
-        ]
-    )
+def matchup_options_keyboard(bot: TelegramBot, match_public_id: uuid.UUID):
+    print("Match Public Id:", match_public_id)
+    buttons = [
+        {'text': '✅ Confirmar Partido', 'callback_data': generate_callback_string(f"inside:{match_public_id}")},
+        {'text': '❌ Rechazar Partido', 'callback_data': generate_callback_string(f"outside:{match_public_id}")},
+        {'text': '⬅', 'callback_data': generate_callback_string('back')}
+    ]
+
+    return bot.ui.create_inline_keyboard(buttons=buttons, row_width=INLINE_KEYWORD_ROW_WIDTH)
 
 
 def check_players_has_required_status(matchup: dict, user_public_id: str | None):
@@ -130,8 +130,12 @@ def handle_matchups(message: Message, bot: TelegramBot):
 
 
 def matchups_callback(call: CallbackQuery, bot: TelegramBot):
+    print("CallbackData:", call.data)
     if call.data == generate_callback_string('back'):
         matchups_back_callback(call, bot)
+    elif call.data.startswith(generate_callback_string('inside')):
+        print(f"Entro a confirmar con: \n{call.data}")
+        # handle_player_response_match_callback(call, bot, new_status)
     else:
         matchups_main_callback(call, bot)
 
@@ -178,7 +182,7 @@ def matchups_main_callback(call: CallbackQuery, bot: TelegramBot):
            f"\nJugadores:{player_info}"
 
     bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id,
-                          text=text, reply_markup=matchups_back_keyboard())
+                          text=text, reply_markup=matchup_options_keyboard(bot, public_id))
 
 
 def matchups_back_callback(call: CallbackQuery, bot: TelegramBot):
