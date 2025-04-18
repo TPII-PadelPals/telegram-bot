@@ -1,5 +1,6 @@
 from enum import Enum
 import uuid
+from .responder_al_emparejamiento import handle_player_response_match_callback
 from model.telegram_bot import TelegramBot
 from telebot.types import Message, InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery
 from datetime import datetime as dt
@@ -65,7 +66,6 @@ def matchups_keyboard_line(bot: TelegramBot, matchup: dict):
 
 
 def matchup_options_keyboard(bot: TelegramBot, match_public_id: uuid.UUID):
-    print("Match Public Id:", match_public_id)
     buttons = [
         {'text': '✅ Confirmar Partido', 'callback_data': generate_callback_string(f"inside:{match_public_id}")},
         {'text': '❌ Rechazar Partido', 'callback_data': generate_callback_string(f"outside:{match_public_id}")},
@@ -130,12 +130,10 @@ def handle_matchups(message: Message, bot: TelegramBot):
 
 
 def matchups_callback(call: CallbackQuery, bot: TelegramBot):
-    print("CallbackData:", call.data)
     if call.data == generate_callback_string('back'):
         matchups_back_callback(call, bot)
     elif call.data.startswith(generate_callback_string('inside')):
-        print(f"Entro a confirmar con: \n{call.data}")
-        # handle_player_response_match_callback(call, bot, new_status)
+        handle_player_response_match_callback(call, bot)
     else:
         matchups_main_callback(call, bot)
 
