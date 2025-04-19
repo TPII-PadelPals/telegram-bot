@@ -1,11 +1,7 @@
 import unittest
-from unittest.mock import patch, MagicMock
-from unittest.mock import patch
+from unittest.mock import MagicMock
 
-from handlers.player import handle_respond_to_matchmaking_accept, handle_respond_to_matchmaking_reject, \
-    handle_survey_to_player
-from handlers.player.configurar_disponibilidad import process_time_step
-from handlers.player.configurar_golpes import handle_configure_strokes
+from handlers.player import handle_survey_to_player
 from handlers.player.ver_reservas import handle_see_reserves
 
 
