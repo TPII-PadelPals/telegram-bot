@@ -15,8 +15,7 @@ def handle_player_response_match_callback(call: CallbackQuery, bot: TelegramBot)
     )
 
     if not user_public_id:
-        bot.send_message(chat_id, bot.language_manager.get(
-            "ERROR_USER_NOT_FOUND"))
+        bot.send_message(chat_id, bot.language_manager.get("ERROR_USER_NOT_FOUND"))
         return
     
     params = call.data.split(':')
@@ -24,7 +23,7 @@ def handle_player_response_match_callback(call: CallbackQuery, bot: TelegramBot)
     player_reserve_status = params.pop()
 
     if (not match_public_id) or (not player_reserve_status):
-        bot.reply_to(call.message, bot.language_manager.get("ERROR_SET_AVAILABILITY"))
+        bot.reply_to(call.message, bot.language_manager.get("ERROR_SET_MATCH_PLAYER_STATUS"))
         return
     
     response = matches_service.update_match_player_status(user_public_id=user_public_id, match_public_id=match_public_id, status=player_reserve_status)
@@ -33,11 +32,10 @@ def handle_player_response_match_callback(call: CallbackQuery, bot: TelegramBot)
         bot.edit_message_text(
             chat_id=call.message.chat.id,
             message_id=call.message.message_id,
-            text="Gracias por su confirmación. Ha ingresado al partido."
-            # bot.language_manager.get(),
+            text=bot.language_manager.get("MESSAGE_MATCH_PLAYER_CONFIRMATION"),
         )
     else:
-        bot.reply_to(call.id, bot.language_manager.get("ERROR_SET_AVAILABILITY"))
+        bot.reply_to(call.id, bot.language_manager.get("ERROR_SET_MATCH_PLAYER_STATUS"))
 
 
 
