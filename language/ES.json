@@ -96,7 +96,6 @@
     "/ver_emparejamientos": "Visualizacion de emparejamientos del usuario realizados por la aplicacion.",
     "/configurar_golpes": "Configura el nivel de habilidad con los distintos golpes de padel del usuario.",
     "/ver_reservas": "Visualizacion de las canchas reservadas.",
-    "/aceptar_emparejamiento": "Acepta un emparejamiento para poder reservar la cancha.",
     "/rechazar_emparejamiento": "Rechazo de un emparejamiento, este emparejamiento ya no aparecera.",
     "/encuesta_jugador": "Permite puntuar a un jugador con el que se haya participado en un partido antes.",
     "/configurar_ubicacion": "Configura la ubicación y el radio en el cual quieras buscar un establecimiento."
