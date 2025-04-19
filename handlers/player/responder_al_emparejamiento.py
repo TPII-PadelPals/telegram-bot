@@ -3,7 +3,6 @@ from telebot.types import CallbackQuery
 from services.users_service import UsersService
 from services.matches_service import MatchesService
 
-
 def handle_player_response_match_callback(call: CallbackQuery, bot: TelegramBot):
     users_service = UsersService()
     matches_service = MatchesService()
@@ -35,7 +34,7 @@ def handle_player_response_match_callback(call: CallbackQuery, bot: TelegramBot)
             text=bot.language_manager.get("MESSAGE_MATCH_PLAYER_CONFIRMATION"),
         )
     else:
-        bot.reply_to(call.id, bot.language_manager.get("ERROR_SET_MATCH_PLAYER_STATUS"))
+        bot.reply_to(call.message, bot.language_manager.get("ERROR_SET_MATCH_PLAYER_STATUS"))
 
 
 
