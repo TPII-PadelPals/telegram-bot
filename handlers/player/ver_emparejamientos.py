@@ -20,7 +20,7 @@ class ReserveStatus(str, Enum):
 
 VIEW_PADDLE_MATCHUPS_COMMAND = "ver_emparejamientos"
 PLAYER_MATCHES_STATUS = [ReserveStatus.ASSIGNED, ReserveStatus.INSIDE]
-INLINE_KEYWORD_ROW_WIDTH = 2
+INLINE_KEYWORD_ROW_WIDTH = 1
 
 users_service = UsersService()
 match_service = MatchesService()
@@ -86,7 +86,7 @@ def filter_buttons_view(buttons: List[Dict[str, str]], user_p_id: UUID, match_p_
 def matchup_options_keyboard(bot: TelegramBot, user_public_id: UUID,  match_public_id: UUID):
     buttons = [
         {'text': '✅ Confirmar Partido', 'callback_data': generate_callback_string(f"inside:{match_public_id}")},
-        {'text': '❌ Rechazar Partido', 'callback_data': generate_callback_string(f"outside:{match_public_id}")},
+        # {'text': '❌ Rechazar Partido', 'callback_data': generate_callback_string(f"outside:{match_public_id}")},
         {'text': '⬅', 'callback_data': generate_callback_string('back')}
     ]
 
