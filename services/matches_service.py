@@ -13,3 +13,14 @@ class MatchesService(BaseService):
     def get_user_matches(self, user_public_id: UUID):
         """Get provisional_match."""
         return self.get(f"/players/{user_public_id}/matches/")
+    
+    def get_match_player(self, user_public_id: UUID, match_public_id: UUID):
+        """Get match player"""
+        return self.get(f"/matches/{match_public_id}/players/{user_public_id}")
+    
+    def update_match_player_status(self, user_public_id: UUID, match_public_id: UUID, status:str):
+        """Patch player status on a match."""
+        status_json = {
+            "reserve": status,
+        }
+        return self.patch(f"/matches/{match_public_id}/players/{user_public_id}/", json=status_json)

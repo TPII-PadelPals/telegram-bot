@@ -9,7 +9,6 @@ from .configurar_golpes import (
 from .configurar_ubicacion import handle_address_configuration
 from .ver_reservas import handle_see_reserves
 from .responder_al_emparejamiento import (
-    handle_respond_to_matchmaking_accept,
     handle_respond_to_matchmaking_reject,
 )
 
@@ -18,10 +17,6 @@ PLAYER_MESSAGE_HANDLERS = [
     {"command": "ver_emparejamientos", "handler": handle_matchups},
     {"command": "configurar_ubicacion", "handler": handle_address_configuration},
     {"command": "ver_reservas", "handler": handle_see_reserves},
-    {
-        "command": "aceptar_emparejamiento",
-        "handler": handle_respond_to_matchmaking_accept,
-    },
     {
         "command": "rechazar_emparejamiento",
         "handler": handle_respond_to_matchmaking_reject,
