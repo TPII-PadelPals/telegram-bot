@@ -1,4 +1,7 @@
 from enum import Enum
+from typing import Dict, List
+from uuid import UUID
+from .responder_al_emparejamiento import handle_player_response_match_callback
 from model.telegram_bot import TelegramBot
 from telebot.types import Message, InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery
 from datetime import datetime as dt
@@ -17,6 +20,7 @@ class ReserveStatus(str, Enum):
 
 VIEW_PADDLE_MATCHUPS_COMMAND = "ver_emparejamientos"
 PLAYER_MATCHES_STATUS = [ReserveStatus.ASSIGNED, ReserveStatus.INSIDE]
+INLINE_KEYWORD_ROW_WIDTH = 1
 
 users_service = UsersService()
 match_service = MatchesService()
@@ -61,18 +65,33 @@ def matchups_keyboard_line(bot: TelegramBot, matchup: dict):
         callback_data=generate_callback_string(public_id)
     )
 
+def remove_inside_button(button):
+    if ReserveStatus.INSIDE.lower() in button.get("callback_data"):
+        return False
+    return True
 
-def matchups_back_keyboard():
-    return InlineKeyboardMarkup(
-        keyboard=[
-            [
-                InlineKeyboardButton(
-                    text='⬅',
-                    callback_data=generate_callback_string('back')
-                )
-            ]
-        ]
-    )
+def filter_buttons_view(buttons: List[Dict[str, str]], user_p_id: UUID, match_p_id: UUID):
+    matches_service = MatchesService()
+    response = matches_service.get_match_player(user_p_id, match_p_id)
+    if not response:
+        return buttons
+    
+    reserve = response.get('reserve', '')
+    if reserve in [ReserveStatus.INSIDE.lower()]:
+        return list(filter(remove_inside_button, buttons))
+
+    return buttons
+
+
+def matchup_options_keyboard(bot: TelegramBot, user_public_id: UUID,  match_public_id: UUID):
+    buttons = [
+        {'text': '✅ Confirmar Partido', 'callback_data': generate_callback_string(f"inside:{match_public_id}")},
+        {'text': '⬅', 'callback_data': generate_callback_string('back')}
+    ]
+
+    buttons = filter_buttons_view(buttons, user_public_id, match_public_id)
+
+    return bot.ui.create_inline_keyboard(buttons=buttons, row_width=INLINE_KEYWORD_ROW_WIDTH)
 
 
 def check_players_has_required_status(matchup: dict, user_public_id: str | None):
@@ -132,6 +151,8 @@ def handle_matchups(message: Message, bot: TelegramBot):
 def matchups_callback(call: CallbackQuery, bot: TelegramBot):
     if call.data == generate_callback_string('back'):
         matchups_back_callback(call, bot)
+    elif call.data.startswith(generate_callback_string('inside')):
+        handle_player_response_match_callback(call, bot)
     else:
         matchups_main_callback(call, bot)
 
@@ -178,7 +199,7 @@ def matchups_main_callback(call: CallbackQuery, bot: TelegramBot):
            f"\nJugadores:{player_info}"
 
     bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id,
-                          text=text, reply_markup=matchups_back_keyboard())
+                          text=text, reply_markup=matchup_options_keyboard(bot, user_public_id, public_id))
 
 
 def matchups_back_callback(call: CallbackQuery, bot: TelegramBot):
