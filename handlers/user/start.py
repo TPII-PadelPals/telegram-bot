@@ -7,6 +7,7 @@ from requests.exceptions import ConnectionError
 
 
 LOGIN_CALLBACK_TIME = 8
+LOGIN_POST_DISCLAIMER_TIME = 2
 
 
 def filter_fn(call: CallbackQuery):
@@ -66,6 +67,7 @@ def handle_callback_query(call: CallbackQuery,
             message_id=call.message.message_id,
             reply_markup=markup)
         fn_sleep(LOGIN_CALLBACK_TIME)
+        send_disclaimer(chat_id, bot, fn_sleep)
         bot.send_message(
             chat_id,
             "Te has registrado correctamente.\nPara encontrar matches, por favor, configura tu ubicación y disponibilidad.")
@@ -73,3 +75,14 @@ def handle_callback_query(call: CallbackQuery,
         bot.reply_to(
             call.message,
             "Esta opción no esta disponible actualmente. Por favor, intenta de nuevo más tarde.")
+
+
+def send_disclaimer(
+        chat_id: int,
+        bot: TelegramBot,
+        fn_sleep: Callable[[float], None] = time.sleep):
+    bot.send_message(
+        chat_id,
+        bot.language_manager.get("MESSAGE_DISCLAIMER")
+    )
+    fn_sleep(LOGIN_POST_DISCLAIMER_TIME)
