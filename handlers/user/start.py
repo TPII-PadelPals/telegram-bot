@@ -67,10 +67,10 @@ def handle_callback_query(call: CallbackQuery,
             message_id=call.message.message_id,
             reply_markup=markup)
         fn_sleep(LOGIN_CALLBACK_TIME)
-        send_disclaimer(chat_id, bot, fn_sleep)
         bot.send_message(
             chat_id,
             "Te has registrado correctamente.\nPara encontrar matches, por favor, configura tu ubicación y disponibilidad.")
+        send_disclaimer(chat_id, bot, fn_sleep)
     elif call.data == "start_user_pass":
         bot.reply_to(
             call.message,
@@ -81,8 +81,8 @@ def send_disclaimer(
         chat_id: int,
         bot: TelegramBot,
         fn_sleep: Callable[[float], None] = time.sleep):
+    fn_sleep(LOGIN_POST_DISCLAIMER_TIME)
     bot.send_message(
         chat_id,
         bot.language_manager.get("MESSAGE_DISCLAIMER")
     )
-    fn_sleep(LOGIN_POST_DISCLAIMER_TIME)
