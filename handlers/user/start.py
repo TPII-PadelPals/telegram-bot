@@ -69,7 +69,17 @@ def handle_callback_query(call: CallbackQuery,
         bot.send_message(
             chat_id,
             "Te has registrado correctamente.\nPara encontrar matches, por favor, configura tu ubicación y disponibilidad.")
+        send_disclaimer(chat_id, bot)
     elif call.data == "start_user_pass":
         bot.reply_to(
             call.message,
             "Esta opción no esta disponible actualmente. Por favor, intenta de nuevo más tarde.")
+
+
+def send_disclaimer(
+        chat_id: int,
+        bot: TelegramBot):
+    bot.send_message(
+        chat_id,
+        bot.language_manager.get("MESSAGE_DISCLAIMER")
+    )
