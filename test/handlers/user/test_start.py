@@ -105,8 +105,7 @@ class TestHandleStart(unittest.TestCase):
     def test_handle_callback_query_disclaimer(self):
         disclaimer = "MESSAGE_DISCLAIMER"
         self.bot.language_manager = {"MESSAGE_DISCLAIMER": disclaimer}
-        send_disclaimer(self.call.message.chat.id, self.bot, MagicMock())
-        # MagicMock().assert_called_once_with(self.call.message.chat.id, disclaimer)
+        send_disclaimer(self.call.message.chat.id, self.bot)
         self.bot.send_message.assert_called_once_with(self.call.message.chat.id, disclaimer)
 
 

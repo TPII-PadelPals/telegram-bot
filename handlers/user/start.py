@@ -7,7 +7,6 @@ from requests.exceptions import ConnectionError
 
 
 LOGIN_CALLBACK_TIME = 8
-LOGIN_POST_DISCLAIMER_TIME = 2
 
 
 def filter_fn(call: CallbackQuery):
@@ -70,7 +69,7 @@ def handle_callback_query(call: CallbackQuery,
         bot.send_message(
             chat_id,
             "Te has registrado correctamente.\nPara encontrar matches, por favor, configura tu ubicación y disponibilidad.")
-        send_disclaimer(chat_id, bot, fn_sleep)
+        send_disclaimer(chat_id, bot)
     elif call.data == "start_user_pass":
         bot.reply_to(
             call.message,
@@ -79,9 +78,7 @@ def handle_callback_query(call: CallbackQuery,
 
 def send_disclaimer(
         chat_id: int,
-        bot: TelegramBot,
-        fn_sleep: Callable[[float], None] = time.sleep):
-    fn_sleep(LOGIN_POST_DISCLAIMER_TIME)
+        bot: TelegramBot):
     bot.send_message(
         chat_id,
         bot.language_manager.get("MESSAGE_DISCLAIMER")
