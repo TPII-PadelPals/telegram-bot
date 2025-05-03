@@ -12,6 +12,7 @@ class TestMatchupResponseMatchPlayerCallback(unittest.TestCase):
 
         self.language_manager = {
             "MESSAGE_MATCH_PLAYER_CONFIRMATION": "Gracias por su confirmación. Ha ingresado al partido.",
+            "MESSAGE_MATCH_PLAYER_REJECT": "Ha rechazado el partido correctamente. Si desea participar de un partido puede buscar sus matches disponibles con el comando /ver_emparejamientos.",
             "ERROR_SET_MATCH_PLAYER_STATUS": "No se pudo actualizar el estado del match. Por favor inténtelo nuevamente.",
             "ERROR_USER_NOT_FOUND": "Usted no se encuentra registrado.\nPor favor intente registrarse con el comando /start y vuelva a intentarlo.",
         }
@@ -101,6 +102,76 @@ class TestMatchupResponseMatchPlayerCallback(unittest.TestCase):
         }
         
         self.call.data = generate_callback_string(f'inside:{self.match_public_id}')
+
+        handle_player_response_match_callback(self.call, self.bot)
+        
+        self.bot.send_message.assert_called_once_with(
+            self.message.chat.id,
+            self.language_manager.get("ERROR_USER_NOT_FOUND"),
+        )
+
+    @patch('handlers.player.responder_al_emparejamiento.UsersService')
+    @patch('handlers.player.responder_al_emparejamiento.MatchesService')
+    def test_match_player_response_reject_match_callback(self, MockMatchesService, MockUsersService):
+        mock_users_service = MockUsersService.return_value
+        mock_matches_service = MockMatchesService.return_value
+
+        mock_users_service.get_user_info.return_value = {
+            "data": [{"public_id": self.user_public_id}]
+        }
+        
+        mock_matches_service.update_match_player_status.return_value = {
+            'user_public_id': self.user_public_id,
+            'match_public_id': self.match_public_id,
+            'reserve': 'outside'
+        }
+        
+        self.call.data = generate_callback_string(f'outside:{self.match_public_id}')
+
+        handle_player_response_match_callback(self.call, self.bot)
+        
+        self.bot.edit_message_text.assert_called_once_with(
+            chat_id=self.call.message.chat.id,
+            message_id=self.call.message.message_id,
+            text=self.language_manager.get("MESSAGE_MATCH_PLAYER_REJECT"),
+        )
+
+    @patch('handlers.player.responder_al_emparejamiento.UsersService')
+    @patch('handlers.player.responder_al_emparejamiento.MatchesService')
+    def test_match_player_response_reject_match_callback_with_service_error(self, MockMatchesService, MockUsersService):
+        mock_users_service = MockUsersService.return_value
+        mock_matches_service = MockMatchesService.return_value
+
+        mock_users_service.get_user_info.return_value = {
+            "data": [{"public_id": self.user_public_id}]
+        }
+        
+        mock_matches_service.update_match_player_status.return_value = None
+        
+        self.call.data = generate_callback_string(f'outside:{self.match_public_id}')
+
+        handle_player_response_match_callback(self.call, self.bot)
+        
+        self.bot.reply_to.assert_called_once_with(
+            self.call.message,
+            self.language_manager.get("ERROR_SET_MATCH_PLAYER_STATUS")
+        )
+
+    @patch('handlers.player.responder_al_emparejamiento.UsersService')
+    @patch('handlers.player.responder_al_emparejamiento.MatchesService')
+    def test_match_player_response_reject_match_callback_without_user_public_id_returns_error(self, MockMatchesService, MockUsersService):
+        mock_users_service = MockUsersService.return_value
+        mock_matches_service = MockMatchesService.return_value
+
+        mock_users_service.get_user_info.return_value = {"data": []}
+        
+        mock_matches_service.update_match_player_status.return_value = {
+            'user_public_id': self.user_public_id,
+            'match_public_id': self.match_public_id,
+            'reserve': 'outside'
+        }
+        
+        self.call.data = generate_callback_string(f'outside:{self.match_public_id}')
 
         handle_player_response_match_callback(self.call, self.bot)
         
