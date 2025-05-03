@@ -14,13 +14,13 @@ class ReserveStatus(str, Enum):
     ASSIGNED = "assigned"
     SIMILAR = "similar"
     PROVISIONAL = "Provisional"
-    INSIDE = "Inside"
+    INSIDE = "inside"
     REJECTED = "Rejected"
 
 
 VIEW_PADDLE_MATCHUPS_COMMAND = "ver_emparejamientos"
 PLAYER_MATCHES_STATUS = [ReserveStatus.ASSIGNED, ReserveStatus.INSIDE]
-INLINE_KEYWORD_ROW_WIDTH = 1
+INLINE_KEYWORD_ROW_WIDTH = 2
 
 users_service = UsersService()
 match_service = MatchesService()
@@ -86,6 +86,7 @@ def filter_buttons_view(buttons: List[Dict[str, str]], user_p_id: UUID, match_p_
 def matchup_options_keyboard(bot: TelegramBot, user_public_id: UUID,  match_public_id: UUID):
     buttons = [
         {'text': '✅ Confirmar Partido', 'callback_data': generate_callback_string(f"inside:{match_public_id}")},
+        {'text': '❌ Rechazar Partido', 'callback_data': generate_callback_string(f"outside:{match_public_id}")},
         {'text': '⬅', 'callback_data': generate_callback_string('back')}
     ]
 
@@ -102,10 +103,11 @@ def check_players_has_required_status(matchup: dict, user_public_id: str | None)
     includes_user = False
 
     for player in match_players:
-        if player.get('reserve') in PLAYER_MATCHES_STATUS:
+        status = player.get('reserve')
+        if status in PLAYER_MATCHES_STATUS:
             return_players.append(player)
 
-        if player.get('user_public_id') == user_public_id:
+        if player.get('user_public_id') == user_public_id and status in PLAYER_MATCHES_STATUS:
             includes_user = True
 
     return includes_user, return_players
@@ -149,9 +151,11 @@ def handle_matchups(message: Message, bot: TelegramBot):
 
 
 def matchups_callback(call: CallbackQuery, bot: TelegramBot):
+    is_confirmed = call.data.startswith(generate_callback_string('inside'))
+    is_rejected = call.data.startswith(generate_callback_string('outside'))
     if call.data == generate_callback_string('back'):
         matchups_back_callback(call, bot)
-    elif call.data.startswith(generate_callback_string('inside')):
+    elif is_confirmed or is_rejected:
         handle_player_response_match_callback(call, bot)
     else:
         matchups_main_callback(call, bot)

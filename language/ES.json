@@ -102,6 +102,7 @@
   },
   "MESSAGE_RESPOND_TO_MATCHMAKING_HELP": "Para aceptar/rechazar un emparejamiento se deben dar los siguientes datos:\n- oponente: Ej: Pablo.\n- Cancha: Ej: 4\nHora del encuentro: Ej: 15\n\nLa estructura es: /<aceptar_emparejamiento/rechazar_emparejamiento> <Oponente> <Cancha> <Horario>.\nEjemplos:\n/aceptar_emparejamiento Pablo 51 9\n/rechazar_emparejamiento Carlos 32 18",
   "MESSAGE_MATCH_PLAYER_CONFIRMATION": "Gracias por su confirmación. Ha ingresado al partido.",
+  "MESSAGE_MATCH_PLAYER_REJECT": "Ha rechazado el partido correctamente. Si desea participar de un partido puede buscar sus matches disponibles con el comando /ver_emparejamientos.",
   "MESSAGE_RESPOND_TO_MATCHMAKING": "Estado de emparejamiento: ",
   "MESSAGE_SURVEY_PLAYER_ALLOWED": "Ahora puede realizar una encuesta para puntuar a los jugadores con quien participo, para hacerlo /encuesta_jugador <Nombre del jugador> <puntaje de 1 a 5>.\nLos siguientes jugadores ahora pueden ser punteados: ",
   "MESSAGE_SURVEY_PLAYER_ERROR": "No se ha podido cargar la reseña al jugador: ",

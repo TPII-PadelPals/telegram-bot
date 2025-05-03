@@ -33,7 +33,7 @@ def handle_player_response_match_callback(call: CallbackQuery, bot: TelegramBot)
         bot.edit_message_text(
             chat_id=call.message.chat.id,
             message_id=call.message.message_id,
-            text=bot.language_manager.get("MESSAGE_MATCH_PLAYER_CONFIRMATION"),
+            text=bot.language_manager.get("MESSAGE_MATCH_PLAYER_CONFIRMATION" if player_reserve_status == 'inside' else "MESSAGE_MATCH_PLAYER_REJECT"),
         )
     else:
         bot.reply_to(call.message, bot.language_manager.get("ERROR_SET_MATCH_PLAYER_STATUS"))
