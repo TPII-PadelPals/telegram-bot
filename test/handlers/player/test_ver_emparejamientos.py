@@ -31,7 +31,7 @@ class TestMatchupsMainCallback(unittest.TestCase):
             "status": "pending",
             "match_players": [
                 {"reserve": "assigned", "user_id": "user1"},
-                {"reserve": "Inside", "user_id": "user2"}
+                {"reserve": "inside", "user_id": "user2"}
             ]
         }
 
