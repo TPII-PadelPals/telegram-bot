@@ -15,6 +15,7 @@ class ReserveStatus(str, Enum):
     SIMILAR = "similar"
     PROVISIONAL = "Provisional"
     INSIDE = "inside"
+    OUTSIDE = "outside"
     REJECTED = "Rejected"
 
 
@@ -65,8 +66,12 @@ def matchups_keyboard_line(bot: TelegramBot, matchup: dict):
         callback_data=generate_callback_string(public_id)
     )
 
-def remove_inside_button(button):
-    if ReserveStatus.INSIDE.lower() in button.get("callback_data"):
+def remove_inside_and_outside_buttons(button):
+    callback_data = button.get("callback_data")
+    inside = ReserveStatus.INSIDE.lower()
+    outside = ReserveStatus.OUTSIDE.lower()
+    
+    if inside in callback_data or outside in callback_data:
         return False
     return True
 
@@ -78,7 +83,7 @@ def filter_buttons_view(buttons: List[Dict[str, str]], user_p_id: UUID, match_p_
     
     reserve = response.get('reserve', '')
     if reserve in [ReserveStatus.INSIDE.lower()]:
-        return list(filter(remove_inside_button, buttons))
+        return list(filter(remove_inside_and_outside_buttons, buttons))
 
     return buttons
 
