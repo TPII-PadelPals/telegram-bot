@@ -72,7 +72,7 @@ class TestMatchupsMainCallback(unittest.TestCase):
                 ]
                 },
             ],
-            "count": 3
+            "count": 1
         }
 
     @patch('handlers.player.ver_emparejamientos.get_user_public_id')
@@ -89,11 +89,9 @@ class TestMatchupsMainCallback(unittest.TestCase):
         self.bot.send_message.assert_not_called()
 
     @patch('handlers.player.ver_emparejamientos.get_user_public_id')
-    @patch('handlers.player.ver_emparejamientos.MatchesService')
-    def test_handle_matchups_no_matches_when_i_rejected_match(self, MockMatchesService, mock_get_user_id):
-        mock_matches_service = MockMatchesService.return_value
-
-        mock_matches_service.get_user_matches.return_value = self.player_outside_matches
+    @patch('handlers.player.ver_emparejamientos.match_service')
+    def test_handle_matchups_no_matches_when_i_rejected_match(self, mock_match_service, mock_get_user_id):
+        mock_match_service.get_user_matches.return_value = self.player_outside_matches
         mock_get_user_id.return_value = "3a7ebc3c-0300-4f50-ae18-3ee0a79aa1e1"
         self.bot.language_manager.get.return_value = "MESSAGE_SEE_MATCHES_EMPTY"
 
