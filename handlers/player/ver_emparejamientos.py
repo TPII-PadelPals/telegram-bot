@@ -113,8 +113,8 @@ def check_players_has_required_status(matchup: dict, user_public_id: str | None)
         if status in PLAYER_MATCHES_STATUS:
             return_players.append(player)
 
-        if player.get('user_public_id') == user_public_id and status in PLAYER_MATCHES_STATUS:
-            includes_user = True
+            if player.get('user_public_id') == user_public_id:
+                includes_user = True
 
     return includes_user, return_players
 
