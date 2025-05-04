@@ -15,12 +15,13 @@ class ReserveStatus(str, Enum):
     SIMILAR = "similar"
     PROVISIONAL = "Provisional"
     INSIDE = "inside"
+    OUTSIDE = "outside"
     REJECTED = "Rejected"
 
 
 VIEW_PADDLE_MATCHUPS_COMMAND = "ver_emparejamientos"
 PLAYER_MATCHES_STATUS = [ReserveStatus.ASSIGNED, ReserveStatus.INSIDE]
-INLINE_KEYWORD_ROW_WIDTH = 1
+INLINE_KEYWORD_ROW_WIDTH = 2
 
 users_service = UsersService()
 match_service = MatchesService()
@@ -65,9 +66,12 @@ def matchups_keyboard_line(bot: TelegramBot, matchup: dict):
         callback_data=generate_callback_string(public_id)
     )
 
-
-def remove_inside_button(button):
-    if ReserveStatus.INSIDE.lower() in button.get("callback_data"):
+def remove_inside_and_outside_buttons(button):
+    callback_data = button.get("callback_data")
+    inside = ReserveStatus.INSIDE.lower()
+    outside = ReserveStatus.OUTSIDE.lower()
+    
+    if inside in callback_data or outside in callback_data:
         return False
     return True
 
@@ -80,15 +84,15 @@ def filter_buttons_view(buttons: List[Dict[str, str]], user_p_id: UUID, match_p_
 
     reserve = response.get('reserve', '')
     if reserve in [ReserveStatus.INSIDE.lower()]:
-        return list(filter(remove_inside_button, buttons))
+        return list(filter(remove_inside_and_outside_buttons, buttons))
 
     return buttons
 
 
 def matchup_options_keyboard(bot: TelegramBot, user_public_id: UUID,  match_public_id: UUID):
     buttons = [
-        {'text': '✅ Confirmar Partido', 'callback_data': generate_callback_string(
-            f"inside:{match_public_id}")},
+        {'text': '✅ Confirmar Partido', 'callback_data': generate_callback_string(f"inside:{match_public_id}")},
+        {'text': '❌ Rechazar Partido', 'callback_data': generate_callback_string(f"outside:{match_public_id}")},
         {'text': '⬅', 'callback_data': generate_callback_string('back')}
     ]
 
@@ -105,7 +109,8 @@ def check_players_has_required_status(matchup: dict, user_public_id: str | None)
     includes_user = False
 
     for player in match_players:
-        if player.get('reserve') in PLAYER_MATCHES_STATUS:
+        status = player.get('reserve')
+        if status in PLAYER_MATCHES_STATUS:
             return_players.append(player)
 
             if player.get('user_public_id') == user_public_id:
@@ -152,9 +157,11 @@ def handle_matchups(message: Message, bot: TelegramBot):
 
 
 def matchups_callback(call: CallbackQuery, bot: TelegramBot):
+    is_confirmed = call.data.startswith(generate_callback_string('inside'))
+    is_rejected = call.data.startswith(generate_callback_string('outside'))
     if call.data == generate_callback_string('back'):
         matchups_back_callback(call, bot)
-    elif call.data.startswith(generate_callback_string('inside')):
+    elif is_confirmed or is_rejected:
         handle_player_response_match_callback(call, bot)
     else:
         matchups_main_callback(call, bot)
