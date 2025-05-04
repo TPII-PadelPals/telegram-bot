@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import MagicMock
 
-from handlers.user.start import handle_start, handle_callback_query
+from handlers.user.start import handle_start, handle_callback_query, send_disclaimer
 from telebot.types import CallbackQuery, Message
 from requests.exceptions import ConnectionError
 
@@ -20,6 +20,7 @@ class TestHandleStart(unittest.TestCase):
         self.call.message.chat.id = 12345
         self.call.message.message_id = 67890
         self.call.message.chat.username = "test_user"
+        self.bot.send_message = MagicMock()
 
 
     def test_start_with_users_service_disconnected_replies_error(self):
@@ -100,6 +101,13 @@ class TestHandleStart(unittest.TestCase):
         #     self.call.message,
         #     "Esta opción no esta disponible actualmente. Por favor, intenta de nuevo más tarde."
         # )
+
+    def test_handle_callback_query_disclaimer(self):
+        disclaimer = "MESSAGE_DISCLAIMER"
+        self.bot.language_manager = {"MESSAGE_DISCLAIMER": disclaimer}
+        send_disclaimer(self.call.message.chat.id, self.bot)
+        self.bot.send_message.assert_called_once_with(self.call.message.chat.id, disclaimer)
+
 
 if __name__ == '__main__':
     unittest.main()

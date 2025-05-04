@@ -75,12 +75,13 @@ def remove_inside_and_outside_buttons(button):
         return False
     return True
 
+
 def filter_buttons_view(buttons: List[Dict[str, str]], user_p_id: UUID, match_p_id: UUID):
     matches_service = MatchesService()
     response = matches_service.get_match_player(user_p_id, match_p_id)
     if not response:
         return buttons
-    
+
     reserve = response.get('reserve', '')
     if reserve in [ReserveStatus.INSIDE.lower()]:
         return list(filter(remove_inside_and_outside_buttons, buttons))
