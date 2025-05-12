@@ -66,11 +66,12 @@ def matchups_keyboard_line(bot: TelegramBot, matchup: dict):
         callback_data=generate_callback_string(public_id)
     )
 
+
 def remove_inside_and_outside_buttons(button):
     callback_data = button.get("callback_data")
     inside = ReserveStatus.INSIDE.lower()
     outside = ReserveStatus.OUTSIDE.lower()
-    
+
     if inside in callback_data or outside in callback_data:
         return False
     return True
@@ -91,8 +92,10 @@ def filter_buttons_view(buttons: List[Dict[str, str]], user_p_id: UUID, match_p_
 
 def matchup_options_keyboard(bot: TelegramBot, user_public_id: UUID,  match_public_id: UUID):
     buttons = [
-        {'text': '✅ Confirmar Partido', 'callback_data': generate_callback_string(f"inside:{match_public_id}")},
-        {'text': '❌ Rechazar Partido', 'callback_data': generate_callback_string(f"outside:{match_public_id}")},
+        {'text': '✅ Confirmar Partido', 'callback_data': generate_callback_string(
+            f"inside:{match_public_id}")},
+        {'text': '❌ Rechazar Partido', 'callback_data': generate_callback_string(
+            f"outside:{match_public_id}")},
         {'text': '⬅', 'callback_data': generate_callback_string('back')}
     ]
 
