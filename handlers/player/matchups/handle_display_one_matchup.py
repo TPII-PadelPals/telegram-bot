@@ -39,7 +39,8 @@ def matchup_options_keyboard(bot: TelegramBot, user_public_id: UUID,  match_publ
             f"{MatchupAction.PAY}:{match_public_id}")},
         {'text': '❌ Rechazar Partido', 'callback_data': generate_callback_string(
             f"{MatchupAction.REJECT}:{match_public_id}")},
-        {'text': '⬅', 'callback_data': generate_callback_string('back')}
+        {'text': '⬅', 'callback_data': generate_callback_string(
+            MatchupAction.ALL)}
     ]
 
     buttons = filter_buttons_view(buttons, user_public_id, match_public_id)
@@ -77,7 +78,7 @@ def handle_display_one_matchup_callback(call: CallbackQuery, bot: TelegramBot):
 
     player_info = ""
     for i, player in enumerate(match_players, 1):
-        user_data = users_service.get_user_by_id(user.public_id)
+        user_data = users_service.get_user_by_id(player["user_public_id"])
         player_info += f"\nJugador {i}: {user_data.get('name')}\n"
         player_info += f"Estado: {player['reserve']}\n"
 
