@@ -26,11 +26,6 @@ def generate_callback_string(data: str):
     return f"{VIEW_PADDLE_MATCHUPS_COMMAND}:{data}"
 
 
-def get_user_public_id(telegram_id):
-    data = users_service.get_user_info(telegram_id)
-    return data.get("data")[0].get("public_id") if data.get("data") else None
-
-
 def check_players_has_required_status(matchup: dict, user_public_id: str | None):
     """ Check if any player in the match has a status in PLAYER_MATCHES_STATUS and if the user is in the match """
     match_players = matchup.get('match_players', [])

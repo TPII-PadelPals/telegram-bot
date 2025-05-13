@@ -1,5 +1,15 @@
+from typing import Any
 from .base_service import BaseService
 from core.config import settings
+
+
+class User:
+    def __init__(self, data: dict[str, Any]):
+        self.public_id: str = data["public_id"]
+        self.name: str = data["public_id"]
+        self.email: str = data["email"]
+        self.phone: str = data["phone"]
+        self.telegram_id: int = data["telegram_id"]
 
 
 class UsersService(BaseService):
@@ -13,8 +23,9 @@ class UsersService(BaseService):
     def get_user_info(self, chat_id):
         """Get the information of a user given users's chat ID 
         which corresponds to the telegram ID in the UsersService"""
-        return self.get("/users/", params={"telegram_id": chat_id})
-    
+        content = self.get("/users/", params={"telegram_id": chat_id})
+        return User(content["data"][0])
+
     def get_user_by_id(self, user_public_id):
         """Get the information of a user given users's public ID"""
         return self.get(f"/users/{user_public_id}/")

@@ -1,9 +1,9 @@
 
 from handlers.player.matchups.handle_display_all_matchups import display_all_matchups, matchups_back_callback
+from handlers.player.matchups.handle_display_all_payments import handle_match_confirmation_step
 from handlers.player.matchups.handle_display_one_matchup import matchups_main_callback
 from handlers.player.matchups.handle_reply_one_matchup import handle_player_response_match_callback
 from handlers.player.matchups.utils import VIEW_PADDLE_MATCHUPS_COMMAND, generate_callback_string
-from handlers.player.ver_emparejamientos import handle_match_confirmation_step
 from model.telegram_bot import TelegramBot
 from telebot.types import Message, CallbackQuery
 

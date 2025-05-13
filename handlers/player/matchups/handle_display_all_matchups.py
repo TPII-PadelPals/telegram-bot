@@ -1,6 +1,10 @@
-from handlers.player.matchups.utils import generate_callback_string, get_user_public_id, parse_provisional_match, validate_and_filter_matchups
+from handlers.player.matchups.utils import generate_callback_string, parse_provisional_match, validate_and_filter_matchups
 from model.telegram_bot import TelegramBot
 from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery
+
+from services.users_service import UsersService
+
+users_service = UsersService()
 
 
 def matchups_keyboard_line(bot: TelegramBot, matchup: dict):
@@ -22,13 +26,13 @@ def matchups_keyboard(bot: TelegramBot, matchups: list):
 
 
 def display_all_matchups(bot: TelegramBot, chat_id: int, message_id: int | None = None):
-    user_public_id = get_user_public_id(chat_id)
-    if not user_public_id:
+    user = users_service.get_user_info(chat_id)
+    if not user.public_id:
         bot.send_message(chat_id, bot.language_manager.get(
             "MESSAGE_SEE_MATCHES_EMPTY"))
         return
 
-    matches = validate_and_filter_matchups(user_public_id)
+    matches = validate_and_filter_matchups(user.public_id)
 
     if not matches:
         bot.send_message(chat_id, bot.language_manager.get(
