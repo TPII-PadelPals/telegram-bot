@@ -54,5 +54,5 @@ def display_all_matchups(bot: TelegramBot, chat_id: int, message_id: int | None 
         )
 
 
-def matchups_back_callback(call: CallbackQuery, bot: TelegramBot):
+def handle_display_all_matchups_callback(call: CallbackQuery, bot: TelegramBot):
     display_all_matchups(bot, call.message.chat.id, call.message.message_id)

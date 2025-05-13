@@ -1,6 +1,6 @@
 from typing import Dict, List
 from uuid import UUID
-from handlers.player.matchups.utils import ReserveStatus, generate_callback_string, parse_provisional_match, validate_and_filter_matchups
+from handlers.player.matchups.utils import MatchupAction, ReserveStatus, generate_callback_string, parse_provisional_match, validate_and_filter_matchups
 from model.telegram_bot import TelegramBot
 from telebot.types import CallbackQuery
 from services.matches_service import MatchesService
@@ -38,9 +38,9 @@ def filter_buttons_view(buttons: List[Dict[str, str]], user_p_id: UUID, match_p_
 def matchup_options_keyboard(bot: TelegramBot, user_public_id: UUID,  match_public_id: UUID):
     buttons = [
         {'text': '✅ Confirmar Partido', 'callback_data': generate_callback_string(
-            f"pay:{match_public_id}")},
+            f"{MatchupAction.PAY}:{match_public_id}")},
         {'text': '❌ Rechazar Partido', 'callback_data': generate_callback_string(
-            f"outside:{match_public_id}")},
+            f"{MatchupAction.REJECT}:{match_public_id}")},
         {'text': '⬅', 'callback_data': generate_callback_string('back')}
     ]
 
@@ -49,7 +49,7 @@ def matchup_options_keyboard(bot: TelegramBot, user_public_id: UUID,  match_publ
     return bot.ui.create_inline_keyboard(buttons=buttons, row_width=INLINE_KEYWORD_ROW_WIDTH)
 
 
-def matchups_main_callback(call: CallbackQuery, bot: TelegramBot):
+def handle_display_one_matchup_callback(call: CallbackQuery, bot: TelegramBot):
     telegram_id = call.from_user.id
     user = users_service.get_user_info(telegram_id)
     if not user.public_id:

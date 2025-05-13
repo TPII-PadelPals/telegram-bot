@@ -1,3 +1,4 @@
+from handlers.player.matchups.utils import MatchupAction, ReserveStatus
 from model.telegram_bot import TelegramBot
 from telebot.types import CallbackQuery
 from services.users_service import UsersService
@@ -7,14 +8,10 @@ users_service = UsersService()
 matches_service = MatchesService()
 
 
-def handle_player_response_match_callback(call: CallbackQuery, bot: TelegramBot):
+def handle_reply_one_matchup_callback(call: CallbackQuery, bot: TelegramBot):
 
     chat_id = call.from_user.id
     user = users_service.get_user_info(chat_id)
-    # user_public_id = (
-    #     response.get("data")[0].get(
-    #         "public_id") if response.get("data") else None
-    # )
 
     if not user.public_id:
         bot.send_message(chat_id, bot.language_manager.get(
@@ -23,7 +20,10 @@ def handle_player_response_match_callback(call: CallbackQuery, bot: TelegramBot)
 
     params = call.data.split(':')
     match_public_id = params.pop()
-    player_reserve_status = params.pop()
+    matchup_action = params.pop()
+    player_reserve_status = ReserveStatus.REJECTED
+    if matchup_action == MatchupAction.CONFIRM:
+        player_reserve_status = ReserveStatus.INSIDE
 
     if (not match_public_id) or (not player_reserve_status):
         bot.reply_to(call.message, bot.language_manager.get(

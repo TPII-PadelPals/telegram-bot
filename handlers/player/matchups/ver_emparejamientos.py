@@ -1,9 +1,9 @@
 
-from handlers.player.matchups.handle_display_all_matchups import display_all_matchups, matchups_back_callback
-from handlers.player.matchups.handle_display_all_payments import handle_match_confirmation_step
-from handlers.player.matchups.handle_display_one_matchup import matchups_main_callback
-from handlers.player.matchups.handle_reply_one_matchup import handle_player_response_match_callback
-from handlers.player.matchups.utils import VIEW_PADDLE_MATCHUPS_COMMAND, generate_callback_string
+from handlers.player.matchups.handle_display_all_matchups import display_all_matchups, handle_display_all_matchups_callback
+from handlers.player.matchups.handle_display_all_pay_methods import handle_display_all_pay_methods_callback
+from handlers.player.matchups.handle_display_one_matchup import handle_display_one_matchup_callback
+from handlers.player.matchups.handle_reply_one_matchup import handle_reply_one_matchup_callback
+from handlers.player.matchups.utils import VIEW_PADDLE_MATCHUPS_COMMAND, MatchupAction, generate_callback_string
 from model.telegram_bot import TelegramBot
 from telebot.types import Message, CallbackQuery
 
@@ -20,15 +20,18 @@ def handle_matchups(message: Message, bot: TelegramBot):
 def matchups_callback(call: CallbackQuery, bot: TelegramBot):
     data = call.data
 
-    if data == generate_callback_string('back'):
-        matchups_back_callback(call, bot)
+    if data == generate_callback_string(MatchupAction.ALL):
+        handle_display_all_matchups_callback(call, bot)
 
-    elif data.startswith(generate_callback_string('pay')):
-        handle_match_confirmation_step(call, bot)
+    elif data.startswith(generate_callback_string(MatchupAction.ONE)):
+        handle_display_one_matchup_callback(call, bot)
 
-    elif (data.startswith(generate_callback_string('inside')) or
-          data.startswith(generate_callback_string('outside'))):
-        handle_player_response_match_callback(call, bot)
+    elif data.startswith(generate_callback_string(MatchupAction.PAY)):
+        handle_display_all_pay_methods_callback(call, bot)
+
+    elif (data.startswith(generate_callback_string(MatchupAction.CONFIRM)) or
+          data.startswith(generate_callback_string(MatchupAction.REJECT))):
+        handle_reply_one_matchup_callback(call, bot)
 
     else:
-        matchups_main_callback(call, bot)
+        raise ValueError("Callback not implemented")

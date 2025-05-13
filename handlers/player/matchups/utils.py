@@ -4,6 +4,17 @@ from datetime import datetime as dt
 from services.users_service import UsersService
 from services.matches_service import MatchesService
 
+VIEW_PADDLE_MATCHUPS_COMMAND = "ver_emparejamientos"
+
+
+class MatchupAction(str):
+    # It has to be limited to one Byte and so one character
+    ALL = "A"
+    ONE = "O"
+    PAY = "P"
+    CONFIRM = "C"
+    REJECT = "R"
+
 
 class ReserveStatus(str, Enum):
     ASSIGNED = "assigned"
@@ -14,9 +25,7 @@ class ReserveStatus(str, Enum):
     REJECTED = "Rejected"
 
 
-VIEW_PADDLE_MATCHUPS_COMMAND = "ver_emparejamientos"
 PLAYER_MATCHES_STATUS = [ReserveStatus.ASSIGNED, ReserveStatus.INSIDE]
-INLINE_KEYWORD_ROW_WIDTH = 2
 
 users_service = UsersService()
 match_service = MatchesService()
