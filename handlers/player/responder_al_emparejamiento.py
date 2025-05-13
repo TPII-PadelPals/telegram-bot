@@ -34,15 +34,22 @@ def handle_player_response_match_callback(call: CallbackQuery, bot: TelegramBot)
 
     if response:
         text = bot.language_manager.get("MESSAGE_MATCH_PLAYER_REJECT")
+        payment_keyboard = None
         if player_reserve_status == 'inside':
             pay_url = response["pay_url"]
             text = bot.language_manager.get(
                 "MESSAGE_MATCH_PLAYER_CONFIRMATION")
-            text = text.format(pay_url)
+            buttons = [
+                {'text': '👉 Ir a MercadoPago', 'url': pay_url},
+            ]
+            payment_keyboard = bot.ui.create_inline_keyboard(
+                buttons=buttons, row_width=1)
+
         bot.edit_message_text(
             chat_id=call.message.chat.id,
             message_id=call.message.message_id,
             text=text,
+            reply_markup=payment_keyboard
         )
     else:
         bot.reply_to(call.message, bot.language_manager.get(

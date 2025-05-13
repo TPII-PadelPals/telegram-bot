@@ -5,7 +5,6 @@ from .responder_al_emparejamiento import handle_player_response_match_callback
 from model.telegram_bot import TelegramBot
 from telebot.types import Message, InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery
 from datetime import datetime as dt
-from telebot.types import Message, CallbackQuery
 from services.users_service import UsersService
 from services.matches_service import MatchesService
 
@@ -93,7 +92,7 @@ def filter_buttons_view(buttons: List[Dict[str, str]], user_p_id: UUID, match_p_
 def matchup_options_keyboard(bot: TelegramBot, user_public_id: UUID,  match_public_id: UUID):
     buttons = [
         {'text': '✅ Confirmar Partido', 'callback_data': generate_callback_string(
-            f"inside:{match_public_id}")},
+            f"pay:{match_public_id}")},
         {'text': '❌ Rechazar Partido', 'callback_data': generate_callback_string(
             f"outside:{match_public_id}")},
         {'text': '⬅', 'callback_data': generate_callback_string('back')}
@@ -159,17 +158,47 @@ def handle_matchups(message: Message, bot: TelegramBot):
         "MESSAGE_SEE_MATCHES"), reply_markup=matchups_keyboard(bot, matches))
 
 
+# Show payments
+def handle_match_confirmation_step(call: CallbackQuery, bot: TelegramBot):
+    match_public_id = call.data.split(":")[-1]
+
+    text = bot.language_manager.get("MESSAGE_MATCH_PLAYER_CONFIRMATION")
+
+    buttons = [
+        {'text': '💳 Pagar con MercadoPago', 'callback_data': generate_callback_string(
+            f"inside:{match_public_id}")},
+        {'text': '⬅', 'callback_data': generate_callback_string(
+            f'main:{match_public_id}')}
+    ]
+    keyboard = bot.ui.create_inline_keyboard(buttons=buttons, row_width=1)
+
+    bot.edit_message_text(
+        chat_id=call.message.chat.id,
+        message_id=call.message.message_id,
+        text=text,
+        reply_markup=keyboard
+    )
+
+
+# Switch callbacks
 def matchups_callback(call: CallbackQuery, bot: TelegramBot):
-    is_confirmed = call.data.startswith(generate_callback_string('inside'))
-    is_rejected = call.data.startswith(generate_callback_string('outside'))
-    if call.data == generate_callback_string('back'):
+    data = call.data
+
+    if data == generate_callback_string('back'):
         matchups_back_callback(call, bot)
-    elif is_confirmed or is_rejected:
+
+    elif data.startswith(generate_callback_string('pay')):
+        handle_match_confirmation_step(call, bot)
+
+    elif (data.startswith(generate_callback_string('inside')) or
+          data.startswith(generate_callback_string('outside'))):
         handle_player_response_match_callback(call, bot)
+
     else:
         matchups_main_callback(call, bot)
 
 
+# Show selected match
 def matchups_main_callback(call: CallbackQuery, bot: TelegramBot):
     telegram_id = call.from_user.id
     user_public_id = get_user_public_id(telegram_id)
@@ -215,6 +244,7 @@ def matchups_main_callback(call: CallbackQuery, bot: TelegramBot):
                           text=text, reply_markup=matchup_options_keyboard(bot, user_public_id, public_id))
 
 
+# List all matches
 def matchups_back_callback(call: CallbackQuery, bot: TelegramBot):
     chat_id = call.message.chat.id
     user_public_id = get_user_public_id(chat_id)
