@@ -14,10 +14,8 @@ INLINE_KEYWORD_ROW_WIDTH = 2
 
 def remove_inside_and_outside_buttons(button):
     callback_data = button.get("callback_data")
-    inside = ReserveStatus.INSIDE.lower()
-    outside = ReserveStatus.OUTSIDE.lower()
 
-    if inside in callback_data or outside in callback_data:
+    if MatchupAction.PAY in callback_data or MatchupAction.REJECT in callback_data:
         return False
     return True
 
