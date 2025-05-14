@@ -27,11 +27,12 @@ def matchups_keyboard(bot: TelegramBot, matchups: list):
 def display_all_matchups(bot: TelegramBot, chat_id: int, message_id: int | None = None):
     users_service = UsersService()
 
-    user = users_service.get_user_info(chat_id)
-    if not user:
+    users = users_service.get_user_info(chat_id)
+    if not users:
         bot.send_message(chat_id, bot.language_manager.get(
             "MESSAGE_SEE_MATCHES_EMPTY"))
         return
+    user = users[0]
 
     matches = validate_and_filter_matchups(user.public_id)
 
@@ -40,12 +41,19 @@ def display_all_matchups(bot: TelegramBot, chat_id: int, message_id: int | None 
             "MESSAGE_SEE_MATCHES_EMPTY"))
         return
 
-    bot.edit_message_text(
-        chat_id=chat_id,
-        message_id=message_id,
-        text=bot.language_manager.get("MESSAGE_SEE_MATCHES"),
-        reply_markup=matchups_keyboard(bot, matches)
-    )
+    if message_id:
+        bot.edit_message_text(
+            chat_id=chat_id,
+            message_id=message_id,
+            text=bot.language_manager.get("MESSAGE_SEE_MATCHES"),
+            reply_markup=matchups_keyboard(bot, matches)
+        )
+    else:
+        bot.send_message(
+            chat_id=chat_id,
+            text=bot.language_manager.get("MESSAGE_SEE_MATCHES"),
+            reply_markup=matchups_keyboard(bot, matches)
+        )
 
 
 def handle_display_all_matchups_callback(call: CallbackQuery, bot: TelegramBot):

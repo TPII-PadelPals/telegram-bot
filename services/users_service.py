@@ -23,10 +23,7 @@ class UsersService(BaseService):
         """Get the information of a user given users's chat ID 
         which corresponds to the telegram ID in the UsersService"""
         content = self.get("/users/", params={"telegram_id": chat_id})
-        data = content["data"]
-        if not data:
-            return None
-        return User(**data[0])
+        return [User(**data) for data in content["data"]]
 
     def get_user_by_id(self, user_public_id):
         """Get the information of a user given users's public ID"""

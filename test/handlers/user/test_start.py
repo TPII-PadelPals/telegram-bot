@@ -5,6 +5,8 @@ from handlers.user.start import handle_start, handle_callback_query, send_discla
 from telebot.types import CallbackQuery, Message
 from requests.exceptions import ConnectionError
 
+from services.users_service import User
+
 
 class TestHandleStart(unittest.TestCase):
     def setUp(self):
@@ -22,7 +24,6 @@ class TestHandleStart(unittest.TestCase):
         self.call.message.chat.username = "test_user"
         self.bot.send_message = MagicMock()
 
-
     def test_start_with_users_service_disconnected_replies_error(self):
         users_service_mock = MagicMock()
         users_service_mock.get_user_info = MagicMock(
@@ -33,13 +34,9 @@ class TestHandleStart(unittest.TestCase):
         self.bot.reply_to.assert_called_once_with(
             self.message, "Ha ocurrido un error. Por favor, intenta de nuevo más tarde.")
 
-
     def test_start_with_user_already_registered_replies_welcome(self):
-        user = {"name": "Name Surname"}
-        users = {
-            "data": [user],
-            "count": 1
-        }
+        user = User(name="Name Surname")
+        users = [user]
 
         users_service_mock = MagicMock()
         users_service_mock.get_user_info = MagicMock(return_value=users)
@@ -47,14 +44,10 @@ class TestHandleStart(unittest.TestCase):
         handle_start(self.message, self.bot, users_service_mock)
 
         self.bot.reply_to.assert_called_once_with(
-            self.message, f"Bienvenido de nuevo, {user['name']}!")
-
+            self.message, f"Bienvenido de nuevo, {user.name}!")
 
     def test_start_with_user_not_registered_asks_login(self):
-        users = {
-            "data": [],
-            "count": 0
-        }
+        users = []
 
         users_service_mock = MagicMock()
         users_service_mock.get_user_info = MagicMock(return_value=users)
@@ -63,7 +56,6 @@ class TestHandleStart(unittest.TestCase):
 
         assert self.bot.reply_to.call_args.args[
             1] == "Bienvenido a PaddlePals! Por favor seleccione un método de registro:"
-
 
     def test_handle_callback_query_start_user_pass_replies_error(self):
         self.call.data = "start_user_pass"
@@ -75,7 +67,6 @@ class TestHandleStart(unittest.TestCase):
             self.call.message,
             "Esta opción no esta disponible actualmente. Por favor, intenta de nuevo más tarde."
         )
-
 
     def test_handle_callback_query_start_google_replies_registration(self):
         self.call.data = "start_google"
@@ -89,13 +80,13 @@ class TestHandleStart(unittest.TestCase):
                               users_service_mock, sleep_mock)
 
         assert self.bot.edit_message_text.call_args.args[
-                   0] == "¡Bienvenido! Por favor, regístrate con Google para continuar."
+            0] == "¡Bienvenido! Por favor, regístrate con Google para continuar."
 
         assert self.bot.edit_message_text.call_args.kwargs[
-                   "chat_id"] == self.call.message.chat.id
+            "chat_id"] == self.call.message.chat.id
 
         assert self.bot.edit_message_text.call_args.kwargs[
-                   "message_id"] == self.call.message.message_id
+            "message_id"] == self.call.message.message_id
 
         # assert self.bot.send_message.called_once_with(
         #     self.call.message,
@@ -106,7 +97,8 @@ class TestHandleStart(unittest.TestCase):
         disclaimer = "MESSAGE_DISCLAIMER"
         self.bot.language_manager = {"MESSAGE_DISCLAIMER": disclaimer}
         send_disclaimer(self.call.message.chat.id, self.bot)
-        self.bot.send_message.assert_called_once_with(self.call.message.chat.id, disclaimer)
+        self.bot.send_message.assert_called_once_with(
+            self.call.message.chat.id, disclaimer)
 
 
 if __name__ == '__main__':

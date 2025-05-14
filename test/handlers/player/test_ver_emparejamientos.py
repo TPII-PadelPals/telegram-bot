@@ -84,8 +84,8 @@ class TestMatchupsMainCallback(unittest.TestCase):
     @patch('handlers.player.matchups.utils.MatchesService')
     def test_handle_matchups_no_matches(self, MockMatchesService, MockUsersService):
         mock_users_service = MockUsersService.return_value
-        mock_users_service.get_user_info.return_value = User(
-            public_id="test_user_id")
+        mock_users_service.get_user_info.return_value = [User(
+            public_id="test_user_id")]
 
         mock_matches_services = MockMatchesService.return_value
         mock_matches_services.get_user_matches.return_value = []
@@ -101,8 +101,8 @@ class TestMatchupsMainCallback(unittest.TestCase):
     @patch('handlers.player.matchups.utils.MatchesService')
     def test_handle_matchups_no_matches_when_i_rejected_match(self, MockMatchesService, MockUsersService):
         mock_users_service = MockUsersService.return_value
-        mock_users_service.get_user_info.return_value = User(
-            public_id="3a7ebc3c-0300-4f50-ae18-3ee0a79aa1e1")
+        mock_users_service.get_user_info.return_value = [User(
+            public_id="3a7ebc3c-0300-4f50-ae18-3ee0a79aa1e1")]
 
         mock_match_service = MockMatchesService.return_value
         mock_match_service.get_user_matches.return_value = self.player_outside_matches
@@ -118,8 +118,8 @@ class TestMatchupsMainCallback(unittest.TestCase):
     @patch('handlers.player.matchups.handle_display_all_matchups.validate_and_filter_matchups')
     def test_handle_matchups_with_matches(self, mock_validate_and_filter_matchups, MockUsersService):
         mock_users_service = MockUsersService.return_value
-        mock_users_service.get_user_info.return_value = User(
-            public_id="test_user_id")
+        mock_users_service.get_user_info.return_value = [User(
+            public_id="test_user_id")]
 
         mock_validate_and_filter_matchups.return_value = [self.sample_match]
 
@@ -127,8 +127,8 @@ class TestMatchupsMainCallback(unittest.TestCase):
 
         handle_matchups(self.message, self.bot)
 
-        self.bot.edit_message_text.assert_called_once()
-        _args, kwargs = self.bot.edit_message_text.call_args
+        self.bot.send_message.assert_called_once()
+        _args, kwargs = self.bot.send_message.call_args
         assert kwargs['text'] == self.bot.language_manager.get(
             "MESSAGE_SEE_MATCHES")
 
@@ -150,7 +150,7 @@ class TestMatchupsMainCallback(unittest.TestCase):
         user_name = "Player name"
         user = User(public_id="test_user_id", name=user_name)
         mock_users_service = MockUsersService.return_value
-        mock_users_service.get_user_info.return_value = user
+        mock_users_service.get_user_info.return_value = [user]
         mock_users_service.get_user_by_id.return_value = user
 
         mock_validate_and_filter_matchups.return_value = [self.sample_match]
@@ -181,7 +181,7 @@ class TestMatchupsMainCallback(unittest.TestCase):
     def test_handle_display_one_matchup_callback_invalid(self, mock_validate_and_filter_matchups, MockUsersService):
         user = User(public_id="test_user_id", name="Player name")
         mock_users_service = MockUsersService.return_value
-        mock_users_service.get_user_info.return_value = user
+        mock_users_service.get_user_info.return_value = [user]
         mock_users_service.get_user_by_id.return_value = user
 
         mock_validate_and_filter_matchups.return_value = []
@@ -197,7 +197,7 @@ class TestMatchupsMainCallback(unittest.TestCase):
     def test_handle_display_one_matchup_callback_no_matches(self, mock_validate_and_filter_matchups, MockUsersService):
         user = User(public_id="test_user_id", name="Player name")
         mock_users_service = MockUsersService.return_value
-        mock_users_service.get_user_info.return_value = user
+        mock_users_service.get_user_info.return_value = [user]
         mock_users_service.get_user_by_id.return_value = user
 
         mock_validate_and_filter_matchups.return_value = []
@@ -214,10 +214,9 @@ class TestMatchupsMainCallback(unittest.TestCase):
 
     @patch('handlers.player.matchups.handle_display_one_matchup.UsersService')
     def test_handle_display_one_matchup_callback_no_user_id(self, MockUsersService):
-        user = None
         mock_users_service = MockUsersService.return_value
-        mock_users_service.get_user_info.return_value = user
-        mock_users_service.get_user_by_id.return_value = user
+        mock_users_service.get_user_info.return_value = []
+        mock_users_service.get_user_by_id.return_value = None
         self.bot.language_manager.get.return_value = "MESSAGE_SEE_MATCHES_EMPTY"
 
         self.call.data = generate_callback_string('1')
@@ -232,8 +231,8 @@ class TestMatchupsMainCallback(unittest.TestCase):
     @patch('handlers.player.matchups.handle_display_all_matchups.validate_and_filter_matchups')
     def test_handle_display_all_matchups_callback_no_matches(self, mock_validate_and_filter_matchups, MockUsersService):
         mock_users_service = MockUsersService.return_value
-        mock_users_service.get_user_info.return_value = User(
-            public_id="test_user_id")
+        mock_users_service.get_user_info.return_value = [User(
+            public_id="test_user_id")]
 
         mock_validate_and_filter_matchups.return_value = []
 
@@ -249,8 +248,8 @@ class TestMatchupsMainCallback(unittest.TestCase):
     @patch('handlers.player.matchups.handle_display_all_matchups.validate_and_filter_matchups')
     def test_handle_display_all_matchups_callback_with_matches(self, mock_validate_and_filter_matchups, MockUsersService):
         mock_users_service = MockUsersService.return_value
-        mock_users_service.get_user_info.return_value = User(
-            public_id="test_user_id")
+        mock_users_service.get_user_info.return_value = [User(
+            public_id="test_user_id")]
 
         mock_validate_and_filter_matchups.return_value = [self.sample_match]
 
@@ -266,7 +265,7 @@ class TestMatchupsMainCallback(unittest.TestCase):
     @patch('handlers.player.matchups.handle_display_all_matchups.UsersService')
     def test_handle_display_all_matchups_callback_no_user_id(self, MockUsersService):
         mock_users_service = MockUsersService.return_value
-        mock_users_service.get_user_info.return_value = None
+        mock_users_service.get_user_info.return_value = []
 
         self.bot.language_manager.get.return_value = "MESSAGE_SEE_MATCHES_EMPTY"
 

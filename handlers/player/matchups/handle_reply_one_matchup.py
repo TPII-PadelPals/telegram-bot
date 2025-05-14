@@ -10,12 +10,13 @@ def handle_reply_one_matchup_callback(call: CallbackQuery, bot: TelegramBot):
     matches_service = MatchesService()
 
     chat_id = call.from_user.id
-    user = users_service.get_user_info(chat_id)
+    users = users_service.get_user_info(chat_id)
 
-    if not user:
+    if not users:
         bot.send_message(chat_id, bot.language_manager.get(
             "ERROR_USER_NOT_FOUND"))
         return
+    user = users[0]
 
     params = call.data.split(':')
     match_public_id = params.pop()

@@ -13,7 +13,7 @@ def filter_fn(call: CallbackQuery):
 
 
 def handle_matchups(message: Message, bot: TelegramBot):
-    display_all_matchups(bot, message.chat.id)  # message.message_id
+    display_all_matchups(bot, message.chat.id)
 
 
 # Switch callbacks

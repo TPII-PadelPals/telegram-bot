@@ -49,8 +49,8 @@ class TestMatchupResponseMatchPlayerCallback(unittest.TestCase):
         mock_matches_service = MockMatchesService.return_value
         pay_url = 'http://a-payment-method.com'
 
-        mock_users_service.get_user_info.return_value = User(
-            public_id=self.user_public_id)
+        mock_users_service.get_user_info.return_value = [User(
+            public_id=self.user_public_id)]
 
         mock_matches_service.update_match_player_status.return_value = {
             'user_public_id': self.user_public_id,
@@ -76,8 +76,8 @@ class TestMatchupResponseMatchPlayerCallback(unittest.TestCase):
         mock_users_service = MockUsersService.return_value
         mock_matches_service = MockMatchesService.return_value
 
-        mock_users_service.get_user_info.return_value = User(
-            public_id=self.user_public_id)
+        mock_users_service.get_user_info.return_value = [User(
+            public_id=self.user_public_id)]
 
         mock_matches_service.update_match_player_status.return_value = None
 
@@ -121,8 +121,8 @@ class TestMatchupResponseMatchPlayerCallback(unittest.TestCase):
         mock_users_service = MockUsersService.return_value
         mock_matches_service = MockMatchesService.return_value
 
-        mock_users_service.get_user_info.return_value = User(
-            public_id=self.user_public_id)
+        mock_users_service.get_user_info.return_value = [User(
+            public_id=self.user_public_id)]
 
         mock_matches_service.update_match_player_status.return_value = {
             'user_public_id': self.user_public_id,
@@ -148,8 +148,8 @@ class TestMatchupResponseMatchPlayerCallback(unittest.TestCase):
         mock_users_service = MockUsersService.return_value
         mock_matches_service = MockMatchesService.return_value
 
-        mock_users_service.get_user_info.return_value = User(
-            public_id=self.user_public_id)
+        mock_users_service.get_user_info.return_value = [User(
+            public_id=self.user_public_id)]
 
         mock_matches_service.update_match_player_status.return_value = None
 
@@ -169,7 +169,7 @@ class TestMatchupResponseMatchPlayerCallback(unittest.TestCase):
         mock_users_service = MockUsersService.return_value
         mock_matches_service = MockMatchesService.return_value
 
-        mock_users_service.get_user_info.return_value = None
+        mock_users_service.get_user_info.return_value = []
 
         mock_matches_service.update_match_player_status.return_value = {
             'user_public_id': self.user_public_id,
