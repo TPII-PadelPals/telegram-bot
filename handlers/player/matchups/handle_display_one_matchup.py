@@ -16,9 +16,6 @@ INLINE_KEYWORD_ROW_WIDTH = 2
 def remove_inside_and_outside_buttons(button):
     callback_data = button.get("callback_data")
 
-    logger.info(f"remove_inside_and_outside_buttons: {button = }")
-    logger.info(f"remove_inside_and_outside_buttons: {callback_data = }")
-
     if MatchupAction.PAY in callback_data or MatchupAction.REJECT in callback_data:
         return False
     return True
@@ -27,7 +24,6 @@ def remove_inside_and_outside_buttons(button):
 def filter_buttons_view(buttons: List[Dict[str, str]], user_p_id: UUID, match_p_id: UUID):
     matches_service = MatchesService()
     response = matches_service.get_match_player(user_p_id, match_p_id)
-    logger.info(f"filter_buttons_view: {response = }")
     if not response:
         return buttons
 
