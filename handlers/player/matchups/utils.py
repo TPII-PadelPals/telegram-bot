@@ -1,7 +1,6 @@
 from enum import Enum
 from model.telegram_bot import TelegramBot
 from datetime import datetime as dt
-from services.users_service import UsersService
 from services.matches_service import MatchesService
 
 VIEW_PADDLE_MATCHUPS_COMMAND = "ver_emparejamientos"
@@ -19,16 +18,14 @@ class MatchupAction(str):
 class ReserveStatus(str, Enum):
     ASSIGNED = "assigned"
     SIMILAR = "similar"
-    PROVISIONAL = "Provisional"
     INSIDE = "inside"
     OUTSIDE = "outside"
+    # The following states might be deprecated in the future
+    PROVISIONAL = "Provisional"
     REJECTED = "Rejected"
 
 
 PLAYER_MATCHES_STATUS = [ReserveStatus.ASSIGNED, ReserveStatus.INSIDE]
-
-users_service = UsersService()
-match_service = MatchesService()
 
 
 def generate_callback_string(data: str):
@@ -66,6 +63,7 @@ def filter_matchups_by_players_status(matchups: list, user_public_id: str | None
 
 
 def validate_and_filter_matchups(user_public_id: str | None):
+    match_service = MatchesService()
     user_matches = match_service.get_user_matches(user_public_id)
     matches = user_matches.get("data") if user_matches else []
     return filter_matchups_by_players_status(matches, user_public_id)

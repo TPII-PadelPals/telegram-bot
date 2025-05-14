@@ -4,8 +4,6 @@ from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton, CallbackQu
 
 from services.users_service import UsersService
 
-users_service = UsersService()
-
 
 def matchups_keyboard_line(bot: TelegramBot, matchup: dict):
     public_id, court_id, date, time, _, _ = parse_provisional_match(
@@ -27,6 +25,8 @@ def matchups_keyboard(bot: TelegramBot, matchups: list):
 
 
 def display_all_matchups(bot: TelegramBot, chat_id: int, message_id: int | None = None):
+    users_service = UsersService()
+
     user = users_service.get_user_info(chat_id)
     if not user:
         bot.send_message(chat_id, bot.language_manager.get(
@@ -40,19 +40,12 @@ def display_all_matchups(bot: TelegramBot, chat_id: int, message_id: int | None 
             "MESSAGE_SEE_MATCHES_EMPTY"))
         return
 
-    if message_id:
-        bot.edit_message_text(
-            chat_id=chat_id,
-            message_id=message_id,
-            text=bot.language_manager.get("MESSAGE_SEE_MATCHES"),
-            reply_markup=matchups_keyboard(bot, matches)
-        )
-    else:
-        bot.send_message(
-            chat_id,
-            bot.language_manager.get("MESSAGE_SEE_MATCHES"),
-            reply_markup=matchups_keyboard(bot, matches)
-        )
+    bot.edit_message_text(
+        chat_id=chat_id,
+        message_id=message_id,
+        text=bot.language_manager.get("MESSAGE_SEE_MATCHES"),
+        reply_markup=matchups_keyboard(bot, matches)
+    )
 
 
 def handle_display_all_matchups_callback(call: CallbackQuery, bot: TelegramBot):

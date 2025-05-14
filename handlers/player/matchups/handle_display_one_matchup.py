@@ -6,8 +6,6 @@ from telebot.types import CallbackQuery
 from services.matches_service import MatchesService
 from services.users_service import UsersService
 
-users_service = UsersService()
-match_service = MatchesService()
 
 INLINE_KEYWORD_ROW_WIDTH = 2
 
@@ -49,6 +47,8 @@ def matchup_options_keyboard(bot: TelegramBot, user_public_id: UUID,  match_publ
 
 
 def handle_display_one_matchup_callback(call: CallbackQuery, bot: TelegramBot):
+    users_service = UsersService()
+
     telegram_id = call.from_user.id
     user = users_service.get_user_info(telegram_id)
     if not user:
@@ -78,8 +78,8 @@ def handle_display_one_matchup_callback(call: CallbackQuery, bot: TelegramBot):
 
     player_info = ""
     for i, player in enumerate(match_players, 1):
-        user_data = users_service.get_user_by_id(player["user_public_id"])
-        player_info += f"\nJugador {i}: {user_data.get('name')}\n"
+        user = users_service.get_user_by_id(player["user_public_id"])
+        player_info += f"\nJugador {i}: {user.name}\n"
         player_info += f"Estado: {player['reserve']}\n"
 
     text = f"Establecimiento: {public_id}\n" \
@@ -89,5 +89,9 @@ def handle_display_one_matchup_callback(call: CallbackQuery, bot: TelegramBot):
            f"Estado: {status}\n" \
            f"\nJugadores:{player_info}"
 
-    bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id,
-                          text=text, reply_markup=matchup_options_keyboard(bot, user.public_id, public_id))
+    bot.edit_message_text(
+        chat_id=call.message.chat.id,
+        message_id=call.message.message_id,
+        text=text,
+        reply_markup=matchup_options_keyboard(bot, user.public_id, public_id)
+    )

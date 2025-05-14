@@ -6,6 +6,7 @@ from handlers.player.matchups.handle_display_all_matchups import handle_display_
 from handlers.player.matchups.handle_display_one_matchup import handle_display_one_matchup_callback
 from handlers.player.matchups.utils import generate_callback_string
 from handlers.player.matchups.ver_emparejamientos import handle_matchups
+from services.users_service import User
 
 
 class TestMatchupsMainCallback(unittest.TestCase):
@@ -34,8 +35,8 @@ class TestMatchupsMainCallback(unittest.TestCase):
             "time": "10",
             "status": "pending",
             "match_players": [
-                {"reserve": "assigned", "user_id": "user1"},
-                {"reserve": "inside", "user_id": "user2"}
+                {"reserve": "assigned", "user_public_id": "user1"},
+                {"reserve": "inside", "user_public_id": "user2"}
             ]
         }
 
@@ -79,69 +80,87 @@ class TestMatchupsMainCallback(unittest.TestCase):
             "count": 1
         }
 
-    @patch('handlers.player.matchups.ver_emparejamientos.get_user_public_id')
-    @patch('handlers.player.matchups.ver_emparejamientos.validate_and_filter_matchups')
-    def test_handle_matchups_no_matches(self, mock_validate_and_filter_matchups, mock_get_user_id):
-        mock_get_user_id.return_value = "test_user_id"
-        self.bot.language_manager.get.return_value = "MESSAGE_SEE_MATCHES_EMPTY"
-        mock_validate_and_filter_matchups.return_value = []
+    @patch('handlers.player.matchups.handle_display_all_matchups.UsersService')
+    @patch('handlers.player.matchups.utils.MatchesService')
+    def test_handle_matchups_no_matches(self, MockMatchesService, MockUsersService):
+        mock_users_service = MockUsersService.return_value
+        mock_users_service.get_user_info.return_value = User(
+            public_id="test_user_id")
 
-        handle_matchups(self.message, self.bot)
+        mock_matches_services = MockMatchesService.return_value
+        mock_matches_services.get_user_matches.return_value = []
 
-        self.bot.reply_to.assert_called_once_with(
-            self.message, self.bot.language_manager.get("MESSAGE_SEE_MATCHES_EMPTY"))
-        self.bot.send_message.assert_not_called()
-
-    @patch('handlers.player.matchups.ver_emparejamientos.get_user_public_id')
-    @patch('handlers.player.matchups.ver_emparejamientos.match_service')
-    def test_handle_matchups_no_matches_when_i_rejected_match(self, mock_match_service, mock_get_user_id):
-        mock_match_service.get_user_matches.return_value = self.player_outside_matches
-        mock_get_user_id.return_value = "3a7ebc3c-0300-4f50-ae18-3ee0a79aa1e1"
-        self.bot.language_manager.get.return_value = "MESSAGE_SEE_MATCHES_EMPTY"
-
-        handle_matchups(self.message, self.bot)
-
-        self.bot.reply_to.assert_called_once_with(
-            self.message, self.bot.language_manager.get("MESSAGE_SEE_MATCHES_EMPTY"))
-        self.bot.send_message.assert_not_called()
-
-    @patch('handlers.player.matchups.ver_emparejamientos.get_user_public_id')
-    @patch('handlers.player.matchups.ver_emparejamientos.validate_and_filter_matchups')
-    def test_handle_matchups_with_matches(self, mock_validate_and_filter_matchups, mock_get_user_id):
-        mock_get_user_id.return_value = "test_user_id"
-        self.bot.language_manager.get.return_value = "MESSAGE_SEE_MATCHES"
-        mock_validate_and_filter_matchups.return_value = [self.sample_match]
-
-        handle_matchups(self.message, self.bot)
-
-        self.bot.send_message.assert_called_once()
-        self.assertIn(self.bot.language_manager.get(
-            "MESSAGE_SEE_MATCHES"), self.bot.send_message.call_args[0])
-        self.bot.reply_to.assert_not_called()
-
-    @patch('handlers.player.matchups.ver_emparejamientos.get_user_public_id')
-    def test_handle_matchups_no_user_id(self, mock_get_user_id):
-        mock_get_user_id.return_value = None
         self.bot.language_manager.get.return_value = "MESSAGE_SEE_MATCHES_EMPTY"
 
         handle_matchups(self.message, self.bot)
 
         self.bot.send_message.assert_called_once_with(
             self.message.chat.id, self.bot.language_manager.get("MESSAGE_SEE_MATCHES_EMPTY"))
-        self.bot.reply_to.assert_not_called()
 
-    @patch('handlers.player.matchups.ver_emparejamientos.get_user_public_id')
-    @patch('handlers.player.matchups.ver_emparejamientos.validate_and_filter_matchups')
-    @patch('handlers.player.matchups.ver_emparejamientos.users_service')
-    def test_handle_display_one_matchup_callback_valid(self, mock_users_service, mock_validate_and_filter_matchups, mock_get_user_id):
-        mock_get_user_id.return_value = "test_user_id"
+    @patch('handlers.player.matchups.handle_display_all_matchups.UsersService')
+    @patch('handlers.player.matchups.utils.MatchesService')
+    def test_handle_matchups_no_matches_when_i_rejected_match(self, MockMatchesService, MockUsersService):
+        mock_users_service = MockUsersService.return_value
+        mock_users_service.get_user_info.return_value = User(
+            public_id="3a7ebc3c-0300-4f50-ae18-3ee0a79aa1e1")
+
+        mock_match_service = MockMatchesService.return_value
+        mock_match_service.get_user_matches.return_value = self.player_outside_matches
+
+        self.bot.language_manager.get.return_value = "MESSAGE_SEE_MATCHES_EMPTY"
+
+        handle_matchups(self.message, self.bot)
+
+        self.bot.send_message.assert_called_once_with(
+            self.message.chat.id, self.bot.language_manager.get("MESSAGE_SEE_MATCHES_EMPTY"))
+
+    @patch('handlers.player.matchups.handle_display_all_matchups.UsersService')
+    @patch('handlers.player.matchups.handle_display_all_matchups.validate_and_filter_matchups')
+    def test_handle_matchups_with_matches(self, mock_validate_and_filter_matchups, MockUsersService):
+        mock_users_service = MockUsersService.return_value
+        mock_users_service.get_user_info.return_value = User(
+            public_id="test_user_id")
+
+        mock_validate_and_filter_matchups.return_value = [self.sample_match]
+
+        self.bot.language_manager.get.return_value = "MESSAGE_SEE_MATCHES"
+
+        handle_matchups(self.message, self.bot)
+
+        self.bot.edit_message_text.assert_called_once()
+        _args, kwargs = self.bot.edit_message_text.call_args
+        assert kwargs['text'] == self.bot.language_manager.get(
+            "MESSAGE_SEE_MATCHES")
+
+    @patch('handlers.player.matchups.handle_display_all_matchups.UsersService')
+    def test_handle_matchups_no_user_id(self, MockUsersService):
+        mock_users_service = MockUsersService.return_value
+        mock_users_service.get_user_info.return_value = None
+        self.bot.language_manager.get.return_value = "MESSAGE_SEE_MATCHES_EMPTY"
+
+        handle_matchups(self.message, self.bot)
+
+        self.bot.send_message.assert_called_once_with(
+            self.message.chat.id, self.bot.language_manager.get("MESSAGE_SEE_MATCHES_EMPTY"))
+
+    @patch('handlers.player.matchups.handle_display_one_matchup.matchup_options_keyboard')
+    @patch('handlers.player.matchups.handle_display_one_matchup.validate_and_filter_matchups')
+    @patch('handlers.player.matchups.handle_display_one_matchup.UsersService')
+    def test_handle_display_one_matchup_callback_valid(self, MockUsersService, mock_validate_and_filter_matchups, mock_matchup_options_keyboard):
+        user_name = "Player name"
+        user = User(public_id="test_user_id", name=user_name)
+        mock_users_service = MockUsersService.return_value
+        mock_users_service.get_user_info.return_value = user
+        mock_users_service.get_user_by_id.return_value = user
+
+        mock_validate_and_filter_matchups.return_value = [self.sample_match]
+
+        mock_matchup_options_keyboard.return_value = None
+
         self.bot.language_manager.get.side_effect = [
             "%d/%m/%Y",
             "%H:%M",
         ]
-        mock_validate_and_filter_matchups.return_value = [self.sample_match]
-        mock_users_service.get_user_by_id.return_value = {
-            "name": "Player Name"}
 
         self.call.data = generate_callback_string('1')
 
@@ -154,13 +173,17 @@ class TestMatchupsMainCallback(unittest.TestCase):
         self.assertIn("Dia: 10/10/2023", args['text'])
         self.assertIn("Horario: 10:00", args['text'])
         self.assertIn("Estado: pending", args['text'])
-        self.assertIn("Jugador 1: Player Name", args['text'])
+        self.assertIn(f"Jugador 1: {user_name}", args['text'])
         self.assertIn("Estado: assigned", args['text'])
 
-    @patch('handlers.player.matchups.ver_emparejamientos.get_user_public_id')
-    @patch('handlers.player.matchups.ver_emparejamientos.validate_and_filter_matchups')
-    def test_handle_display_one_matchup_callback_invalid(self, mock_validate_and_filter_matchups, mock_get_user_id):
-        mock_get_user_id.return_value = "test_user_id"
+    @patch('handlers.player.matchups.handle_display_one_matchup.UsersService')
+    @patch('handlers.player.matchups.handle_display_one_matchup.validate_and_filter_matchups')
+    def test_handle_display_one_matchup_callback_invalid(self, mock_validate_and_filter_matchups, MockUsersService):
+        user = User(public_id="test_user_id", name="Player name")
+        mock_users_service = MockUsersService.return_value
+        mock_users_service.get_user_info.return_value = user
+        mock_users_service.get_user_by_id.return_value = user
+
         mock_validate_and_filter_matchups.return_value = []
 
         self.call.data = generate_callback_string('999')
@@ -169,11 +192,16 @@ class TestMatchupsMainCallback(unittest.TestCase):
 
         self.bot.edit_message_text.assert_not_called()
 
-    @patch('handlers.player.matchups.ver_emparejamientos.get_user_public_id')
-    @patch('handlers.player.matchups.ver_emparejamientos.validate_and_filter_matchups')
-    def test_handle_display_one_matchup_callback_no_matches(self, mock_validate_and_filter_matchups, mock_get_user_id):
-        mock_get_user_id.return_value = "test_user_id"
+    @patch('handlers.player.matchups.handle_display_one_matchup.UsersService')
+    @patch('handlers.player.matchups.handle_display_one_matchup.validate_and_filter_matchups')
+    def test_handle_display_one_matchup_callback_no_matches(self, mock_validate_and_filter_matchups, MockUsersService):
+        user = User(public_id="test_user_id", name="Player name")
+        mock_users_service = MockUsersService.return_value
+        mock_users_service.get_user_info.return_value = user
+        mock_users_service.get_user_by_id.return_value = user
+
         mock_validate_and_filter_matchups.return_value = []
+
         self.bot.language_manager.get.return_value = "MESSAGE_SEE_MATCHES_EMPTY"
 
         self.call.data = generate_callback_string('1')
@@ -184,9 +212,12 @@ class TestMatchupsMainCallback(unittest.TestCase):
             self.call.message, self.bot.language_manager.get("MESSAGE_SEE_MATCHES_EMPTY"))
         self.bot.edit_message_text.assert_not_called()
 
-    @patch('handlers.player.matchups.ver_emparejamientos.get_user_public_id')
-    def test_handle_display_one_matchup_callback_no_user_id(self, mock_get_user_id):
-        mock_get_user_id.return_value = None
+    @patch('handlers.player.matchups.handle_display_one_matchup.UsersService')
+    def test_handle_display_one_matchup_callback_no_user_id(self, MockUsersService):
+        user = None
+        mock_users_service = MockUsersService.return_value
+        mock_users_service.get_user_info.return_value = user
+        mock_users_service.get_user_by_id.return_value = user
         self.bot.language_manager.get.return_value = "MESSAGE_SEE_MATCHES_EMPTY"
 
         self.call.data = generate_callback_string('1')
@@ -197,36 +228,46 @@ class TestMatchupsMainCallback(unittest.TestCase):
             self.call.from_user.id, self.bot.language_manager.get("MESSAGE_SEE_MATCHES_EMPTY"))
         self.bot.edit_message_text.assert_not_called()
 
-    @patch('handlers.player.matchups.ver_emparejamientos.get_user_public_id')
-    @patch('handlers.player.matchups.ver_emparejamientos.validate_and_filter_matchups')
-    def test_handle_display_all_matchups_callback_no_matches(self, mock_validate_and_filter_matchups, mock_get_user_id):
-        mock_get_user_id.return_value = "test_user_id"
-        self.bot.language_manager.get.return_value = "MESSAGE_SEE_MATCHES_EMPTY"
+    @patch('handlers.player.matchups.handle_display_all_matchups.UsersService')
+    @patch('handlers.player.matchups.handle_display_all_matchups.validate_and_filter_matchups')
+    def test_handle_display_all_matchups_callback_no_matches(self, mock_validate_and_filter_matchups, MockUsersService):
+        mock_users_service = MockUsersService.return_value
+        mock_users_service.get_user_info.return_value = User(
+            public_id="test_user_id")
+
         mock_validate_and_filter_matchups.return_value = []
+
+        self.bot.language_manager.get.return_value = "MESSAGE_SEE_MATCHES_EMPTY"
 
         handle_display_all_matchups_callback(self.call, self.bot)
 
-        self.bot.reply_to.assert_called_once_with(
-            self.call.message, self.bot.language_manager.get("MESSAGE_SEE_MATCHES_EMPTY"))
+        self.bot.send_message.assert_called_once_with(
+            self.call.message.chat.id, self.bot.language_manager.get("MESSAGE_SEE_MATCHES_EMPTY"))
         self.bot.edit_message_text.assert_not_called()
 
-    @patch('handlers.player.matchups.ver_emparejamientos.get_user_public_id')
-    @patch('handlers.player.matchups.ver_emparejamientos.validate_and_filter_matchups')
-    def test_handle_display_all_matchups_callback_with_matches(self, mock_validate_and_filter_matchups, mock_get_user_id):
-        mock_get_user_id.return_value = "test_user_id"
-        self.bot.language_manager.get.return_value = "MESSAGE_SEE_MATCHES"
+    @patch('handlers.player.matchups.handle_display_all_matchups.UsersService')
+    @patch('handlers.player.matchups.handle_display_all_matchups.validate_and_filter_matchups')
+    def test_handle_display_all_matchups_callback_with_matches(self, mock_validate_and_filter_matchups, MockUsersService):
+        mock_users_service = MockUsersService.return_value
+        mock_users_service.get_user_info.return_value = User(
+            public_id="test_user_id")
+
         mock_validate_and_filter_matchups.return_value = [self.sample_match]
+
+        self.bot.language_manager.get.return_value = "MESSAGE_SEE_MATCHES"
 
         handle_display_all_matchups_callback(self.call, self.bot)
 
         self.bot.edit_message_text.assert_called_once()
         self.assertIn(self.bot.language_manager.get(
             "MESSAGE_SEE_MATCHES"), self.bot.edit_message_text.call_args[1]['text'])
-        self.bot.reply_to.assert_not_called()
+        self.bot.send_message.assert_not_called()
 
-    @patch('handlers.player.matchups.ver_emparejamientos.get_user_public_id')
-    def test_handle_display_all_matchups_callback_no_user_id(self, mock_get_user_id):
-        mock_get_user_id.return_value = None
+    @patch('handlers.player.matchups.handle_display_all_matchups.UsersService')
+    def test_handle_display_all_matchups_callback_no_user_id(self, MockUsersService):
+        mock_users_service = MockUsersService.return_value
+        mock_users_service.get_user_info.return_value = None
+
         self.bot.language_manager.get.return_value = "MESSAGE_SEE_MATCHES_EMPTY"
 
         handle_display_all_matchups_callback(self.call, self.bot)

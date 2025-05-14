@@ -20,7 +20,7 @@ def handle_reply_one_matchup_callback(call: CallbackQuery, bot: TelegramBot):
     params = call.data.split(':')
     match_public_id = params.pop()
     matchup_action = params.pop()
-    player_reserve_status = ReserveStatus.REJECTED
+    player_reserve_status = ReserveStatus.OUTSIDE
     if matchup_action == MatchupAction.CONFIRM:
         player_reserve_status = ReserveStatus.INSIDE
 
