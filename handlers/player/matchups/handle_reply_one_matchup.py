@@ -4,16 +4,15 @@ from telebot.types import CallbackQuery
 from services.users_service import UsersService
 from services.matches_service import MatchesService
 
-users_service = UsersService()
-matches_service = MatchesService()
-
 
 def handle_reply_one_matchup_callback(call: CallbackQuery, bot: TelegramBot):
+    users_service = UsersService()
+    matches_service = MatchesService()
 
     chat_id = call.from_user.id
     user = users_service.get_user_info(chat_id)
 
-    if not user.public_id:
+    if not user:
         bot.send_message(chat_id, bot.language_manager.get(
             "ERROR_USER_NOT_FOUND"))
         return

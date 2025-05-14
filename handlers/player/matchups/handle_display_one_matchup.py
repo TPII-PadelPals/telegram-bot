@@ -51,7 +51,7 @@ def matchup_options_keyboard(bot: TelegramBot, user_public_id: UUID,  match_publ
 def handle_display_one_matchup_callback(call: CallbackQuery, bot: TelegramBot):
     telegram_id = call.from_user.id
     user = users_service.get_user_info(telegram_id)
-    if not user.public_id:
+    if not user:
         bot.send_message(telegram_id, bot.language_manager.get(
             "MESSAGE_SEE_MATCHES_EMPTY"))
         return

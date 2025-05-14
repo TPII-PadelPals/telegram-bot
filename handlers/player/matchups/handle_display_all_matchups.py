@@ -28,7 +28,7 @@ def matchups_keyboard(bot: TelegramBot, matchups: list):
 
 def display_all_matchups(bot: TelegramBot, chat_id: int, message_id: int | None = None):
     user = users_service.get_user_info(chat_id)
-    if not user.public_id:
+    if not user:
         bot.send_message(chat_id, bot.language_manager.get(
             "MESSAGE_SEE_MATCHES_EMPTY"))
         return

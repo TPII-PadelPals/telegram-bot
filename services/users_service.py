@@ -1,15 +1,14 @@
-from typing import Any
 from .base_service import BaseService
 from core.config import settings
 
 
 class User:
-    def __init__(self, data: dict[str, Any]):
-        self.public_id: str = data["public_id"]
-        self.name: str = data["public_id"]
-        self.email: str = data["email"]
-        self.phone: str = data["phone"]
-        self.telegram_id: int = data["telegram_id"]
+    def __init__(self, public_id="", name="", email="", phone="", telegram_id=0):
+        self.public_id: str = str(public_id)
+        self.name: str = str(name)
+        self.email: str = str(email)
+        self.phone: str = str(phone)
+        self.telegram_id: int = int(telegram_id)
 
 
 class UsersService(BaseService):
@@ -20,11 +19,14 @@ class UsersService(BaseService):
         self.base_url += "/api/v1"
         self.x_api_key_header = {"x-api-key": settings.USERS_SERVICE_API_KEY}
 
-    def get_user_info(self, chat_id):
+    def get_user_info(self, chat_id) -> User | None:
         """Get the information of a user given users's chat ID 
         which corresponds to the telegram ID in the UsersService"""
         content = self.get("/users/", params={"telegram_id": chat_id})
-        return User(content["data"][0])
+        data = content["data"]
+        if not data:
+            return None
+        return User(**data[0])
 
     def get_user_by_id(self, user_public_id):
         """Get the information of a user given users's public ID"""
