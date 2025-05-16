@@ -8,6 +8,7 @@ class MessageProcessing:
     SEPARATOR_FOR_NAMES = ", "
 
     ORDER_SURVEY_PLAYER = "survey_player"
+    ORDER_NEW_MATCHES = "NEW_MATCH"
 
     def message_processing(self, language: LanguageManager, request: MessageRequest):
         split_message = request.message.split(self.SEPARATOR_FOR_ORDER_IN_MESSAGE)
@@ -16,6 +17,8 @@ class MessageProcessing:
                 list_of_players = split_message[1].split(self.SEPARATOR_FOR_MESSAGE)
                 message = language.get("MESSAGE_SURVEY_PLAYER_ALLOWED")
                 message += self.SEPARATOR_FOR_NAMES.join(list_of_players)
+            case self.ORDER_NEW_MATCHES:
+                message = language.get("MESSAGE_NEW_MATCHES")
             case _:
                 message = request.message
         result = {"chat_id": request.chat_id, "message": message}
