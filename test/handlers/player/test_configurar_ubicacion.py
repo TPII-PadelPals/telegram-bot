@@ -7,6 +7,7 @@ from handlers.player.configurar_ubicacion import (
     process_address_step,
     process_radius_step,
 )
+from services.users_service import User
 
 TEST_CHAT_ID = 12345
 TEST_USER_PUBLIC_ID = UUID("11111111-2222-3333-4444-555555555555")
@@ -33,9 +34,7 @@ def bot_mock():
 @pytest.fixture
 def users_service_mock():
     mock = MagicMock()
-    mock.get_user_info.return_value = {
-        "data": [{"public_id": TEST_USER_PUBLIC_ID}]
-    }
+    mock.get_user_info.return_value = [User(public_id=TEST_USER_PUBLIC_ID)]
     return mock
 
 
@@ -69,7 +68,7 @@ def test_handle_address_configuration_success(patched_users_service, message_moc
 
 
 def test_handle_address_configuration_no_user_data(patched_users_service, message_mock, bot_mock):
-    patched_users_service.get_user_info.return_value = {"data": []}
+    patched_users_service.get_user_info.return_value = []
 
     with pytest.raises(IndexError):
         handle_address_configuration(message_mock, bot_mock)

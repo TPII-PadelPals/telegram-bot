@@ -26,16 +26,14 @@ def availability_callback(
 ):
     telegram_id = call.from_user.id
 
-    response = UsersService().get_user_info(telegram_id)
-    user_public_id = (
-        response.get("data")[0].get("public_id") if response.get("data") else None
-    )
+    users = UsersService().get_user_info(telegram_id)
+    user = users[0] if users else None
 
     type = call.data.split(CALLBACK_STRING_SEPARATOR)[1]
     if type == TIME:
-        process_time_step(call, bot, user_public_id)
+        process_time_step(call, bot, user.public_id)
     elif type == DAY:
-        process_day_step(call, bot, user_public_id)
+        process_day_step(call, bot, user.public_id)
     else:
         bot.send_message(
             call.message.chat.id,
@@ -59,7 +57,8 @@ def generate_markup_options(
 
 
 def handle_configure_availability(message: Message, bot: TelegramBot):
-    time_options = generate_markup_options(bot, TIME, "AVAILABILITY_TIME_BUTTONS")
+    time_options = generate_markup_options(
+        bot, TIME, "AVAILABILITY_TIME_BUTTONS")
 
     bot.send_message(
         message.chat.id,
@@ -84,7 +83,8 @@ def process_time_step(
     time_id = int(callback_data.split(CALLBACK_STRING_SEPARATOR)[-1])
 
     if time_id is None:
-        bot.reply_to(call.message, bot.language_manager.get("ERROR_SET_AVAILABILITY"))
+        bot.reply_to(call.message, bot.language_manager.get(
+            "ERROR_SET_AVAILABILITY"))
         return
 
     partial_player = {"time_availability": time_id}
@@ -92,7 +92,8 @@ def process_time_step(
     response = PlayersService().update_partial_player(user_public_id, partial_player)
 
     if response:
-        day_options = generate_markup_options(bot, DAY, "AVAILABILITY_DAY_BUTTONS")
+        day_options = generate_markup_options(
+            bot, DAY, "AVAILABILITY_DAY_BUTTONS")
         bot.edit_message_text(
             chat_id=call.message.chat.id,
             message_id=call.message.message_id,
@@ -100,7 +101,8 @@ def process_time_step(
             reply_markup=day_options,
         )
     else:
-        bot.reply_to(call.id, bot.language_manager.get("ERROR_SET_AVAILABILITY"))
+        bot.reply_to(call.id, bot.language_manager.get(
+            "ERROR_SET_AVAILABILITY"))
 
 
 def process_day_step(
@@ -119,7 +121,8 @@ def process_day_step(
     week_day = int(callback_data.split(CALLBACK_STRING_SEPARATOR)[-1])
 
     if not week_day:
-        bot.reply_to(call.message, bot.language_manager.get("ERROR_SET_AVAILABILITY"))
+        bot.reply_to(call.message, bot.language_manager.get(
+            "ERROR_SET_AVAILABILITY"))
 
     availability_days = {
         "available_days": [
@@ -127,13 +130,16 @@ def process_day_step(
         ]
     }
 
-    response = PlayersService().update_availability(user_public_id, availability_days)
+    response = PlayersService().update_availability(
+        user_public_id, availability_days)
 
     if response:
         bot.edit_message_text(
             chat_id=call.message.chat.id,
             message_id=call.message.message_id,
-            text=bot.language_manager.get("SUCCESSFUL_AVAILABILITY_CONFIGURATION"),
+            text=bot.language_manager.get(
+                "SUCCESSFUL_AVAILABILITY_CONFIGURATION"),
         )
     else:
-        bot.reply_to(call.id, bot.language_manager.get("ERROR_SET_AVAILABILITY"))
+        bot.reply_to(call.id, bot.language_manager.get(
+            "ERROR_SET_AVAILABILITY"))

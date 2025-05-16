@@ -7,16 +7,19 @@ from handlers.player.configurar_golpes import (
     skill_level_callback,
     show_strokes_list_callback,
 )
+from services.users_service import User
 
 
 class TestConfigurarGolpes(unittest.TestCase):
     def setUp(self):
         self.bot = MagicMock()
         self.bot.language_manager = MagicMock()
-        self.bot.language_manager.get = MagicMock(side_effect=self._mock_language_get)
+        self.bot.language_manager.get = MagicMock(
+            side_effect=self._mock_language_get)
 
         self.bot.ui = MagicMock()
-        self.bot.ui.create_inline_keyboard = MagicMock(return_value="mock_markup")
+        self.bot.ui.create_inline_keyboard = MagicMock(
+            return_value="mock_markup")
 
         self.bot.send_message = MagicMock()
         self.bot.edit_message_text = MagicMock()
@@ -34,7 +37,7 @@ class TestConfigurarGolpes(unittest.TestCase):
 
         self.user_service_api = MagicMock()
         self.user_service_api.get_user_info = MagicMock(
-            return_value={"data": [{"public_id": "123"}]}
+            return_value=[User(public_id="123")]
         )
 
         self.user_service = MagicMock(return_value=self.user_service_api)

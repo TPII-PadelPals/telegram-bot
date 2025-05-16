@@ -89,7 +89,7 @@ def strokes_callback(call: CallbackQuery, bot: TelegramBot):
         },
         {
             "text": language_manager.get("BACK"),
-            "callback_data": generate_callback_string(f"strokes_list"),
+            "callback_data": generate_callback_string("strokes_list"),
         },
     ]
 
@@ -104,7 +104,8 @@ def strokes_callback(call: CallbackQuery, bot: TelegramBot):
     bot.edit_message_text(
         chat_id=call.message.chat.id,
         message_id=call.message.message_id,
-        text=language_manager.get("SELECT_SKILL_LEVEL_FOR").format(stroke=stroke_name),
+        text=language_manager.get(
+            "SELECT_SKILL_LEVEL_FOR").format(stroke=stroke_name),
         reply_markup=markup,
     )
 
@@ -123,11 +124,13 @@ def skill_level_callback(
     level_idx = int(parts[3])
 
     telegram_id = call.from_user.id
-    user_id = get_user_public_id(telegram_id, user_service)
+    users = user_service().get_user_info(telegram_id)
 
-    if user_id is None:
-        bot.answer_callback_query(call.id, language_manager.get("ERROR_RECEIVE_DATA"))
+    if not users:
+        bot.answer_callback_query(
+            call.id, language_manager.get("ERROR_RECEIVE_DATA"))
         return
+    user = users[0]
 
     api_connection = get_api()
     strokes_names = language_manager.get("STROKES_NAMES")
@@ -139,13 +142,15 @@ def skill_level_callback(
     else:
         strokes_body[stroke_key] = SKILL_LEVELS[level_idx]
 
-    result = api_connection.update_strokes(user_id, strokes_body)
+    result = api_connection.update_strokes(user.public_id, strokes_body)
 
-    if result.get("user_public_id") != str(user_id):
-        bot.answer_callback_query(call.id, language_manager.get("ERROR_RECEIVE_DATA"))
+    if result.get("user_public_id") != str(user.public_id):
+        bot.answer_callback_query(
+            call.id, language_manager.get("ERROR_RECEIVE_DATA"))
         return
 
-    bot.answer_callback_query(call.id, language_manager.get("STROKE_UPDATED_SUCCESS"))
+    bot.answer_callback_query(
+        call.id, language_manager.get("STROKE_UPDATED_SUCCESS"))
 
     show_strokes_list_callback(call, bot)
 
@@ -159,9 +164,3 @@ def show_strokes_list_callback(call: CallbackQuery, bot: TelegramBot):
         text=bot.language_manager.get("SELECT_STROKE_MESSAGE"),
         reply_markup=markup,
     )
-
-
-def get_user_public_id(telegram_id, user_service):
-    service = user_service()
-    data = service.get_user_info(telegram_id)
-    return data.get("data")[0].get("public_id") if data.get("data") else None
