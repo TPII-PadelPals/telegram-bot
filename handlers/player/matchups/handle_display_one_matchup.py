@@ -1,7 +1,8 @@
 import logging
 from typing import Dict, List
 from uuid import UUID
-from handlers.player.matchups.utils import MatchupAction, ReserveStatus, generate_callback_string, parse_provisional_match, validate_and_filter_matchups
+from handlers.player.matchups.utils import MatchupAction, ReserveStatus, generate_callback_string, \
+    parse_provisional_match, validate_and_filter_matchups, add_business_info
 from model.telegram_bot import TelegramBot
 from telebot.types import CallbackQuery
 from services.matches_service import MatchesService
@@ -77,7 +78,8 @@ def handle_display_one_matchup_callback(call: CallbackQuery, bot: TelegramBot):
                          bot.language_manager.get("MESSAGE_MATCH_NOT_FOUND"))
         return
 
-    public_id, court_id, date, time, status, match_players = parse_provisional_match(
+    add_business_info([selected_match])
+    public_id, business_name, court_id, date, time, status, match_players, business_location = parse_provisional_match(
         bot, selected_match)
 
     player_info = ""
@@ -86,8 +88,9 @@ def handle_display_one_matchup_callback(call: CallbackQuery, bot: TelegramBot):
         player_info += f"\nJugador {i}: {_user.name}\n"
         player_info += f"Estado: {player['reserve']}\n"
 
-    text = f"Establecimiento: {public_id}\n" \
+    text = f"Establecimiento: {business_name}\n" \
            f"Cancha: {court_id}\n" \
+           f"Lugar: {business_location}\n" \
            f"Dia: {date}\n" \
            f"Horario: {time}\n" \
            f"Estado: {status}\n" \

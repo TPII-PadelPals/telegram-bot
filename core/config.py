@@ -34,4 +34,9 @@ class Settings(BaseSettings):
     MATCHES_SERVICE_PORT: int
     MATCHES_SERVICE_API_KEY: str
 
+    # Business service settings
+    BUSINESS_SERVICE_HOST: str
+    BUSINESS_SERVICE_PORT: int
+    BUSINESS_SERVICE_API_KEY: str
+
 settings = Settings()

@@ -1,6 +1,8 @@
 from enum import Enum
 from model.telegram_bot import TelegramBot
 from datetime import datetime as dt
+
+from services.business_service import BusinessService
 from services.matches_service import MatchesService
 
 VIEW_PADDLE_MATCHUPS_COMMAND = "ver_emparejamientos"
@@ -71,6 +73,8 @@ def validate_and_filter_matchups(user_public_id: str | None):
 
 def parse_provisional_match(bot: TelegramBot, matchup: dict):
     public_id = matchup['public_id']
+    business_name = matchup['business_name']
+    business_location = matchup['business_location']
     court_id = matchup['court_name']
     # Nota: court_public_id existe, pero actualmente se usa court_name
     # en los endpoints de los micro-servicios
@@ -80,4 +84,20 @@ def parse_provisional_match(bot: TelegramBot, matchup: dict):
         bot.language_manager.get('TIME_FMT'))
     status = matchup.get('status', '-')
     match_players = matchup.get('match_players', [])
-    return public_id, court_id, date, time, status, match_players
+    return public_id, business_name, court_id, date, time, status, match_players, business_location
+
+def add_business_info(matches: list[dict[str, str]]):
+    business_service = BusinessService()
+    business_matches = {}
+    for match in matches:
+        business_public_id = match["business_public_id"]
+        list = business_matches.get(business_public_id)
+        if list is not None:
+            list.append(match)
+        else:
+            business_matches[business_public_id] = [match]
+    for business_public_id, matches in business_matches.items():
+        business = business_service.get_business(business_public_id)
+        for match in matches:
+            match["business_name"] = business["name"]
+            match["business_location"] = business["location"]
