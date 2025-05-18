@@ -1,5 +1,7 @@
 import time
 from typing import Callable
+
+from handlers.user.help import generate_message_help
 from model.telegram_bot import TelegramBot
 from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton, Message, CallbackQuery
 from services.users_service import UsersService
@@ -70,6 +72,7 @@ def handle_callback_query(call: CallbackQuery,
             chat_id,
             "Te has registrado correctamente.\nPara encontrar matches, por favor, configura tu ubicación y disponibilidad.")
         send_disclaimer(chat_id, bot)
+        send_help_message(chat_id, bot)
     elif call.data == "start_user_pass":
         bot.reply_to(
             call.message,
@@ -82,4 +85,13 @@ def send_disclaimer(
     bot.send_message(
         chat_id,
         bot.language_manager.get("MESSAGE_DISCLAIMER")
+    )
+
+def send_help_message(
+        chat_id: int,
+        bot: TelegramBot
+):
+    bot.send_message(
+        chat_id,
+        generate_message_help(bot)
     )
