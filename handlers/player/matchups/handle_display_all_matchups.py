@@ -10,7 +10,7 @@ def matchups_keyboard_line(bot: TelegramBot, matchup: dict):
     public_id,  business_name, court_id, date, time, _, _, _ = parse_provisional_match(
         bot, matchup)
 
-    button_text = f"{business_name} - {court_id} - {time} {date}"####
+    button_text = f"{business_name} - {court_id} - {time} {date}"
     return InlineKeyboardButton(
         text=button_text,
         callback_data=generate_callback_string(

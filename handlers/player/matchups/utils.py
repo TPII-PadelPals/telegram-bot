@@ -91,9 +91,9 @@ def add_business_info(matches: list[dict[str, str]]):
     business_matches = {}
     for match in matches:
         business_public_id = match["business_public_id"]
-        list = business_matches.get(business_public_id)
-        if list is not None:
-            list.append(match)
+        matches_for_business = business_matches.get(business_public_id)
+        if matches_for_business is not None:
+            matches_for_business.append(match)
         else:
             business_matches[business_public_id] = [match]
     for business_public_id, matches in business_matches.items():
