@@ -1,4 +1,5 @@
-from handlers.player.matchups.utils import MatchupAction, generate_callback_string, parse_provisional_match, validate_and_filter_matchups
+from handlers.player.matchups.utils import MatchupAction, generate_callback_string, parse_provisional_match, \
+    validate_and_filter_matchups, add_business_info
 from model.telegram_bot import TelegramBot
 from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery
 
@@ -6,10 +7,10 @@ from services.users_service import UsersService
 
 
 def matchups_keyboard_line(bot: TelegramBot, matchup: dict):
-    public_id, court_id, date, time, _, _ = parse_provisional_match(
+    public_id,  business_name, court_id, date, time, _, _, _ = parse_provisional_match(
         bot, matchup)
 
-    button_text = f"{public_id} - {court_id} - {time} {date}"
+    button_text = f"{business_name} - {court_id} - {time} {date}"
     return InlineKeyboardButton(
         text=button_text,
         callback_data=generate_callback_string(
@@ -19,6 +20,7 @@ def matchups_keyboard_line(bot: TelegramBot, matchup: dict):
 
 def matchups_keyboard(bot: TelegramBot, matchups: list):
     inline_markup = InlineKeyboardMarkup()
+    add_business_info(matchups)
     for matchup in matchups:
         inline_markup.row(matchups_keyboard_line(bot, matchup))
     return inline_markup

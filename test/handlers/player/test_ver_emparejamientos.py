@@ -34,10 +34,17 @@ class TestMatchupsMainCallback(unittest.TestCase):
             "date": "2023-10-10",
             "time": "10",
             "status": "pending",
+            "business_public_id": "a5f94e1a-e03c-49be-a8fe-9d6fcb912e29",
             "match_players": [
                 {"reserve": "assigned", "user_public_id": "user1"},
                 {"reserve": "inside", "user_public_id": "user2"}
             ]
+        }
+
+        self.sample_business = {
+            "business_public_id": "a5f94e1a-e03c-49be-a8fe-9d6fcb912e29",
+            "name": "b_1",
+            "location": "loc_1"
         }
 
         self.player_outside_matches = {
@@ -46,6 +53,7 @@ class TestMatchupsMainCallback(unittest.TestCase):
                     "public_id": "a5f94e1a-e03c-49be-a8fe-9d6fcb912e19",
                     "court_name": "Cancha1",
                     "court_public_id": "55fac2f7-1989-46b1-b2c0-4b662c5ecb87",
+                    "business_public_id": "a5f94e1a-e03c-49be-a8fe-9d6fcb912e29",
                     "time": 9,
                     "date": "2025-05-02",
                     "status": "Provisional",
@@ -116,12 +124,16 @@ class TestMatchupsMainCallback(unittest.TestCase):
 
     @patch('handlers.player.matchups.handle_display_all_matchups.UsersService')
     @patch('handlers.player.matchups.handle_display_all_matchups.validate_and_filter_matchups')
-    def test_handle_matchups_with_matches(self, mock_validate_and_filter_matchups, MockUsersService):
+    @patch('handlers.player.matchups.utils.BusinessService')
+    def test_handle_matchups_with_matches(self, MockBusinessService, mock_validate_and_filter_matchups, MockUsersService):
         mock_users_service = MockUsersService.return_value
         mock_users_service.get_user_info.return_value = [User(
             public_id="test_user_id")]
 
         mock_validate_and_filter_matchups.return_value = [self.sample_match]
+
+        mock_business_service = MockBusinessService.return_value
+        mock_business_service.get_business.return_value = self.sample_business
 
         self.bot.language_manager.get.return_value = "MESSAGE_SEE_MATCHES"
 
@@ -146,7 +158,8 @@ class TestMatchupsMainCallback(unittest.TestCase):
     @patch('handlers.player.matchups.handle_display_one_matchup.matchup_options_keyboard')
     @patch('handlers.player.matchups.handle_display_one_matchup.validate_and_filter_matchups')
     @patch('handlers.player.matchups.handle_display_one_matchup.UsersService')
-    def test_handle_display_one_matchup_callback_valid(self, MockUsersService, mock_validate_and_filter_matchups, mock_matchup_options_keyboard):
+    @patch('handlers.player.matchups.utils.BusinessService')
+    def test_handle_display_one_matchup_callback_valid(self, MockBusinessService, MockUsersService, mock_validate_and_filter_matchups, mock_matchup_options_keyboard):
         user_name = "Player name"
         user = User(public_id="test_user_id", name=user_name)
         mock_users_service = MockUsersService.return_value
@@ -156,6 +169,9 @@ class TestMatchupsMainCallback(unittest.TestCase):
         mock_validate_and_filter_matchups.return_value = [self.sample_match]
 
         mock_matchup_options_keyboard.return_value = None
+
+        mock_business_service = MockBusinessService.return_value
+        mock_business_service.get_business.return_value = self.sample_business
 
         self.bot.language_manager.get.side_effect = [
             "%d/%m/%Y",
@@ -168,7 +184,7 @@ class TestMatchupsMainCallback(unittest.TestCase):
 
         self.bot.edit_message_text.assert_called_once()
         args = self.bot.edit_message_text.call_args[1]
-        self.assertIn("Establecimiento: 1", args['text'])
+        self.assertIn("Establecimiento: b_1", args['text'])
         self.assertIn("Cancha: 1", args['text'])
         self.assertIn("Dia: 10/10/2023", args['text'])
         self.assertIn("Horario: 10:00", args['text'])
@@ -246,12 +262,16 @@ class TestMatchupsMainCallback(unittest.TestCase):
 
     @patch('handlers.player.matchups.handle_display_all_matchups.UsersService')
     @patch('handlers.player.matchups.handle_display_all_matchups.validate_and_filter_matchups')
-    def test_handle_display_all_matchups_callback_with_matches(self, mock_validate_and_filter_matchups, MockUsersService):
+    @patch('handlers.player.matchups.utils.BusinessService')
+    def test_handle_display_all_matchups_callback_with_matches(self, MockBusinessService, mock_validate_and_filter_matchups, MockUsersService):
         mock_users_service = MockUsersService.return_value
         mock_users_service.get_user_info.return_value = [User(
             public_id="test_user_id")]
 
         mock_validate_and_filter_matchups.return_value = [self.sample_match]
+
+        mock_business_service = MockBusinessService.return_value
+        mock_business_service.get_business.return_value = self.sample_business
 
         self.bot.language_manager.get.return_value = "MESSAGE_SEE_MATCHES"
 
