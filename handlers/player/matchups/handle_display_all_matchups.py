@@ -6,11 +6,15 @@ from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton, CallbackQu
 from services.users_service import UsersService
 
 
+MAX_BUSSINESS_LEN = 20
+MAX_COURT_LEN = 10
+
+
 def matchups_keyboard_line(bot: TelegramBot, matchup: dict):
     public_id,  business_name, court_id, date, time, _, _, _ = parse_provisional_match(
         bot, matchup)
 
-    button_text = f"{business_name} - {court_id} - {time} {date}"
+    button_text = f"{business_name[:MAX_BUSSINESS_LEN]} - {court_id[:MAX_COURT_LEN]} - {date} - {time} hs"
     return InlineKeyboardButton(
         text=button_text,
         callback_data=generate_callback_string(
@@ -48,13 +52,15 @@ def display_all_matchups(bot: TelegramBot, chat_id: int, message_id: int | None 
             chat_id=chat_id,
             message_id=message_id,
             text=bot.language_manager.get("MESSAGE_SEE_MATCHES"),
-            reply_markup=matchups_keyboard(bot, matches)
+            reply_markup=matchups_keyboard(bot, matches),
+            parse_mode='Markdown'
         )
     else:
         bot.send_message(
             chat_id=chat_id,
             text=bot.language_manager.get("MESSAGE_SEE_MATCHES"),
-            reply_markup=matchups_keyboard(bot, matches)
+            reply_markup=matchups_keyboard(bot, matches),
+            parse_mode='Markdown'
         )
 
 
