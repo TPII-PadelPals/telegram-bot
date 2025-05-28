@@ -184,10 +184,11 @@ class TestMatchupsMainCallback(unittest.TestCase):
 
         self.bot.edit_message_text.assert_called_once()
         args = self.bot.edit_message_text.call_args[1]
+        print(args["text"])
         self.assertIn("Establecimiento: b_1", args['text'])
         self.assertIn("Cancha: 1", args['text'])
-        self.assertIn("Dia: 10/10/2023", args['text'])
-        self.assertIn("Horario: 10:00", args['text'])
+        self.assertIn("Fecha: 10/10/2023", args['text'])
+        self.assertIn("Horario: 10:00 - 11:00 hs", args['text'])
         self.assertIn("Estado: pending", args['text'])
         self.assertIn(f"Jugador 1: {user_name}", args['text'])
         self.assertIn("Estado: assigned", args['text'])

@@ -89,11 +89,12 @@ def handle_display_one_matchup_callback(call: CallbackQuery, bot: TelegramBot):
 
     time = f"{start_time} - {end_time} hs"
 
+    reserve_status = bot.language_manager.get("RESERVE_STATUS")
     player_info = ""
     for i, player in enumerate(match_players, 1):
         _user = users_service.get_user_by_id(player["user_public_id"])
         player_info += f"\nJugador {i}: {_user.name}\n"
-        player_info += f"Estado: {player['reserve']}\n"
+        player_info += f"Estado: {reserve_status[player['reserve']]}\n"
 
     text = f"Establecimiento: {business_name}\n" \
            f"Cancha: {court_id}\n" \
