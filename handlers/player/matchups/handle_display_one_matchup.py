@@ -98,7 +98,7 @@ def handle_display_one_matchup_callback(call: CallbackQuery, bot: TelegramBot):
     text = f"Establecimiento: {business_name}\n" \
            f"Cancha: {court_id}\n" \
            f"Dirección: {business_location}\n" \
-           f"Dia: {date}\n" \
+           f"Fecha: {date}\n" \
            f"Horario: {time}\n" \
            f"Estado: {status}\n" \
            f"\nJugadores:{player_info}"
