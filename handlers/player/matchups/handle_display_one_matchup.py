@@ -1,7 +1,7 @@
 import logging
 from typing import Dict, List
 from uuid import UUID
-from handlers.player.matchups.utils import MatchupAction, ReserveStatus, generate_callback_string, \
+from handlers.player.matchups.utils import MatchupAction, ReserveStatus, format_time, generate_callback_string, \
     parse_provisional_match, validate_and_filter_matchups, add_business_info
 from model.telegram_bot import TelegramBot
 from telebot.types import CallbackQuery
@@ -81,6 +81,13 @@ def handle_display_one_matchup_callback(call: CallbackQuery, bot: TelegramBot):
     add_business_info([selected_match])
     public_id, business_name, court_id, date, time, status, match_players, business_location = parse_provisional_match(
         bot, selected_match)
+
+    start_time = int(time.split(":")[0])
+    end_time = start_time + 1
+    start_time = format_time(bot, start_time)
+    end_time = format_time(bot, end_time)
+
+    time = f"{start_time} - {end_time} hs"
 
     player_info = ""
     for i, player in enumerate(match_players, 1):

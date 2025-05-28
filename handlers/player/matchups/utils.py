@@ -71,6 +71,11 @@ def validate_and_filter_matchups(user_public_id: str | None):
     return filter_matchups_by_players_status(matches, user_public_id)
 
 
+def format_time(bot: TelegramBot, time: int):
+    return dt.strptime(str(time), "%H").strftime(
+        bot.language_manager.get('TIME_FMT'))
+
+
 def parse_provisional_match(bot: TelegramBot, matchup: dict):
     public_id = matchup['public_id']
     business_name = matchup['business_name']
@@ -80,11 +85,11 @@ def parse_provisional_match(bot: TelegramBot, matchup: dict):
     # en los endpoints de los micro-servicios
     date = dt.strptime(
         matchup['date'], "%Y-%m-%d").strftime(bot.language_manager.get('DATE_FMT'))
-    time = dt.strptime(str(matchup['time']), "%H").strftime(
-        bot.language_manager.get('TIME_FMT'))
+    time = format_time(bot, matchup["time"])
     status = matchup.get('status', '-')
     match_players = matchup.get('match_players', [])
     return public_id, business_name, court_id, date, time, status, match_players, business_location
+
 
 def add_business_info(matches: list[dict[str, str]]):
     business_service = BusinessService()
