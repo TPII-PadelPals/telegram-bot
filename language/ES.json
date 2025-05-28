@@ -1,10 +1,10 @@
 {
   "MESSAGE_START": "Bienvenido a PadelPals",
   "MESSAGE_INVALID_VALUE": "No es un valor valido",
-  "MESSAGE_SEE_MATCHES": "Emparejamientos posibles:\n( Establecimiento - Cancha - Fecha - Hora )",
+  "MESSAGE_SEE_MATCHES": "Emparejamientos posibles:\n( Establecimiento | Cancha | Fecha | Hora )",
   "PLAYER": "Jugador",
   "COURT": "Cancha",
-  "COURT_ID": "ID Cancha",
+  "court_name": "ID Cancha",
   "DATE_FMT": "%d/%m/%Y",
   "TIME": "Horario",
   "TIME_FMT": "%H:%M",

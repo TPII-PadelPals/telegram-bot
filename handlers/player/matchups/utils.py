@@ -1,3 +1,4 @@
+import locale
 from enum import Enum
 from model.telegram_bot import TelegramBot
 from datetime import datetime as dt
@@ -5,7 +6,10 @@ from datetime import datetime as dt
 from services.business_service import BusinessService
 from services.matches_service import MatchesService
 
+locale.setlocale(locale.LC_ALL, 'es_AR.UTF-8')
+
 VIEW_PADDLE_MATCHUPS_COMMAND = "ver_emparejamientos"
+MAX_PLAYERS = 4
 
 
 class MatchupAction(str):
@@ -76,33 +80,49 @@ def format_time(bot: TelegramBot, time: int):
         bot.language_manager.get('TIME_FMT'))
 
 
+def format_price_abbreviated(amount):
+    amount = float(amount)
+    abs_amount = abs(amount)
+    sign = "-" if amount < 0 else ""
+
+    if abs_amount >= 1_000_000:
+        formatted = f"{abs_amount / 1_000_000:.1f}M"
+    elif abs_amount >= 1_000:
+        formatted = f"{abs_amount / 1_000:.1f}K"
+    else:
+        formatted = f"{abs_amount:.2f}".replace(".", ",")
+
+    return f"{sign}~${formatted}"
+
+
+def format_price_complete(amount):
+    amount = float(amount)
+    return locale.currency(float(amount), grouping=True)
+
+
 def parse_provisional_match(bot: TelegramBot, matchup: dict):
-    public_id = matchup['public_id']
-    business_name = matchup['business_name']
-    business_location = matchup['business_location']
-    court_id = matchup['court_name']
-    # Nota: court_public_id existe, pero actualmente se usa court_name
-    # en los endpoints de los micro-servicios
-    date = dt.strptime(
+    matchup['date'] = dt.strptime(
         matchup['date'], "%Y-%m-%d").strftime(bot.language_manager.get('DATE_FMT'))
-    time = format_time(bot, matchup["time"])
-    status = matchup.get('status', '-')
-    match_players = matchup.get('match_players', [])
-    return public_id, business_name, court_id, date, time, status, match_players, business_location
+    matchup['time'] = format_time(bot, matchup["time"])
+    matchup['price_per_hour'] = str(
+        float(matchup['price_per_hour']) / MAX_PLAYERS)
+
+    return matchup
 
 
-def add_business_info(matches: list[dict[str, str]]):
+def add_court_info(matches: list[dict[str, str]]):
     business_service = BusinessService()
-    business_matches = {}
+    court_matches = {}
     for match in matches:
-        business_public_id = match["business_public_id"]
-        matches_for_business = business_matches.get(business_public_id)
-        if matches_for_business is not None:
-            matches_for_business.append(match)
+        court_public_id = match["court_public_id"]
+        if court_public_id in court_matches:
+            court_matches[court_public_id].append(match)
         else:
-            business_matches[business_public_id] = [match]
-    for business_public_id, matches in business_matches.items():
-        business = business_service.get_business(business_public_id)
+            court_matches[court_public_id] = [match]
+    for court_public_id, matches in court_matches.items():
+        court = business_service.get_court(court_public_id)
         for match in matches:
-            match["business_name"] = business["name"]
-            match["business_location"] = business["location"]
+            match["business_name"] = court["business_name"]
+            match["business_location"] = court["business_location"]
+            match["court_name"] = court["name"]
+            match["price_per_hour"] = court["price_per_hour"]

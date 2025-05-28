@@ -1,8 +1,8 @@
 import logging
 from typing import Dict, List
 from uuid import UUID
-from handlers.player.matchups.utils import MatchupAction, ReserveStatus, format_time, generate_callback_string, \
-    parse_provisional_match, validate_and_filter_matchups, add_business_info
+from handlers.player.matchups.utils import MatchupAction, ReserveStatus, format_price_complete, format_time, generate_callback_string, \
+    parse_provisional_match, validate_and_filter_matchups, add_court_info
 from model.telegram_bot import TelegramBot
 from telebot.types import CallbackQuery
 from services.matches_service import MatchesService
@@ -78,18 +78,20 @@ def handle_display_one_matchup_callback(call: CallbackQuery, bot: TelegramBot):
                          bot.language_manager.get("MESSAGE_MATCH_NOT_FOUND"))
         return
 
-    add_business_info([selected_match])
-    public_id, business_name, court_id, date, time, status, match_players, business_location = parse_provisional_match(
+    add_court_info([selected_match])
+    selected_match = parse_provisional_match(
         bot, selected_match)
 
-    start_time = int(time.split(":")[0])
+    start_time = int(selected_match['time'].split(":")[0])
     end_time = start_time + 1
     start_time = format_time(bot, start_time)
     end_time = format_time(bot, end_time)
+    time_formatted = f"{start_time} - {end_time} hs"
 
-    time = f"{start_time} - {end_time} hs"
+    price_formatted = format_price_complete(selected_match['price_per_hour'])
 
     reserve_status = bot.language_manager.get("RESERVE_STATUS")
+    match_players = selected_match['match_players']
     player_info = ""
     for i, player in enumerate(match_players, 1):
         _user = users_service.get_user_by_id(player["user_public_id"])
@@ -100,17 +102,19 @@ def handle_display_one_matchup_callback(call: CallbackQuery, bot: TelegramBot):
         player_info += "\n"
         player_info += bot.language_manager.get("MESSAGGE_FIRST_ASSIGNED")
 
-    text = f"Establecimiento: {business_name}\n" \
-           f"Cancha: {court_id}\n" \
-           f"Dirección: {business_location}\n" \
-           f"Fecha: {date}\n" \
-           f"Horario: {time}\n" \
-           f"Estado: {status}\n" \
+    text = f"Establecimiento: {selected_match['business_name']}\n" \
+           f"Cancha: {selected_match['court_name']}\n" \
+           f"Dirección: {selected_match['business_location']}\n" \
+           f"Fecha: {selected_match['date']}\n" \
+           f"Horario: {time_formatted}\n" \
+           f"Precio (por jugador): {price_formatted}\n" \
+           f"Estado: {selected_match['status']}\n" \
            f"\nJugadores:{player_info}"
 
     bot.edit_message_text(
         chat_id=call.message.chat.id,
         message_id=call.message.message_id,
         text=text,
-        reply_markup=matchup_options_keyboard(bot, user.public_id, public_id)
+        reply_markup=matchup_options_keyboard(
+            bot, user.public_id, selected_match['public_id'])
     )

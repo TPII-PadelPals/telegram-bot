@@ -10,9 +10,17 @@ class BusinessService(BaseService):
         self._set_base_url(settings.BUSINESS_SERVICE_HOST,
                            settings.BUSINESS_SERVICE_PORT)
         self.set_prefix_url("/api/v1")
-        self.x_api_key_header = {"x-api-key": settings.BUSINESS_SERVICE_API_KEY}
+        self.x_api_key_header = {
+            "x-api-key": settings.BUSINESS_SERVICE_API_KEY}
 
     def get_business(self, business_public_id: UUID):
         """get business"""
-        info = self.get(f"/businesses/", params={"business_public_id": business_public_id, "limit": 1})
+        info = self.get(
+            "/businesses/", params={"business_public_id": business_public_id, "limit": 1})
+        return info['data'][0]
+
+    def get_court(self, court_public_id: UUID):
+        """get business"""
+        info = self.get(
+            "/padel-courts/", params={"court_public_id": court_public_id, "limit": 1})
         return info['data'][0]

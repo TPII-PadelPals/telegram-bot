@@ -1,5 +1,5 @@
-from handlers.player.matchups.utils import MatchupAction, generate_callback_string, parse_provisional_match, \
-    validate_and_filter_matchups, add_business_info
+from handlers.player.matchups.utils import MatchupAction, format_price_abbreviated, generate_callback_string, parse_provisional_match, \
+    validate_and_filter_matchups, add_court_info
 from model.telegram_bot import TelegramBot
 from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery
 
@@ -11,20 +11,26 @@ MAX_COURT_LEN = 10
 
 
 def matchups_keyboard_line(bot: TelegramBot, matchup: dict):
-    public_id,  business_name, court_id, date, time, _, _, _ = parse_provisional_match(
+    matchup = parse_provisional_match(
         bot, matchup)
-
-    button_text = f"{business_name[:MAX_BUSSINESS_LEN]} - {court_id[:MAX_COURT_LEN]} - {date} - {time} hs"
+    button_text_split = [
+        f"{matchup['business_name'][:MAX_BUSSINESS_LEN]}",
+        f"{matchup['court_name'][:MAX_COURT_LEN]}",
+        f"{matchup['date']}",
+        f"{matchup['time']} hs",
+        format_price_abbreviated(matchup['price_per_hour'])
+    ]
+    button_text = " | ".join(button_text_split)
     return InlineKeyboardButton(
         text=button_text,
         callback_data=generate_callback_string(
-            f"{MatchupAction.ONE}:{public_id}")
+            f"{MatchupAction.ONE}:{matchup['public_id']}")
     )
 
 
 def matchups_keyboard(bot: TelegramBot, matchups: list):
     inline_markup = InlineKeyboardMarkup()
-    add_business_info(matchups)
+    add_court_info(matchups)
     for matchup in matchups:
         inline_markup.row(matchups_keyboard_line(bot, matchup))
     return inline_markup
