@@ -143,5 +143,6 @@
   "RESERVE_STATUS": {
     "assigned": "Pendiente",
     "inside": "Confirmado"
-  }
+  },
+  "MESSAGGE_FIRST_ASSIGNED": "Hemos elegido este partido especialmente para ti. Si decides unirte, encontraremos jugadores con un perfil similar al tuyo para que disfrutes al máximo la experiencia."
 }

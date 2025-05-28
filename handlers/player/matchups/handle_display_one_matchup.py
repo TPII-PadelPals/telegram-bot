@@ -96,6 +96,10 @@ def handle_display_one_matchup_callback(call: CallbackQuery, bot: TelegramBot):
         player_info += f"\nJugador {i}: {_user.name}\n"
         player_info += f"Estado: {reserve_status[player['reserve']]}\n"
 
+    if len(match_players) == 1:
+        player_info += "\n"
+        player_info += bot.language_manager.get("MESSAGGE_FIRST_ASSIGNED")
+
     text = f"Establecimiento: {business_name}\n" \
            f"Cancha: {court_id}\n" \
            f"Dirección: {business_location}\n" \
