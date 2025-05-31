@@ -6,16 +6,24 @@ from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton, CallbackQu
 from services.users_service import UsersService
 
 
-MAX_BUSSINESS_LEN = 20
+MAX_BUSINESS_LEN = 20
 MAX_COURT_LEN = 10
+TRUNCATE_SYMBOL = "..."
+
+
+def truncate_with_symbol(text: str, max_len: int, symbol: str) -> str:
+
+    return text if len(text) <= max_len else text[:max_len - len(symbol)] + symbol
 
 
 def matchups_keyboard_line(bot: TelegramBot, matchup: dict):
     matchup = parse_provisional_match(
         bot, matchup)
     button_text_split = [
-        f"{matchup['business_name'][:MAX_BUSSINESS_LEN]}",
-        f"{matchup['court_name'][:MAX_COURT_LEN]}",
+        truncate_with_symbol(
+            matchup['business_name'], MAX_BUSINESS_LEN, TRUNCATE_SYMBOL),
+        truncate_with_symbol(matchup['court_name'],
+                             MAX_COURT_LEN, TRUNCATE_SYMBOL),
         f"{matchup['date']}",
         f"{matchup['time']} hs",
         format_price_abbreviated(matchup['price_per_hour'])
