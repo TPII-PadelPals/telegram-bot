@@ -1,26 +1,44 @@
-from handlers.player.matchups.utils import MatchupAction, generate_callback_string, parse_provisional_match, \
-    validate_and_filter_matchups, add_business_info
+from handlers.player.matchups.utils import MatchupAction, format_price_abbreviated, generate_callback_string, parse_provisional_match, \
+    validate_and_filter_matchups, add_court_info
 from model.telegram_bot import TelegramBot
 from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery
 
 from services.users_service import UsersService
 
 
-def matchups_keyboard_line(bot: TelegramBot, matchup: dict):
-    public_id,  business_name, court_id, date, time, _, _, _ = parse_provisional_match(
-        bot, matchup)
+MAX_BUSINESS_LEN = 20
+MAX_COURT_LEN = 10
+TRUNCATE_SYMBOL = "..."
 
-    button_text = f"{business_name} - {court_id} - {time} {date}"
+
+def truncate_with_symbol(text: str, max_len: int, symbol: str) -> str:
+
+    return text if len(text) <= max_len else text[:max_len - len(symbol)] + symbol
+
+
+def matchups_keyboard_line(bot: TelegramBot, matchup: dict):
+    matchup = parse_provisional_match(
+        bot, matchup)
+    button_text_split = [
+        truncate_with_symbol(
+            matchup['business_name'], MAX_BUSINESS_LEN, TRUNCATE_SYMBOL),
+        truncate_with_symbol(matchup['court_name'],
+                             MAX_COURT_LEN, TRUNCATE_SYMBOL),
+        f"{matchup['date']}",
+        f"{matchup['time']} hs",
+        format_price_abbreviated(matchup['price_per_hour'])
+    ]
+    button_text = " | ".join(button_text_split)
     return InlineKeyboardButton(
         text=button_text,
         callback_data=generate_callback_string(
-            f"{MatchupAction.ONE}:{public_id}")
+            f"{MatchupAction.ONE}:{matchup['public_id']}")
     )
 
 
 def matchups_keyboard(bot: TelegramBot, matchups: list):
     inline_markup = InlineKeyboardMarkup()
-    add_business_info(matchups)
+    add_court_info(matchups)
     for matchup in matchups:
         inline_markup.row(matchups_keyboard_line(bot, matchup))
     return inline_markup
@@ -54,7 +72,7 @@ def display_all_matchups(bot: TelegramBot, chat_id: int, message_id: int | None 
         bot.send_message(
             chat_id=chat_id,
             text=bot.language_manager.get("MESSAGE_SEE_MATCHES"),
-            reply_markup=matchups_keyboard(bot, matches)
+            reply_markup=matchups_keyboard(bot, matches),
         )
 
 

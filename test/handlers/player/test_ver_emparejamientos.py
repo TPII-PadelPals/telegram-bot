@@ -29,30 +29,34 @@ class TestMatchupsMainCallback(unittest.TestCase):
         self.call.message.chat.username = "test_user"
 
         self.sample_match = {
-            "public_id": "1",
+            "public_id": "a5f94e1a-e03c-49be-a8fe-9d6fcb912e19",
+            "business_public_id": "a5f94e1a-e03c-49be-a8fe-9d6fcb912e29",
+            "court_public_id": "55fac2f7-1989-46b1-b2c0-4b662c5ecb87",
             "court_name": "1",
             "date": "2023-10-10",
             "time": "10",
-            "status": "pending",
-            "business_public_id": "a5f94e1a-e03c-49be-a8fe-9d6fcb912e29",
+            "status": "Provisional",
             "match_players": [
                 {"reserve": "assigned", "user_public_id": "user1"},
                 {"reserve": "inside", "user_public_id": "user2"}
             ]
         }
 
-        self.sample_business = {
+        self.sample_court = {
+            "court_public_id": "55fac2f7-1989-46b1-b2c0-4b662c5ecb87",
+            "name": "1",
             "business_public_id": "a5f94e1a-e03c-49be-a8fe-9d6fcb912e29",
-            "name": "b_1",
-            "location": "loc_1"
+            "business_name": "b_1",
+            "business_location": "loc_1",
+            "price_per_hour": 1000
         }
 
         self.player_outside_matches = {
             "data": [
                 {
                     "public_id": "a5f94e1a-e03c-49be-a8fe-9d6fcb912e19",
-                    "court_name": "Cancha1",
                     "court_public_id": "55fac2f7-1989-46b1-b2c0-4b662c5ecb87",
+                    "court_name": "1",
                     "business_public_id": "a5f94e1a-e03c-49be-a8fe-9d6fcb912e29",
                     "time": 9,
                     "date": "2025-05-02",
@@ -133,9 +137,20 @@ class TestMatchupsMainCallback(unittest.TestCase):
         mock_validate_and_filter_matchups.return_value = [self.sample_match]
 
         mock_business_service = MockBusinessService.return_value
-        mock_business_service.get_business.return_value = self.sample_business
+        mock_business_service.get_court.return_value = self.sample_court
 
-        self.bot.language_manager.get.return_value = "MESSAGE_SEE_MATCHES"
+        self.bot.language_manager.get.side_effect = lambda key: {
+            "DATE_FMT": "%d/%m/%Y",
+            "TIME_FMT": "%H:%M",
+            "RESERVE_STATUS": {
+                "inside": "Confirmado",
+                "assigned": "Pendiente"
+            },
+            "MATCH_STATUS": {
+                "provisional": "Provisional",
+                "reserved": "Confirmado"
+            }
+        }.get(key)
 
         handle_matchups(self.message, self.bot)
 
@@ -171,14 +186,23 @@ class TestMatchupsMainCallback(unittest.TestCase):
         mock_matchup_options_keyboard.return_value = None
 
         mock_business_service = MockBusinessService.return_value
-        mock_business_service.get_business.return_value = self.sample_business
+        mock_business_service.get_court.return_value = self.sample_court
 
-        self.bot.language_manager.get.side_effect = [
-            "%d/%m/%Y",
-            "%H:%M",
-        ]
+        self.bot.language_manager.get.side_effect = lambda key: {
+            "DATE_FMT": "%d/%m/%Y",
+            "TIME_FMT": "%H:%M",
+            "RESERVE_STATUS": {
+                "inside": "Confirmado",
+                "assigned": "Pendiente"
+            },
+            "MATCH_STATUS": {
+                "provisional": "Provisional",
+                "reserved": "Confirmado"
+            }
+        }.get(key)
 
-        self.call.data = generate_callback_string('1')
+        self.call.data = generate_callback_string(
+            "a5f94e1a-e03c-49be-a8fe-9d6fcb912e19")
 
         handle_display_one_matchup_callback(self.call, self.bot)
 
@@ -186,11 +210,11 @@ class TestMatchupsMainCallback(unittest.TestCase):
         args = self.bot.edit_message_text.call_args[1]
         self.assertIn("Establecimiento: b_1", args['text'])
         self.assertIn("Cancha: 1", args['text'])
-        self.assertIn("Dia: 10/10/2023", args['text'])
-        self.assertIn("Horario: 10:00", args['text'])
-        self.assertIn("Estado: pending", args['text'])
+        self.assertIn("Fecha: 10/10/2023", args['text'])
+        self.assertIn("Horario: 10:00 - 11:00 hs", args['text'])
+        self.assertIn("Estado: Provisional", args['text'])
         self.assertIn(f"Jugador 1: {user_name}", args['text'])
-        self.assertIn("Estado: assigned", args['text'])
+        self.assertIn("Estado: Pendiente", args['text'])
 
     @patch('handlers.player.matchups.handle_display_one_matchup.UsersService')
     @patch('handlers.player.matchups.handle_display_one_matchup.validate_and_filter_matchups')
@@ -271,9 +295,17 @@ class TestMatchupsMainCallback(unittest.TestCase):
         mock_validate_and_filter_matchups.return_value = [self.sample_match]
 
         mock_business_service = MockBusinessService.return_value
-        mock_business_service.get_business.return_value = self.sample_business
+        mock_business_service.get_court.return_value = self.sample_court
 
-        self.bot.language_manager.get.return_value = "MESSAGE_SEE_MATCHES"
+        self.bot.language_manager.get.side_effect = lambda key: {
+            "DATE_FMT": "%d/%m/%Y",
+            "TIME_FMT": "%H:%M",
+            "MESSAGE_SEE_MATCHES": "Here are your matches!",
+            "MATCH_STATUS": {
+                "provisional": "Provisional",
+                "reserved": "Confirmado"
+            }
+        }.get(key)
 
         handle_display_all_matchups_callback(self.call, self.bot)
 
