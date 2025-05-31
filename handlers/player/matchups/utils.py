@@ -100,12 +100,29 @@ def format_price_complete(amount):
     return locale.currency(float(amount), grouping=True)
 
 
+def format_match_status(bot: TelegramBot, matchup: dict):
+    inside_players = [player for player in matchup["match_players"]
+                      if player["reserve"] == ReserveStatus.INSIDE]
+
+    match_status = bot.language_manager.get('MATCH_STATUS')
+
+    matchup['status'] = matchup['status'].lower()
+    if len(inside_players) >= MAX_PLAYERS:
+        matchup['status'] = 'confirmed'
+
+    matchup['status'] = match_status[matchup['status']]
+
+
 def parse_provisional_match(bot: TelegramBot, matchup: dict):
     matchup['date'] = dt.strptime(
         matchup['date'], "%Y-%m-%d").strftime(bot.language_manager.get('DATE_FMT'))
+
     matchup['time'] = format_time(bot, matchup["time"])
+
     matchup['price_per_hour'] = str(
         float(matchup['price_per_hour']) / MAX_PLAYERS)
+
+    format_match_status(bot, matchup)
 
     return matchup
 
