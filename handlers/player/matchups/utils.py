@@ -1,12 +1,12 @@
 import locale
 from enum import Enum
+from typing import Any
 from model.telegram_bot import TelegramBot
 from datetime import datetime as dt
 
 from services.business_service import BusinessService
 from services.matches_service import MatchesService
 
-locale.setlocale(locale.LC_ALL, 'es_AR.UTF-8')
 
 VIEW_PADDLE_MATCHUPS_COMMAND = "ver_emparejamientos"
 MAX_PLAYERS = 4
@@ -95,8 +95,10 @@ def format_price_abbreviated(amount):
     return f"{sign}~${formatted}"
 
 
-def format_price_complete(amount):
+def format_price_complete(bot: TelegramBot, amount: Any):
     amount = float(amount)
+    locale.setlocale(locale.LC_ALL, bot.language_manager.get(
+        'PRICE_LOCALE_FMT'))
     return locale.currency(float(amount), grouping=True)
 
 
@@ -108,7 +110,7 @@ def format_match_status(bot: TelegramBot, matchup: dict):
 
     matchup['status'] = matchup['status'].lower()
     if len(inside_players) >= MAX_PLAYERS:
-        matchup['status'] = 'confirmed'
+        matchup['status'] = 'reserved'
 
     matchup['status'] = match_status[matchup['status']]
 

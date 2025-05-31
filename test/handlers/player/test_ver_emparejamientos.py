@@ -148,7 +148,7 @@ class TestMatchupsMainCallback(unittest.TestCase):
             },
             "MATCH_STATUS": {
                 "provisional": "Provisional",
-                "confirmed": "Confirmado"
+                "reserved": "Confirmado"
             }
         }.get(key)
 
@@ -197,7 +197,7 @@ class TestMatchupsMainCallback(unittest.TestCase):
             },
             "MATCH_STATUS": {
                 "provisional": "Provisional",
-                "confirmed": "Confirmado"
+                "reserved": "Confirmado"
             }
         }.get(key)
 
@@ -303,7 +303,7 @@ class TestMatchupsMainCallback(unittest.TestCase):
             "MESSAGE_SEE_MATCHES": "Here are your matches!",
             "MATCH_STATUS": {
                 "provisional": "Provisional",
-                "confirmed": "Confirmado"
+                "reserved": "Confirmado"
             }
         }.get(key)
 

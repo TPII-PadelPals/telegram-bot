@@ -88,7 +88,8 @@ def handle_display_one_matchup_callback(call: CallbackQuery, bot: TelegramBot):
     end_time = format_time(bot, end_time)
     time_formatted = f"{start_time} - {end_time} hs"
 
-    price_formatted = format_price_complete(selected_match['price_per_hour'])
+    price_formatted = format_price_complete(
+        bot, selected_match['price_per_hour'])
 
     reserve_status = bot.language_manager.get("RESERVE_STATUS")
     match_players = selected_match['match_players']

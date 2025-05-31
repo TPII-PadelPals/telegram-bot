@@ -147,6 +147,7 @@
   },
   "MATCH_STATUS": {
     "provisional": "Provisional",
-    "confirmed": "Confirmado" 
-  }
+    "reserved": "Confirmado" 
+  },
+  "PRICE_LOCALE_FMT": "es_AR.UTF-8"
 }
