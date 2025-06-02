@@ -30,7 +30,8 @@ class BaseService:
         """Send a GET request."""
         url = f"{self.base_url}{endpoint}"
         headers.update(self.x_api_key_header)
-        logger.info(f"GET request to {url}, params: {params}, headers={headers}")
+        logger.info(
+            f"GET request to {url}, params: {params}, headers={headers}")
         response = requests.get(url, params=params, headers=headers)
         return self._handle_response(response)
 
@@ -73,7 +74,6 @@ class BaseService:
         except requests.exceptions.HTTPError as e:
             logger.info(f"Request error {e}")
             return None
-
 
     def set_prefix_url(self, prefix):
         self.base_url += prefix

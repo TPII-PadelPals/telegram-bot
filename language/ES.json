@@ -1,10 +1,10 @@
 {
   "MESSAGE_START": "Bienvenido a PadelPals",
   "MESSAGE_INVALID_VALUE": "No es un valor valido",
-  "MESSAGE_SEE_MATCHES": "Estos son todos los posibles emparejamientos:\n",
+  "MESSAGE_SEE_MATCHES": "Emparejamientos posibles:\n( Establecimiento | Cancha | Fecha | Hora | Precio )",
   "PLAYER": "Jugador",
   "COURT": "Cancha",
-  "COURT_ID": "ID Cancha",
+  "court_name": "ID Cancha",
   "DATE_FMT": "%d/%m/%Y",
   "TIME": "Horario",
   "TIME_FMT": "%H:%M",
@@ -89,20 +89,18 @@
   "MESSAGE_SEE_RESERVES_EMPTY": "No hay reservas actualmente.",
   "MESSAGE_SEE_RESERVES": "Estos son todas las reservas realizadas:\n",
   "MESSAGE_HELP_GENERAL": {
-    "/start": "Comando de inicio de secion.",
+    "/start": "Comando de inicio de sesión.",
     "/help": "Muestra ayuda de los comandos permitidos.",
     "/registrarse": "Permite registrar un nuevo usuario para la aplicacion.",
     "/configurar_disponibilidad": "Configura la disponibilidad horaria y diaria del usuario.",
     "/ver_emparejamientos": "Visualizacion de emparejamientos del usuario realizados por la aplicacion.",
     "/configurar_golpes": "Configura el nivel de habilidad con los distintos golpes de padel del usuario.",
     "/ver_reservas": "Visualizacion de las canchas reservadas.",
-    "/rechazar_emparejamiento": "Rechazo de un emparejamiento, este emparejamiento ya no aparecera.",
     "/encuesta_jugador": "Permite puntuar a un jugador con el que se haya participado en un partido antes.",
     "/configurar_ubicacion": "Configura la ubicación y el radio en el cual quieras buscar un establecimiento."
   },
-  "MESSAGE_RESPOND_TO_MATCHMAKING_HELP": "Para aceptar/rechazar un emparejamiento se deben dar los siguientes datos:\n- oponente: Ej: Pablo.\n- Cancha: Ej: 4\nHora del encuentro: Ej: 15\n\nLa estructura es: /<aceptar_emparejamiento/rechazar_emparejamiento> <Oponente> <Cancha> <Horario>.\nEjemplos:\n/aceptar_emparejamiento Pablo 51 9\n/rechazar_emparejamiento Carlos 32 18",
-  "MESSAGE_MATCH_PLAYER_CONFIRMATION": "Gracias por su confirmación. Ha ingresado al partido.",
-  "MESSAGE_RESPOND_TO_MATCHMAKING": "Estado de emparejamiento: ",
+  "MESSAGE_MATCH_PLAYER_CONFIRMATION": "Para confirmar el partido, realice el pago de la reserva utilizando uno de los siguientes metodos de pago.\nUna vez realizado el pago, verá el estado de su reserva actualizado en el emparejamiento: /ver_emparejamientos",
+  "MESSAGE_MATCH_PLAYER_REJECT": "Ha rechazado el partido correctamente. Si desea participar de un partido puede buscar sus matches disponibles con el comando /ver_emparejamientos.",
   "MESSAGE_SURVEY_PLAYER_ALLOWED": "Ahora puede realizar una encuesta para puntuar a los jugadores con quien participo, para hacerlo /encuesta_jugador <Nombre del jugador> <puntaje de 1 a 5>.\nLos siguientes jugadores ahora pueden ser punteados: ",
   "MESSAGE_SURVEY_PLAYER_ERROR": "No se ha podido cargar la reseña al jugador: ",
   "QUESTION_SURVEY_PLAYER": "Puntua del 1 al 5 que te parecio este jugador ",
@@ -110,7 +108,7 @@
   "ANSWER_SURVEY_PLAYER": "Se ha registrado su reseña: ",
   "MESSAGE_HELP_SURVEY_PLAYER": "Permite a través de una encuesta evaluar a algún otro jugador con el que hayas jugado antes.\nEjemplo /encuesta_jugador <Nombre del jugador> o bien /encuesta_jugador <Nombre del jugador> <puntaje de 1 a 5>.",
   "ERROR_SET_AVAILABILITY": "No se pudo configurar la disponibilidad. Por favor inténtelo nuevamente.",
-  "ERROR_SET_MATCH_PLAYER_STATUS": "No se pudo actualizar el estado del match. Por favor inténtelo nuevamente.",
+  "ERROR_SET_MATCH_PLAYER_STATUS": "No se pudo confirmar la reserva. Por favor inténtelo nuevamente.",
   "ERROR_RECEIVE_DATA": "Error al intentar contactar con los servicios.\nPor favor intente de nuevo más tarde.",
   "ERROR_USER_NOT_FOUND": "Usted no se encuentra registrado.\nPor favor intente registrarse con el comando /start y vuelva a intentarlo.",
   "SUCCESSFUL_AVAILABILITY_CONFIGURATION": "Ya tenes todo listo! Deseas ver los matches que tenes emparejados para vos? Utiliza el comando /ver_emparejamientos",
@@ -139,5 +137,17 @@
     "lob": "Globo",
     "smash": "Remate",
     "bandeja": "Bandeja"
-  }
+  },
+  "MESSAGE_DISCLAIMER": "Aviso de privacidad:\nTen en cuenta que los datos que ingreses en este chat pueden ser visibles para Telegram, ya que esta plataforma gestiona el servicio de mensajería.\nEvita compartir información sensible, personal o confidencial.\nAl continuar, aceptas que tus datos pueden ser procesados y almacenados por Telegram conforme a sus políticas de privacidad.",
+  "MESSAGE_NEW_MATCHES": "Tiene nuevos emparejamientos disponibles.",
+  "MESSAGGE_FIRST_ASSIGNED": "Hemos elegido este partido especialmente para ti. Si decides unirte, encontraremos jugadores con un perfil similar al tuyo para que disfrutes al máximo la experiencia.",
+  "RESERVE_STATUS": {
+    "assigned": "Pendiente",
+    "inside": "Confirmado"
+  },
+  "MATCH_STATUS": {
+    "provisional": "Provisional",
+    "reserved": "Confirmado" 
+  },
+  "PRICE_LOCALE_FMT": "es_AR.UTF-8"
 }
