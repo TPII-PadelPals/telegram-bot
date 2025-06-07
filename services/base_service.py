@@ -14,8 +14,14 @@ class BaseService:
 
     def _set_base_url(self, host: str = "localhost", port: int | None = None) -> None:
         """Set the base URL for the service."""
+        local_server = ["localhost", "127.0.0.1"]
+        private_prod_server = ["172.31.33.238", "172.31.40.104", "172.31.39.179"]
         service_url = f"{host}:{port}" if port is not None else f"{host}"
-        self.base_url = (f"http://{service_url}")
+        self.base_url = (
+            f"http://{service_url}"
+            if host in local_server or host in private_prod_server
+            else f"https://{service_url}"
+        )
 
     def generate_url(self, endpoint):
         """Generate a full URL from an endpoint."""
