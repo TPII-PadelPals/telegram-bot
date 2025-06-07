@@ -19,6 +19,7 @@ def handle_start(message: Message, bot: TelegramBot, users_service: UsersService
     chat_id = message.chat.id
     try:
         users = users_service.get_user_info(chat_id)
+        print('llegué aca: ', users[0])
         if len(users) == 0:
             ask_login_method(message, bot)
             return
