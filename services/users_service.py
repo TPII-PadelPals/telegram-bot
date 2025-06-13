@@ -14,8 +14,8 @@ class User:
 class UsersService(BaseService):
     def __init__(self):
         """Set the base URL for the service."""
-        self._set_base_url(settings.GATEWAY_HOST,
-                           settings.GATEWAY_PORT)
+        self._set_base_url(settings.USERS_SERVICE_HOST,
+                           settings.USERS_SERVICE_PORT)
         self.base_url += "/api/v1"
         self.x_api_key_header = {"x-api-key": settings.USERS_SERVICE_API_KEY}
 
