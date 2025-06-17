@@ -26,7 +26,7 @@ class BaseService:
     def generate_url(self, endpoint):
         """Generate a full URL from an endpoint."""
         if settings.ENV == 'prod':
-            return f"{settings.USERS_SERVICE_HOST_PROD}{endpoint}"
+            return f"{settings.USERS_SERVICE_HOST_PROD}/api/v1{endpoint}"
         return f"{self.base_url}{endpoint}"
 
     def get(self, endpoint, params=None, headers={}):
