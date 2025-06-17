@@ -34,7 +34,6 @@ class Settings(BaseSettings):
 
     # Users service settings prod
     USERS_SERVICE_HOST_PROD: str
-    USERS_SERVICE_PORT_PROD: str
 
     # Matches service settings
     MATCHES_SERVICE_HOST: str
