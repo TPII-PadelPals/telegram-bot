@@ -26,10 +26,10 @@ if [ -z "$NGROK_URL" ]; then
 fi
 
 # Actualiza o agrega la variable en el .env
-if grep -q "USERS_SERVICE_HOST_PROD=" ../.env; then
-  sed -i "s|USERS_SERVICE_HOST_PROD=.*|USERS_SERVICE_HOST_PROD=$NGROK_URL|" ../.env
+if grep -q "USERS_SERVICE_HOST_PROD=" .env; then
+  sed -i "s|USERS_SERVICE_HOST_PROD=.*|USERS_SERVICE_HOST_PROD=$NGROK_URL|" .env
 else
-  echo "USERS_SERVICE_HOST_PROD=$NGROK_URL" >> ../.env
+  echo "USERS_SERVICE_HOST_PROD=$NGROK_URL" >> .env
 fi
 
 echo "USERS_SERVICE_HOST_PROD actualizado en .env con: $NGROK_URL"
