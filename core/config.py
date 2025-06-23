@@ -32,9 +32,6 @@ class Settings(BaseSettings):
     USERS_SERVICE_PORT: int
     USERS_SERVICE_API_KEY: str
 
-    # Users service settings prod
-    USERS_SERVICE_HOST_PROD: str
-
     # Matches service settings
     MATCHES_SERVICE_HOST: str
     MATCHES_SERVICE_PORT: int
