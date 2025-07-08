@@ -9,7 +9,7 @@ from services.matches_service import MatchesService
 
 
 VIEW_PADDLE_MATCHUPS_COMMAND = "ver_emparejamientos"
-MAX_PLAYERS = 4
+MAX_PLAYERS = 2
 
 
 class MatchupAction(str):
