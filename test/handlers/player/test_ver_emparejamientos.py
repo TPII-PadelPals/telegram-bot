@@ -198,7 +198,8 @@ class TestMatchupsMainCallback(unittest.TestCase):
             "MATCH_STATUS": {
                 "provisional": "Provisional",
                 "reserved": "Confirmado"
-            }
+            },
+            "PRICE_LOCALE_FMT": "es_AR.UTF-8"
         }.get(key)
 
         self.call.data = generate_callback_string(
