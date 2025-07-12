@@ -41,7 +41,7 @@ def ask_login_method(message: Message, bot: TelegramBot):
             callback_data="start_google"))
     bot.reply_to(
         message,
-        "Bienvenido a PaddlePals! Por favor seleccione un método de registro:",
+        "Bienvenido a PadelPals! Por favor seleccione un método de registro:",
         reply_markup=markup)
 
 
