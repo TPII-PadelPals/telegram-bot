@@ -170,16 +170,18 @@ class TestMatchupsMainCallback(unittest.TestCase):
         self.bot.send_message.assert_called_once_with(
             self.message.chat.id, self.bot.language_manager.get("MESSAGE_SEE_MATCHES_EMPTY"))
 
+    @patch("handlers.player.matchups.handle_display_one_matchup.format_price_complete")
     @patch('handlers.player.matchups.handle_display_one_matchup.matchup_options_keyboard')
     @patch('handlers.player.matchups.handle_display_one_matchup.validate_and_filter_matchups')
     @patch('handlers.player.matchups.handle_display_one_matchup.UsersService')
     @patch('handlers.player.matchups.utils.BusinessService')
-    def test_handle_display_one_matchup_callback_valid(self, MockBusinessService, MockUsersService, mock_validate_and_filter_matchups, mock_matchup_options_keyboard):
+    def test_handle_display_one_matchup_callback_valid(self, MockBusinessService, MockUsersService, mock_validate_and_filter_matchups, mock_matchup_options_keyboard, mock_format_price_complete):
         user_name = "Player name"
         user = User(public_id="test_user_id", name=user_name)
         mock_users_service = MockUsersService.return_value
         mock_users_service.get_user_info.return_value = [user]
         mock_users_service.get_user_by_id.return_value = user
+        mock_format_price_complete.return_value = "$250,00"
 
         mock_validate_and_filter_matchups.return_value = [self.sample_match]
 
@@ -198,7 +200,8 @@ class TestMatchupsMainCallback(unittest.TestCase):
             "MATCH_STATUS": {
                 "provisional": "Provisional",
                 "reserved": "Confirmado"
-            }
+            },
+            "PRICE_LOCALE_FMT": "es_AR.UTF-8"
         }.get(key)
 
         self.call.data = generate_callback_string(
@@ -212,6 +215,7 @@ class TestMatchupsMainCallback(unittest.TestCase):
         self.assertIn("Cancha: 1", args['text'])
         self.assertIn("Fecha: 10/10/2023", args['text'])
         self.assertIn("Horario: 10:00 - 11:00 hs", args['text'])
+        self.assertIn("Precio (por jugador): $250,00", args['text'])
         self.assertIn("Estado: Provisional", args['text'])
         self.assertIn(f"Jugador 1: {user_name}", args['text'])
         self.assertIn("Estado: Pendiente", args['text'])

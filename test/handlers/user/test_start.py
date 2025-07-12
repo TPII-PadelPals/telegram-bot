@@ -55,7 +55,7 @@ class TestHandleStart(unittest.TestCase):
         handle_start(self.message, self.bot, users_service_mock)
 
         assert self.bot.reply_to.call_args.args[
-            1] == "Bienvenido a PaddlePals! Por favor seleccione un método de registro:"
+            1] == "Bienvenido a PadelPals! Por favor seleccione un método de registro:"
 
     def test_handle_callback_query_start_user_pass_replies_error(self):
         self.call.data = "start_user_pass"
