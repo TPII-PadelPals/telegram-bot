@@ -43,16 +43,16 @@ class TestMatchupResponseMatchPlayerCallback(unittest.TestCase):
         return self.language_manager.get(key, None)
 
     @patch('handlers.player.matchups.handle_reply_one_matchup.UsersService')
-    @patch('handlers.player.matchups.handle_reply_one_matchup.MatchesService')
-    def test_match_player_response_confirm_match_callback(self, MockMatchesService, MockUsersService):
+    @patch('handlers.player.matchups.handle_reply_one_matchup_confirm.PaymentsService')
+    def test_match_player_response_confirm_match_callback(self, MockPaymentsService, MockUsersService):
         mock_users_service = MockUsersService.return_value
-        mock_matches_service = MockMatchesService.return_value
+        mock_payments_service = MockPaymentsService.return_value
         pay_url = 'http://a-payment-method.com'
 
         mock_users_service.get_user_info.return_value = [User(
             public_id=self.user_public_id)]
 
-        mock_matches_service.update_match_player_status.return_value = {
+        mock_payments_service.update_match_player_status.return_value = {
             'user_public_id': self.user_public_id,
             'match_public_id': self.match_public_id,
             'reserve': 'inside',
@@ -71,15 +71,15 @@ class TestMatchupResponseMatchPlayerCallback(unittest.TestCase):
             "MESSAGE_MATCH_PLAYER_CONFIRMATION")
 
     @patch('handlers.player.matchups.handle_reply_one_matchup.UsersService')
-    @patch('handlers.player.matchups.handle_reply_one_matchup.MatchesService')
-    def test_match_player_response_confirm_match_callback_with_service_error(self, MockMatchesService, MockUsersService):
+    @patch('handlers.player.matchups.handle_reply_one_matchup_confirm.PaymentsService')
+    def test_match_player_response_confirm_match_callback_with_service_error(self, MockPaymentsService, MockUsersService):
         mock_users_service = MockUsersService.return_value
-        mock_matches_service = MockMatchesService.return_value
+        mock_payments_service = MockPaymentsService.return_value
 
         mock_users_service.get_user_info.return_value = [User(
             public_id=self.user_public_id)]
 
-        mock_matches_service.update_match_player_status.return_value = None
+        mock_payments_service.update_match_player_status.return_value = None
 
         self.call.data = generate_callback_string(
             f'inside:{self.match_public_id}')
@@ -92,14 +92,14 @@ class TestMatchupResponseMatchPlayerCallback(unittest.TestCase):
         )
 
     @patch('handlers.player.matchups.handle_reply_one_matchup.UsersService')
-    @patch('handlers.player.matchups.handle_reply_one_matchup.MatchesService')
-    def test_match_player_response_confirm_match_callback_without_user_public_id_returns_error(self, MockMatchesService, MockUsersService):
+    @patch('handlers.player.matchups.handle_reply_one_matchup_confirm.PaymentsService')
+    def test_match_player_response_confirm_match_callback_without_user_public_id_returns_error(self, MockPaymentsService, MockUsersService):
         mock_users_service = MockUsersService.return_value
-        mock_matches_service = MockMatchesService.return_value
+        mock_payments_service = MockPaymentsService.return_value
 
         mock_users_service.get_user_info.return_value = None
 
-        mock_matches_service.update_match_player_status.return_value = {
+        mock_payments_service.update_match_player_status.return_value = {
             'user_public_id': self.user_public_id,
             'match_public_id': self.match_public_id,
             'reserve': 'inside'
@@ -116,7 +116,7 @@ class TestMatchupResponseMatchPlayerCallback(unittest.TestCase):
         )
 
     @patch('handlers.player.matchups.handle_reply_one_matchup.UsersService')
-    @patch('handlers.player.matchups.handle_reply_one_matchup.MatchesService')
+    @patch('handlers.player.matchups.handle_reply_one_matchup_reject.MatchesService')
     def test_match_player_response_reject_match_callback(self, MockMatchesService, MockUsersService):
         mock_users_service = MockUsersService.return_value
         mock_matches_service = MockMatchesService.return_value
@@ -143,7 +143,7 @@ class TestMatchupResponseMatchPlayerCallback(unittest.TestCase):
             "MESSAGE_MATCH_PLAYER_REJECT")
 
     @patch('handlers.player.matchups.handle_reply_one_matchup.UsersService')
-    @patch('handlers.player.matchups.handle_reply_one_matchup.MatchesService')
+    @patch('handlers.player.matchups.handle_reply_one_matchup_reject.MatchesService')
     def test_match_player_response_reject_match_callback_with_service_error(self, MockMatchesService, MockUsersService):
         mock_users_service = MockUsersService.return_value
         mock_matches_service = MockMatchesService.return_value
@@ -164,7 +164,7 @@ class TestMatchupResponseMatchPlayerCallback(unittest.TestCase):
         )
 
     @patch('handlers.player.matchups.handle_reply_one_matchup.UsersService')
-    @patch('handlers.player.matchups.handle_reply_one_matchup.MatchesService')
+    @patch('handlers.player.matchups.handle_reply_one_matchup_reject.MatchesService')
     def test_match_player_response_reject_match_callback_without_user_public_id_returns_error(self, MockMatchesService, MockUsersService):
         mock_users_service = MockUsersService.return_value
         mock_matches_service = MockMatchesService.return_value
