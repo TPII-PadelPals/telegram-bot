@@ -15,6 +15,9 @@ class Settings(BaseSettings):
     TELEGRAM_BOT_SERVICE_HOST: str
     TELEGRAM_BOT_SERVICE_PORT: int
 
+    # Environment settings
+    ENV: str
+
     # Gateway settings
     GATEWAY_HOST: str
     GATEWAY_PORT: int

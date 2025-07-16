@@ -182,6 +182,7 @@ class TestMatchupsMainCallback(unittest.TestCase):
         mock_users_service.get_user_info.return_value = [user]
         mock_users_service.get_user_by_id.return_value = user
         mock_format_price_complete.return_value = "$250,00"
+
         mock_validate_and_filter_matchups.return_value = [self.sample_match]
 
         mock_matchup_options_keyboard.return_value = None
@@ -199,7 +200,8 @@ class TestMatchupsMainCallback(unittest.TestCase):
             "MATCH_STATUS": {
                 "provisional": "Provisional",
                 "reserved": "Confirmado"
-            }
+            },
+            "PRICE_LOCALE_FMT": "es_AR.UTF-8"
         }.get(key)
 
         self.call.data = generate_callback_string(
